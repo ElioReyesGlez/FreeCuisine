@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "488766149622",
+    "project_id": "free-cuisine",
+    "storage_bucket": "free-cuisine.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:488766149622:android:61aacce9825dab98d96dd7",
+        "android_client_info": {
+          "package_name": "com.erg.freecuisine"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "488766149622-t9itls78o59757m1id7scnf2vji7kjkm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuSF3wGcr7E_NvDOWXXgXYu35ahtbpZbQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "488766149622-t9itls78o59757m1id7scnf2vji7kjkm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

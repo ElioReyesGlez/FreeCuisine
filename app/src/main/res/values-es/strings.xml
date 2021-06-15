@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">Free Cuisine</string>
+    <string name="title_home">Casa</string>
+    <string name="title_recipes">Recetas</string>
+    <string name="title_settings">Ajustes</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        Etiam ac orci massa. Suspendisse a libero a dolor elementum fringilla faucibus vitae leo.
+        Mauris ut metus et quam faucibus lobortis dictum id ligula.</string>
+    <string name="recipe_image">recipe image</string>
+    <string name="recipe_image_transition_name">recipe_image_transition_name</string>
+    <string name="bullet">\u2022</string>
+
+    <string name="str_all_selected">Todas las categorias</string>
+    <string name="recipes">Recetas</string>
+    <string name="ingredients">Ingredientes</string>
+    <string name="search">buscar</string>
+    <string name="reload">Presione para recargar</string>
+
+    <string-array name="tags">
+        <item>Todas las categorias</item>
+        <item>#pescado</item>
+        <item>#vegetables</item>
+        <item>#verduras</item>
+        <item>#postres</item>
+        <item>#pasta</item>
+        <item>#carne</item>
+        <item>#camarón</item>
+        <item>#ensaladas</item>
+        <item>Otro</item>
+    </string-array>
+
+    <string name="empty">Vacío</string>
+    <string name="steps">Pasos por Paso</string>
+    <string name="dinner">cena</string>
+
+</resources>

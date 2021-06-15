@@ -1,0 +1,97 @@
+<resources>
+    <string name="app_name">Free Cuisine</string>
+    <string name="title_home">Casa</string>
+    <string name="title_recipes">Recetas</string>
+    <string name="title_settings">Ajustes</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        Etiam ac orci massa. Suspendisse a libero a dolor elementum fringilla faucibus vitae leo.
+        Mauris ut metus et quam faucibus lobortis dictum id ligula.</string>
+    <string name="recipe_image">recipe image</string>
+    <string name="recipe_image_transition_name">recipe_image_transition_name</string>
+    <string name="bullet">\u2022</string>
+
+    <string name="str_all_selected">Todas las categorias</string>
+    <string name="recipes">Recetas</string>
+
+    <string-array name="brands">
+        <item>Huawei</item>
+        <item>Honor</item>
+        <item>HTC</item>
+        <item>Xiaomi</item>
+        <item>Realme</item>
+        <item>Oppo</item>
+    </string-array>
+
+    <string-array name="tags">
+        <item>All categories</item>
+        <item>#fish</item>
+        <item>#vegetables</item>
+        <item>#appetizers</item>
+        <item>#desserts</item>
+        <item>#pasta</item>
+        <item>#meat</item>
+        <item>#shrimp</item>
+        <item>#salads</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="ingredients">
+        <item>1 cebolla tierna </item>
+        <item>1 diente de ajo </item>
+        <item>1 manojo de perejil fresco </item>
+        <item>1 vaso pequeño de vino blanco </item>
+        <item>1 cucharada sopera de harina de </item>
+        <item>trigo </item>
+        <item>1 vaso pequeño de agua </item>
+        <item>1 chorro de aceite de oliva </item>
+        <item>300 gramos de salmón fresco</item>
+        <item>1 huevo </item>
+    </string-array>
+
+    <string-array name="recipes_title">
+        <item>Palitos de merluza</item>
+        <item>Salmón en salsa verde</item>
+        <item>Buñuelos de bacalao con cerveza</item>
+        <item>Buñuelos de bacalao al horno</item>
+        <item>Merluza en salsa verde</item>
+        <item>Tarta de atún y choclo</item>
+        <item>Sardinas al horno</item>
+        <item>Bacalao espiritual</item>
+        <item>Bacalao en sanfaina</item>
+        <item>Sushi maki de atún</item>
+    </string-array>
+
+    <string-array name="recipes_cooking_time">
+        <item>30m</item>
+        <item>30m</item>
+        <item>45m</item>
+        <item>30m</item>
+        <item>30m</item>
+        <item>45m</item>
+        <item>15m</item>
+        <item>45m</item>
+        <item>90m</item>
+        <item>30m</item>
+    </string-array>
+
+    <string-array name="recipes_amount">
+        <item>3</item>
+        <item>2</item>
+        <item>4</item>
+        <item>2</item>
+        <item>4</item>
+        <item>3</item>
+        <item>3</item>
+        <item>4</item>
+        <item>4</item>
+        <item>4</item>
+    </string-array>
+
+    <string name="ingredients">Ingredientes</string>
+    <string name="empty">Vacío</string>
+    <string name="search">buscar</string>
+    <string name="reload">Presione para recargar</string>
+    <string name="steps">Pasos por Paso</string>
+    <string name="dinner">cena</string>
+
+</resources>
