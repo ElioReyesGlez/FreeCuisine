@@ -4,19 +4,20 @@ import android.content.Context;
 
 import androidx.core.content.ContextCompat;
 
+import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
 import com.yalantis.filter.adapter.FilterAdapter;
 import com.yalantis.filter.widget.FilterItem;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RecipesFilterAdapter extends FilterAdapter<TagModel> {
 
     private int[] colors;
     private Context context;
-
 
     public RecipesFilterAdapter(@NotNull List<? extends TagModel> items,
                                 int[] colors, Context context) {

@@ -1,6 +1,7 @@
 package com.erg.freecuisine.ui;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,7 +15,6 @@ import android.widget.SearchView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.loader.app.LoaderManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DiffUtil;
@@ -26,7 +26,10 @@ import com.erg.freecuisine.R;
 import com.erg.freecuisine.adapters.RecipesAdapter;
 import com.erg.freecuisine.adapters.RecipesFilterAdapter;
 import com.erg.freecuisine.controller.network.AsyncDataLoad;
+import com.erg.freecuisine.controller.network.helpers.FireBaseHelper;
+import com.erg.freecuisine.interfaces.OnFireBaseListenerDataStatus;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
+import com.erg.freecuisine.models.LinkModel;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
 import com.erg.freecuisine.util.Util;
@@ -43,7 +46,10 @@ import static com.erg.freecuisine.util.Constants.TAG_KEY;
 import static com.erg.freecuisine.util.Constants.URL_KEY;
 
 public class RecipesFragment extends Fragment implements
-        FilterListener<TagModel>, OnRecipeListener, SearchView.OnQueryTextListener {
+        FilterListener<TagModel>, OnRecipeListener, OnFireBaseListenerDataStatus,
+        SearchView.OnQueryTextListener {
+
+    private static final String TAG = "RecipesFragment";
 
     private View rootView;
     private RecyclerView recyclerViewRecipes;
@@ -51,14 +57,15 @@ public class RecipesFragment extends Fragment implements
     private Animation scaleUP, scaleDown;
 
     public List<RecipeModel> recipes;
+    public List<TagModel> tags;
     private int[] colors;
-
-    //ToDo Temporal
-    private String[] tags;
 
     private AsyncDataLoad asyncDataLoad;
     private Filter<TagModel> filter;
     public RecipesAdapter recipesAdapter;
+    private RecipesFilterAdapter filterAdapter;
+
+    FireBaseHelper fireBaseHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,7 +73,10 @@ public class RecipesFragment extends Fragment implements
 //        setHasOptionsMenu(true);
 
         recipes = new ArrayList<>();
+        tags = new ArrayList<>();
         asyncDataLoad = new AsyncDataLoad();
+        colors = getResources().getIntArray(R.array.colors);
+        fireBaseHelper = new FireBaseHelper();
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -78,41 +88,31 @@ public class RecipesFragment extends Fragment implements
         Util.showView(null, lottie_anim_loading);
         Util.hideView(null, lottie_anim_empty);
 
-        colors = getResources().getIntArray(R.array.colors);
-        tags = getResources().getStringArray(R.array.tags);
-
         setUpView();
+        Log.d(TAG, "onCreateView: ");
 
         return rootView;
     }
 
     public void setUpView() {
 
-            filter = rootView.findViewById(R.id.filter);
-            RecipesFilterAdapter filterAdapter = new RecipesFilterAdapter(getTags(),
-                    colors, requireContext());
-            filter.setAdapter(filterAdapter);
-            filter.setListener(this);
+        filter = rootView.findViewById(R.id.filter);
 
-            //the text to show when there's no selected items
-            filter.setNoSelectedItemText(getString(R.string.str_all_selected));
-            filter.build();
+        recyclerViewRecipes = rootView.findViewById(R.id.recycler_view_recipes);
+        scaleUP = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
+        scaleDown = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_down);
 
-            recyclerViewRecipes = rootView.findViewById(R.id.recycler_view_recipes);
-            scaleUP = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
-            scaleDown = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_down);
+        int numberOfColumns = 2;
+        StaggeredGridLayoutManager gridLayoutManager =
+                new StaggeredGridLayoutManager(numberOfColumns, StaggeredGridLayoutManager.VERTICAL);
+        recyclerViewRecipes.setLayoutManager(gridLayoutManager);
+        recyclerViewRecipes.setHasFixedSize(true);
+        GridItemDecoration gridItemDecoration = new GridItemDecoration(12, 9);
+        recyclerViewRecipes.addItemDecoration(gridItemDecoration);
+        recyclerViewRecipes.setItemAnimator(new FiltersListItemAnimator());
 
-            int numberOfColumns = 2;
-            StaggeredGridLayoutManager gridLayoutManager =
-                    new StaggeredGridLayoutManager(numberOfColumns, StaggeredGridLayoutManager.VERTICAL);
-            recyclerViewRecipes.setLayoutManager(gridLayoutManager);
-            recyclerViewRecipes.setHasFixedSize(true);
-            GridItemDecoration gridItemDecoration = new GridItemDecoration(12, 9);
-            recyclerViewRecipes.addItemDecoration(gridItemDecoration);
-            recyclerViewRecipes.setItemAnimator(new FiltersListItemAnimator());
-
-            recipesAdapter = new RecipesAdapter(recipes, requireContext(), this);
-            recyclerViewRecipes.setAdapter(recipesAdapter);
+        recipesAdapter = new RecipesAdapter(recipes, requireContext(), this);
+        recyclerViewRecipes.setAdapter(recipesAdapter);
 
 //            refreshView();
     }
@@ -121,6 +121,36 @@ public class RecipesFragment extends Fragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         asyncDataLoad.loadRecipesAsync(requireActivity(), this, "#carne");
+        fireBaseHelper.getLinks(this);
+        Log.d(TAG, "onViewCreated: ");
+    }
+
+    @Override
+    public void onRecipesLoaded(ArrayList<RecipeModel> auxList) {
+        recipes = auxList;
+        recipesAdapter.refreshAdapter(auxList);
+        refreshView();
+    }
+
+
+    @Override
+    public void dataIsLoaded(List<LinkModel> links, List<String> keys) {
+        setUpFilterView(links);
+    }
+
+
+    private void setUpFilterView(List<LinkModel> links) {
+        tags.clear();
+        tags = getTags(links);
+
+        filterAdapter = new RecipesFilterAdapter(tags,
+                colors, requireContext());
+        filter.setAdapter(filterAdapter);
+        filter.setListener(this);
+
+        //the text to show when there's no selected items
+        filter.setNoSelectedItemText(getString(R.string.str_all_selected));
+        filter.build();
     }
 
 
@@ -137,11 +167,16 @@ public class RecipesFragment extends Fragment implements
         }
     }
 
-    private List<TagModel> getTags() {
-        List<TagModel> tags = new ArrayList<>();
+    private List<TagModel> getTags(List<LinkModel> links) {
 
-        for (int i = 0; i < this.tags.length; ++i) {
-            tags.add(new TagModel(this.tags[i], colors[i]));
+        List<TagModel> tags = new ArrayList<>();
+        //All categories as first item
+        tags.add(new TagModel(getString(R.string.str_all_selected), colors[0]));
+        // The rest
+        for (int i = 0; i < links.size(); ++i) {
+            String tag = links.get(i).getTag();
+//            tag = tag.replace('_', '&');  ToDo
+            tags.add(new TagModel(tag, colors[i]));
         }
         return tags;
     }
@@ -152,10 +187,11 @@ public class RecipesFragment extends Fragment implements
 
     @Override
     public void onFilterSelected(TagModel tagModel) {
-        if (tagModel.getText().contains(tags[0])) {
-            filter.deselectAll();
-            filter.collapse();
-        }
+        if (!tags.isEmpty())
+            if (tagModel.getText().contains(tags.get(0).getText())) {
+                filter.deselectAll();
+                filter.collapse();
+            }
     }
 
     @Override

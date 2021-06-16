@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "488766149622",
-    "project_id": "free-cuisine",
-    "storage_bucket": "free-cuisine.appspot.com"
+    "project_number": "493632462350",
+    "project_id": "free-cuisine-erg",
+    "storage_bucket": "free-cuisine-erg.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:488766149622:android:61aacce9825dab98d96dd7",
+        "mobilesdk_app_id": "1:493632462350:android:817fab3299cbbe0d8a265f",
         "android_client_info": {
           "package_name": "com.erg.freecuisine"
         }
       },
       "oauth_client": [
         {
-          "client_id": "488766149622-t9itls78o59757m1id7scnf2vji7kjkm.apps.googleusercontent.com",
+          "client_id": "493632462350-hpt3qiq4iusjne2c2p1erus45oj7h8no.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBuSF3wGcr7E_NvDOWXXgXYu35ahtbpZbQ"
+          "current_key": "AIzaSyC4vFx6JTTNVfIyfQ-ZZuGZcOG8_GqR2R0"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "488766149622-t9itls78o59757m1id7scnf2vji7kjkm.apps.googleusercontent.com",
+              "client_id": "493632462350-hpt3qiq4iusjne2c2p1erus45oj7h8no.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

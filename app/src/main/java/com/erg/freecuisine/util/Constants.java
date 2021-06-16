@@ -70,6 +70,11 @@ public class Constants {
     public static String REGEX_NEW_LINE = "/n";
 
 
+    /*REALTIME FIRE DATABASE KEYS */
+    public static String FIRE_BASE_REFERENCE = "free-cuisine-default-rtdb";
+    public static String LINKS_FIRE_BASE_REFERENCE = "links";
+    public static final String LINK_COLUMN = "link";
+    public static final String TAG_COLUMN = "tag";
 
     public static String TEST_URL =
             "https://www.recetasgratis.net/receta-de-sushi-maki-de-atun-75179.html";
