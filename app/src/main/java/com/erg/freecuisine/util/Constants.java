@@ -55,6 +55,10 @@ public class Constants {
     public static String STEPS_ORDER_TAG = "orden";
     public static String STEPS_IMG_CLASS_TAG = "imagen_wrap";
     public static String STEPS_IMG_TAG = "imagen lupa";
+    public static String STEPS_VIDEO_TAG = "video";
+    public static String IFRAME_TAG = "iframe";
+    public static String VIDEO_ID_ATTR_TAG = "data-id-youtube";
+    public static String DIV_TAG = "div";
 
     /*TAGS FOR WEB SCRAPPING LIST BY TAG*/
     public static String MAIN_CONTENT = "main-content";
@@ -67,7 +71,7 @@ public class Constants {
     public static String SPAN = "span";
 
     public static String NEWLINE = "\n";
-    public static String REGEX_NEW_LINE = "/n";
+    public static String DIVISION_SING = "%";
 
 
     /*REALTIME FIRE DATABASE KEYS */
@@ -75,6 +79,8 @@ public class Constants {
     public static String LINKS_FIRE_BASE_REFERENCE = "links";
     public static final String LINK_COLUMN = "link";
     public static final String TAG_COLUMN = "tag";
+
+    public static String PATTER_FOR_YOUTUBE_ID = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
 
     public static String TEST_URL =
             "https://www.recetasgratis.net/receta-de-sushi-maki-de-atun-75179.html";

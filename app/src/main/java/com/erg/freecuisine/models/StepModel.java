@@ -5,6 +5,7 @@ public class StepModel {
     private int step;
     private String preparation;
     private ImageModel image;
+    private VideoModel video;
 
     public StepModel() { }
 
@@ -12,6 +13,20 @@ public class StepModel {
         this.step = step;
         this.preparation = preparation;
         this.image = image;
+    }
+
+    public StepModel(int step, String preparation, VideoModel video) {
+        this.step = step;
+        this.preparation = preparation;
+        this.video = video;
+    }
+
+    public VideoModel getVideo() {
+        return video;
+    }
+
+    public void setVideo(VideoModel video) {
+        this.video = video;
     }
 
     public int getStepNumber() {

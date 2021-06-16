@@ -2,7 +2,6 @@ package com.erg.freecuisine.controller.network.helpers;
 
 import android.util.Log;
 
-import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 
 import com.erg.freecuisine.interfaces.OnFireBaseListenerDataStatus;
@@ -12,15 +11,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.erg.freecuisine.util.Constants.FIRE_BASE_REFERENCE;
 import static com.erg.freecuisine.util.Constants.LINKS_FIRE_BASE_REFERENCE;
-import static com.erg.freecuisine.util.Constants.LINK_COLUMN;
-import static com.erg.freecuisine.util.Constants.TAG_COLUMN;
 
 public class FireBaseHelper {
     private static final String TAG = "FireBaseHelper";
@@ -48,7 +43,7 @@ public class FireBaseHelper {
                     LinkModel link = snap.getValue(LinkModel.class);
                     links.add(link);
                 }
-                dataStatus.dataIsLoaded(links, keys);
+                dataStatus.onLinksLoaded(links, keys);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

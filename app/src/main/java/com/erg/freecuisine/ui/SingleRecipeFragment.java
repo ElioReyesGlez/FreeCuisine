@@ -2,15 +2,7 @@ package com.erg.freecuisine.ui;
 
 import android.graphics.Paint;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.core.widget.TextViewCompat;
-import androidx.fragment.app.Fragment;
-import androidx.transition.Transition;
-import androidx.transition.TransitionInflater;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +13,28 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.fragment.app.Fragment;
+import androidx.transition.Transition;
+import androidx.transition.TransitionInflater;
+
 import com.airbnb.lottie.LottieAnimationView;
 import com.erg.freecuisine.R;
 import com.erg.freecuisine.controller.network.AsyncDataLoad;
+import com.erg.freecuisine.controller.network.helpers.StringHelper;
+import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.StepModel;
 import com.erg.freecuisine.models.TagModel;
+import com.erg.freecuisine.models.VideoModel;
+import com.erg.freecuisine.util.Constants;
 import com.erg.freecuisine.util.Util;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -37,10 +43,10 @@ import static com.erg.freecuisine.util.Constants.TAG_KEY;
 import static com.erg.freecuisine.util.Constants.URL_KEY;
 
 
-public class SingleRecipeFragment extends Fragment {
+public class SingleRecipeFragment extends Fragment implements OnRecipeListener {
 
     public static final String TAG = "RecipeFragment";
-    private String link;
+    private String url;
     private View rootView;
     public RelativeLayout relative_container_recipe_main_info;
     public LinearLayout linear_layout_empty_container;
@@ -48,6 +54,7 @@ public class SingleRecipeFragment extends Fragment {
     public Animation scaleUp, scaleDown;
     private ArrayList<TagModel> tags;
     private AsyncDataLoad asyncDataLoad;
+    private YouTubePlayerView videoView;
 
 
     public SingleRecipeFragment() {
@@ -68,7 +75,7 @@ public class SingleRecipeFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null && !args.isEmpty()) {
-            link = args.getString(URL_KEY);
+            url = args.getString(URL_KEY);
             if (args.getParcelableArrayList(TAG_KEY) != null) {
                 tags = args.getParcelableArrayList(TAG_KEY);
             }
@@ -87,9 +94,9 @@ public class SingleRecipeFragment extends Fragment {
 
         linear_layout_empty_container = rootView
                 .findViewById(R.id.linear_layout_empty_container);
-        relative_container_recipe_main_info  = rootView
+        relative_container_recipe_main_info = rootView
                 .findViewById(R.id.relative_container_recipe_main_info);
-        lottie_anim_loading  = rootView
+        lottie_anim_loading = rootView
                 .findViewById(R.id.lottie_anim_loading);
         Util.showView(scaleUp, lottie_anim_loading);
 
@@ -99,13 +106,19 @@ public class SingleRecipeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        asyncDataLoad.loadSingleRecipeAsync(requireActivity(), this, link, tags);
+        asyncDataLoad.loadSingleRecipeAsync(requireActivity(), this, url, tags);
     }
+
+    @Override
+    public void onSingleRecipeLoaded(RecipeModel recipe) {
+        setUpView(recipe);
+    }
+
 
     public void setUpView(RecipeModel recipe) {
 
         Util.hideView(null, lottie_anim_loading);
-        if (recipe !=  null && !recipe.getTitle().isEmpty()) {
+        if (recipe != null && !recipe.getTitle().isEmpty()) {
 
             ShapeableImageView recipeImg = rootView.findViewById(R.id.recipe_main_image);
             AppCompatTextView type = rootView.findViewById(R.id.tv_type);
@@ -155,17 +168,29 @@ public class SingleRecipeFragment extends Fragment {
                     .error(R.drawable.ic_lunch_chef)
                     .placeholder(R.drawable.ic_loading)
                     .into(recipeImg);
+
             LinearLayout linear_preparation_container = rootView.findViewById(R.id.linear_preparation_container);
             for (StepModel step : recipe.getSteps()) {
-                View view = getLayoutInflater().inflate(R.layout.item_recipe_preparation_step, null);
+                View view = getLayoutInflater().inflate(R.layout.item_recipe_preparation_step_img, null);
+
+                if (step.getImage() != null && !step.getImage().getUrl().isEmpty()) {
+                    ShapeableImageView iv_step_preparation_image = view.findViewById(R.id.iv_step_preparation_image);
+                    Picasso.get().load(step.getImage().getUrl()).into(iv_step_preparation_image);
+                }
+
+                if (step.getVideo() != null && !step.getVideo().getId().isEmpty()) {
+                    view = getLayoutInflater().inflate(R.layout.item_recipe_preparation_step_video, null);
+                    videoView = view.findViewById(R.id.youtube_player_view);
+                    getViewLifecycleOwner().getLifecycle().addObserver(videoView);
+                    setUpYouPlayerView(videoView, step.getVideo());
+                }
+
                 TextView tv_preparation_number_order = view.findViewById(R.id.tv_preparation_number_order);
                 TextView tv_preparation_description = view.findViewById(R.id.tv_preparation_description);
 //                TextView tv_tips = view.findViewById(R.id.tv_tips);
-                ShapeableImageView iv_step_preparation_image = view.findViewById(R.id.iv_step_preparation_image);
 
                 tv_preparation_number_order.setText(String.valueOf(step.getStepNumber()));
                 tv_preparation_description.setText(step.getPreparation());
-                Picasso.get().load(step.getImage().getUrl()).into(iv_step_preparation_image);
                 linear_preparation_container.addView(view);
             }
 
@@ -175,5 +200,32 @@ public class SingleRecipeFragment extends Fragment {
             Util.showView(scaleUp, linear_layout_empty_container);
             Util.hideView(scaleDown, relative_container_recipe_main_info);
         }
+    }
+
+    private void setUpYouPlayerView(YouTubePlayerView videoView, VideoModel video) {
+        videoView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+            @Override
+            public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                youTubePlayer.cueVideo(video.getId(), 0);
+            }
+        });
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (videoView != null)
+            videoView.release();
+    }
+
+    @Override
+    public void onRecipeClick(int position, View view) {
+        //Empty
+    }
+
+    @Override
+    public void onRecipesLoaded(ArrayList<RecipeModel> auxList) {
+        //Empty
     }
 }

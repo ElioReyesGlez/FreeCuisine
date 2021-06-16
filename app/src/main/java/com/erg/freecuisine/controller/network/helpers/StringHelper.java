@@ -2,6 +2,7 @@ package com.erg.freecuisine.controller.network.helpers;
 
 import com.erg.freecuisine.models.ImageModel;
 import com.erg.freecuisine.models.StepModel;
+import com.erg.freecuisine.models.VideoModel;
 import com.erg.freecuisine.util.Constants;
 
 import org.jsoup.nodes.Element;
@@ -9,11 +10,16 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import static com.erg.freecuisine.util.Constants.DIV_TAG;
+import static com.erg.freecuisine.util.Constants.IFRAME_TAG;
 import static com.erg.freecuisine.util.Constants.IMG_TAG;
 import static com.erg.freecuisine.util.Constants.INGREDIENTS_LABEL_TAG;
 import static com.erg.freecuisine.util.Constants.NEWLINE;
 import static com.erg.freecuisine.util.Constants.PARAGRAPH_TAG;
+import static com.erg.freecuisine.util.Constants.PATTER_FOR_YOUTUBE_ID;
 import static com.erg.freecuisine.util.Constants.PROPERTY_INGREDIENTS_TAG;
 import static com.erg.freecuisine.util.Constants.PROPERTY_TAG_CLASS;
 import static com.erg.freecuisine.util.Constants.SEPARATOR_SING;
@@ -22,9 +28,10 @@ import static com.erg.freecuisine.util.Constants.SRC_TAG;
 import static com.erg.freecuisine.util.Constants.STEPS_IMG_TAG;
 import static com.erg.freecuisine.util.Constants.STEPS_ORDER_TAG;
 import static com.erg.freecuisine.util.Constants.STEPS_TAG;
+import static com.erg.freecuisine.util.Constants.STEPS_VIDEO_TAG;
+import static com.erg.freecuisine.util.Constants.VIDEO_ID_ATTR_TAG;
 
 public class StringHelper {
-
 
     public static String extractTextFromParagraph(Element rootClass, String tag) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -86,9 +93,18 @@ public class StringHelper {
                 int order = Integer.parseInt(orderClass.text());
                 String stepDescription = apartado.select(PARAGRAPH_TAG).first().text();
                 Element imgClass = apartado.getElementsByClass(STEPS_IMG_TAG).first();
-                String url = imgClass.select(IMG_TAG).first().absUrl(SRC_TAG);
-                ImageModel image = new ImageModel(String.valueOf(System.currentTimeMillis()), url);
-                list.add(new StepModel(order, stepDescription, image));
+                if (imgClass != null ) {
+                    String url = imgClass.select(IMG_TAG).first().absUrl(SRC_TAG);
+                    ImageModel image = new ImageModel(url, url);
+                    list.add(new StepModel(order, stepDescription, image));
+                }
+                Element videoClass = apartado.getElementsByClass(STEPS_VIDEO_TAG).first();
+                if (videoClass != null) {
+                    String id = videoClass.child(0).select(DIV_TAG).first().attr(VIDEO_ID_ATTR_TAG);
+                    String url = videoClass.child(0).select(DIV_TAG).first().absUrl(SRC_TAG);
+                    VideoModel video = new VideoModel(id, url);
+                    list.add(new StepModel(order, stepDescription, video));
+                }
             }
         }
         return list;
@@ -99,4 +115,14 @@ public class StringHelper {
         return strDiners.split(SPACE_REGEX)[0];
     }
 
+    /*https://www.youtube.com/embed/xhpM6XMLZS8?autoplay=0&enablejsapi=1&origin=https%3A%2F%2Fwww.recetasgratis.net&widgetid=1*/
+
+    public static String extractIdFromUrl(String url) {
+        Pattern compiledPatter = Pattern.compile(PATTER_FOR_YOUTUBE_ID);
+        Matcher matcher = compiledPatter.matcher(url);
+        if (matcher.find()) {
+            return matcher.group();
+        } else
+            return null;
+    }
 }

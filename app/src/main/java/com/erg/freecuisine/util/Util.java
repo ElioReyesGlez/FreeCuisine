@@ -17,6 +17,7 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.erg.freecuisine.util.Constants.DIVISION_SING;
 import static com.erg.freecuisine.util.Constants.MIN_VIBRATE_TIME;
 import static com.erg.freecuisine.util.Constants.NEWLINE;
 import static com.erg.freecuisine.util.Constants.SPECIAL_MIN_VIBRATE_TIME;
@@ -48,10 +49,6 @@ public class Util {
                 if (anim != null)
                     view.startAnimation(anim);
                 view.setVisibility(View.VISIBLE);
-            } else {
-                if (anim != null) {
-                    view.startAnimation(anim);
-                }
             }
     }
 
@@ -122,10 +119,6 @@ public class Util {
     }
 
     public static String[] extractIngredients (String strIngredients) {
-        return strIngredients.split("%");
-    }
-
-    public static String getUrlByTag(String tag) {
-        return "https://www.recetasgratis.net/Recetas-de-Carne-listado_receta-10_1.html"; // ToDo
+        return strIngredients.split(DIVISION_SING);
     }
 }

@@ -5,10 +5,10 @@ import android.util.Log;
 import com.erg.freecuisine.R;
 import com.erg.freecuisine.controller.network.helpers.StringHelper;
 import com.erg.freecuisine.models.ImageModel;
+import com.erg.freecuisine.models.LinkModel;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.StepModel;
 import com.erg.freecuisine.models.TagModel;
-import com.erg.freecuisine.util.Util;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -42,13 +42,12 @@ public class JsoupController {
 
     private static final String TAG = "JsoupController";
 
-    public static ArrayList<RecipeModel> getRecipesByTag(String tag) {
+    public static ArrayList<RecipeModel> getRecipesByLink(LinkModel linkModel) {
         ArrayList<RecipeModel> recipes = new ArrayList<>();
 
-        String url = Util.getUrlByTag(tag);
         try {
 
-            Document document = Jsoup.connect(url).get();
+            Document document = Jsoup.connect(linkModel.getUrl()).get();
             Element mainContent = document.getElementsByClass(MAIN_CONTENT).first();
             Elements elementsRecipes = mainContent.getElementsByClass(RESULT_LINK);
 
@@ -57,7 +56,7 @@ public class JsoupController {
 
                 RecipeModel recipe = new RecipeModel();
                 Element elementRecipe = elementsRecipes.get(i);
-                String link = elementRecipe.select(A_TAG).first().attr(ATTRIBUTE_HREF);
+                String recipeLink = elementRecipe.select(A_TAG).first().attr(ATTRIBUTE_HREF);
                 Element imageElement = elementRecipe.getElementsByClass(POSITION_IMAGE).first();
                 String imgUrl = imageElement.select(IMG_TAG).first().absUrl(IMAGE_DATA_TAG);
                 if (imgUrl == null || imgUrl.isEmpty()) {
@@ -76,9 +75,9 @@ public class JsoupController {
                 String description = elementRecipe.getElementsByClass(CLASS_INTRO_TAG).first().text();
 //                description = description.replaceAll()
 
-                if (!link.isEmpty()) {
-                    recipe.setLink(link);
-                    recipe.setId(link);
+                if (!recipeLink.isEmpty()) {
+                    recipe.setLink(recipeLink);
+                    recipe.setId(recipeLink);
                 }
                 if (!imgUrl.isEmpty())
                     recipe.setImage(new ImageModel(imgUrl));
@@ -90,8 +89,8 @@ public class JsoupController {
                     recipe.setTime(time);
                 if (!description.isEmpty())
                     recipe.setDescription(description);
-                if (!tag.isEmpty()) {
-                    TagModel tagModel = new TagModel(tag, R.color.colorPrimary);
+                if (!recipeLink.isEmpty()) {
+                    TagModel tagModel = new TagModel(linkModel.getTag(), R.color.colorPrimary);
                     List<TagModel> tags = new ArrayList<>();
                     tags.add(tagModel);
                     recipe.setTags(tags);
@@ -133,9 +132,6 @@ public class JsoupController {
                     recipeInfo.getElementsByClass(PROPERTY_EXTRA_TAG).first(), "");
             String ingredients = StringHelper.extractIngredients(recipeInfo);
             ImageModel mainImage = new ImageModel(id, mainImg.absUrl(SRC_TAG));
-//            List<TagModel> tags = new ArrayList<>();
-//            tags.add(new TagModel("#fish", R.color.my_colorPrimary));
-//            tags.add(new TagModel("#pasta", R.color.my_colorPrimary));
             List<StepModel> steps = StringHelper.extractPreparationSteps(article);
 
             recipe = new RecipeModel(id, recipeTitle,

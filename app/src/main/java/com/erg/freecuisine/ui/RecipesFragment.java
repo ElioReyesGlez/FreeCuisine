@@ -109,33 +109,34 @@ public class RecipesFragment extends Fragment implements
         recyclerViewRecipes.setHasFixedSize(true);
         GridItemDecoration gridItemDecoration = new GridItemDecoration(12, 9);
         recyclerViewRecipes.addItemDecoration(gridItemDecoration);
-        recyclerViewRecipes.setItemAnimator(new FiltersListItemAnimator());
+//        recyclerViewRecipes.setItemAnimator(new FiltersListItemAnimator());
 
         recipesAdapter = new RecipesAdapter(recipes, requireContext(), this);
         recyclerViewRecipes.setAdapter(recipesAdapter);
 
-//            refreshView();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        asyncDataLoad.loadRecipesAsync(requireActivity(), this, "#carne");
         fireBaseHelper.getLinks(this);
         Log.d(TAG, "onViewCreated: ");
     }
 
     @Override
     public void onRecipesLoaded(ArrayList<RecipeModel> auxList) {
-        recipes = auxList;
-        recipesAdapter.refreshAdapter(auxList);
+        recipes.addAll(auxList);
+        recipesAdapter.refreshAdapter(recipes);
         refreshView();
     }
 
 
     @Override
-    public void dataIsLoaded(List<LinkModel> links, List<String> keys) {
+    public void onLinksLoaded(List<LinkModel> links, List<String> keys) {
         setUpFilterView(links);
+        for (LinkModel link : links) {
+            asyncDataLoad.loadRecipesAsync(requireActivity(), this, link);
+        }
     }
 
 
@@ -247,6 +248,11 @@ public class RecipesFragment extends Fragment implements
         NavController navController = Navigation
                 .findNavController(requireActivity(), R.id.nav_host_fragment);
         navController.navigate(R.id.action_navigation_recipes_to_recipeFragment, args);
+    }
+
+    @Override
+    public void onSingleRecipeLoaded(RecipeModel recipe) {
+        //Empty
     }
 
     @Override
