@@ -98,6 +98,7 @@
             android:id="@+id/recycler_view_recipes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/container_height"
             tools:listitem="@layout/item_recipe_card"
             android:visibility="gone"/>
 
