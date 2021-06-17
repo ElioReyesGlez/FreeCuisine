@@ -21,7 +21,11 @@ import java.util.List;
 
 import static com.erg.freecuisine.util.Constants.ATTRIBUTE_HREF;
 import static com.erg.freecuisine.util.Constants.A_TAG;
+import static com.erg.freecuisine.util.Constants.BLOQUE_LINK;
+import static com.erg.freecuisine.util.Constants.CATEGORIA_CLASS;
 import static com.erg.freecuisine.util.Constants.CLASS_INTRO_TAG;
+import static com.erg.freecuisine.util.Constants.ETIQUETA_CLASS;
+import static com.erg.freecuisine.util.Constants.HOME_RECOMMENDED_MAIN_TAG;
 import static com.erg.freecuisine.util.Constants.IMAGE_DATA_TAG;
 import static com.erg.freecuisine.util.Constants.IMG_TAG;
 import static com.erg.freecuisine.util.Constants.MAIN_CONTENT;
@@ -36,6 +40,7 @@ import static com.erg.freecuisine.util.Constants.RECIPE_INFO_TAG;
 import static com.erg.freecuisine.util.Constants.RESULT_LINK;
 import static com.erg.freecuisine.util.Constants.SRC_TAG;
 import static com.erg.freecuisine.util.Constants.TITLE_TAG;
+import static com.erg.freecuisine.util.Constants.TITLE_TITLE_BLOCK;
 import static com.erg.freecuisine.util.Constants.TITLE_TITLE_RESULT;
 
 public class JsoupController {
@@ -142,6 +147,62 @@ public class JsoupController {
 
         } catch (IOException e) {
             Log.e(TAG, "getRecipe: ERROR: " + e.getMessage());
+            return null;
+        }
+    }
+
+
+    public static ArrayList<RecipeModel> getRecommendedRecipe(LinkModel link) {
+        ArrayList<RecipeModel> recipes = new ArrayList<>();
+
+        try {
+
+            Document document = Jsoup.connect(link.getUrl()).get();
+            Element mainContent = document.getElementsByClass(MAIN_CONTENT).first();
+            Element elementRecipesRoot = mainContent
+                    .getElementsByClass(HOME_RECOMMENDED_MAIN_TAG)
+                    .first();
+            Elements elementsRecipes = elementRecipesRoot.getElementsByClass(BLOQUE_LINK);
+
+
+            for (int i = 0; i < elementsRecipes.size(); i++) {
+
+                RecipeModel recipe = new RecipeModel();
+                Element elementRecipe = elementsRecipes.get(i);
+                String recipeLink = elementRecipe.select(A_TAG).first().attr(ATTRIBUTE_HREF);
+                Element imageElement = elementRecipe.getElementsByClass(POSITION_IMAGE).first();
+                String imgUrl = imageElement.select(IMG_TAG).first().absUrl(IMAGE_DATA_TAG);
+                if (imgUrl == null || imgUrl.isEmpty()) {
+                    imgUrl = imageElement.select(IMG_TAG).first().absUrl(SRC_TAG);
+                }
+                String title = elementRecipe.getElementsByClass(TITLE_TITLE_BLOCK).first().text();
+
+                Element category = elementRecipe.getElementsByClass(CATEGORIA_CLASS).first();
+                String tag = category.getElementsByClass(ETIQUETA_CLASS).first().text();
+
+                if (!recipeLink.isEmpty()) {
+                    recipe.setLink(recipeLink);
+                    recipe.setId(recipeLink);
+                }
+                if (!imgUrl.isEmpty())
+                    recipe.setImage(new ImageModel(imgUrl));
+                if (!title.isEmpty())
+                    recipe.setTitle(title);
+                if (!recipeLink.isEmpty() && tag != null && !tag.isEmpty()) {
+                    link.setTag(StringHelper.extractTag(tag));
+                    TagModel tagModel = new TagModel(link.getTag(), R.color.colorPrimary);
+                    List<TagModel> tags = new ArrayList<>();
+                    tags.add(tagModel);
+                    recipe.setTags(tags);
+                }
+
+                if (!recipe.getTitle().isEmpty() && !recipe.getLink().isEmpty()) {
+                    recipes.add(recipe);
+                }
+            }
+            return recipes;
+        } catch (IOException e) {
+            e.printStackTrace();
             return null;
         }
     }

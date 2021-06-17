@@ -18,11 +18,13 @@ import static com.erg.freecuisine.util.Constants.IFRAME_TAG;
 import static com.erg.freecuisine.util.Constants.IMG_TAG;
 import static com.erg.freecuisine.util.Constants.INGREDIENTS_LABEL_TAG;
 import static com.erg.freecuisine.util.Constants.NEWLINE;
+import static com.erg.freecuisine.util.Constants.NUMERAL;
 import static com.erg.freecuisine.util.Constants.PARAGRAPH_TAG;
 import static com.erg.freecuisine.util.Constants.PATTER_FOR_YOUTUBE_ID;
 import static com.erg.freecuisine.util.Constants.PROPERTY_INGREDIENTS_TAG;
 import static com.erg.freecuisine.util.Constants.PROPERTY_TAG_CLASS;
 import static com.erg.freecuisine.util.Constants.SEPARATOR_SING;
+import static com.erg.freecuisine.util.Constants.SPACE;
 import static com.erg.freecuisine.util.Constants.SPACE_REGEX;
 import static com.erg.freecuisine.util.Constants.SRC_TAG;
 import static com.erg.freecuisine.util.Constants.STEPS_IMG_TAG;
@@ -124,5 +126,10 @@ public class StringHelper {
             return matcher.group();
         } else
             return null;
+    }
+
+    public static String extractTag(String tag) {
+        String aux = tag.replaceAll(SPACE_REGEX, "");
+        return NUMERAL + aux;
     }
 }

@@ -65,7 +65,7 @@ public class RecipesFragment extends Fragment implements
     public RecipesAdapter recipesAdapter;
     private RecipesFilterAdapter filterAdapter;
 
-    FireBaseHelper fireBaseHelper;
+    private FireBaseHelper fireBaseHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -113,7 +113,6 @@ public class RecipesFragment extends Fragment implements
 
         recipesAdapter = new RecipesAdapter(recipes, requireContext(), this);
         recyclerViewRecipes.setAdapter(recipesAdapter);
-
     }
 
     @Override
@@ -124,9 +123,9 @@ public class RecipesFragment extends Fragment implements
     }
 
     @Override
-    public void onRecipesLoaded(ArrayList<RecipeModel> auxList) {
-        recipes.addAll(auxList);
-        recipesAdapter.refreshAdapter(recipes);
+    public void onRecipesLoaded(ArrayList<RecipeModel> recipes) {
+        this.recipes.addAll(recipes);
+        recipesAdapter.refreshAdapter(this.recipes);
         refreshView();
     }
 
@@ -137,6 +136,11 @@ public class RecipesFragment extends Fragment implements
         for (LinkModel link : links) {
             asyncDataLoad.loadRecipesAsync(requireActivity(), this, link);
         }
+    }
+
+    @Override
+    public void onMainUrlLoaded(LinkModel link) {
+        //Empty
     }
 
 
@@ -238,6 +242,10 @@ public class RecipesFragment extends Fragment implements
 
     @Override
     public void onRecipeClick(int position, View view) {
+        loadFragment(position, view);
+    }
+
+    private void loadFragment(int position, View view) {
         Util.vibrateMin(requireContext());
         RecipeModel currentRecipe = recipesAdapter.getRecipes().get(position);
         Bundle args = new Bundle();

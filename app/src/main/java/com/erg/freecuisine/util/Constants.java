@@ -22,6 +22,7 @@ public class Constants {
     public static final String URL_KEY = "url";
     public static final String TAG_KEY = "tag_key";
     public static final String SPACE_REGEX = "\\s+";
+    public static final String SPACE = " ";
 
     public static ArrayList<String> getBrands(Context context) {
         ArrayList<String> brands = new ArrayList<>();
@@ -35,58 +36,61 @@ public class Constants {
 
 
     /*TAGS FOR WEB SCRAPPING*/
-    public static String MAIN_TAG = "columna-post";
-    public static String TITLE_TAG = "titulo titulo--articulo";
-    public static String RECIPE_INFO_TAG = "recipe-info";
-    public static String CLASS_INTRO_TAG = "intro";
-    public static String IMG_TAG = "img";
-    public static String SRC_TAG = "src";
-    public static String IMAGE_DATA_TAG = "data-imagen";
-    public static String PARAGRAPH_TAG = "p";
-    public static String PROPERTY_TAG_CLASS = "properties";
-    public static String PROPERTY_TAG = "span";
-    public static String PROPERTY_DINERS_TAG = "property comensales";
-    public static String PROPERTY_TIME_TAG = "property duracion";
-    public static String PROPERTY_TYPE_TAG = "property para";
-    public static String PROPERTY_EXTRA_TAG = "properties inline";
-    public static String PROPERTY_INGREDIENTS_TAG = "ingrediente";
-    public static String INGREDIENTS_LABEL_TAG = "label";
-    public static String STEPS_TAG = "apartado";
-    public static String STEPS_ORDER_TAG = "orden";
-    public static String STEPS_IMG_CLASS_TAG = "imagen_wrap";
-    public static String STEPS_IMG_TAG = "imagen lupa";
-    public static String STEPS_VIDEO_TAG = "video";
-    public static String IFRAME_TAG = "iframe";
-    public static String VIDEO_ID_ATTR_TAG = "data-id-youtube";
-    public static String DIV_TAG = "div";
+    public static final String MAIN_TAG = "columna-post";
+    public static final String TITLE_TAG = "titulo titulo--articulo";
+    public static final String RECIPE_INFO_TAG = "recipe-info";
+    public static final String CLASS_INTRO_TAG = "intro";
+    public static final String IMG_TAG = "img";
+    public static final String SRC_TAG = "src";
+    public static final String IMAGE_DATA_TAG = "data-imagen";
+    public static final String PARAGRAPH_TAG = "p";
+    public static final String PROPERTY_TAG_CLASS = "properties";
+    public static final String PROPERTY_TAG = "span";
+    public static final String PROPERTY_DINERS_TAG = "property comensales";
+    public static final String PROPERTY_TIME_TAG = "property duracion";
+    public static final String PROPERTY_TYPE_TAG = "property para";
+    public static final String PROPERTY_EXTRA_TAG = "properties inline";
+    public static final String PROPERTY_INGREDIENTS_TAG = "ingrediente";
+    public static final String INGREDIENTS_LABEL_TAG = "label";
+    public static final String STEPS_TAG = "apartado";
+    public static final String STEPS_ORDER_TAG = "orden";
+    public static final String STEPS_IMG_CLASS_TAG = "imagen_wrap";
+    public static final String STEPS_IMG_TAG = "imagen lupa";
+    public static final String STEPS_VIDEO_TAG = "video";
+    public static final String IFRAME_TAG = "iframe";
+    public static final String VIDEO_ID_ATTR_TAG = "data-id-youtube";
+    public static final String DIV_TAG = "div";
 
     /*TAGS FOR WEB SCRAPPING LIST BY TAG*/
-    public static String MAIN_CONTENT = "main-content";
-    public static String RESULT_LINK = "resultado link";
-    public static String TITLE_TITLE_RESULT = "titulo titulo--resultado";
-    public static String ATTRIBUTE_HREF = "href";
-    public static String A_TAG = "a";
-    public static String POSITION_IMAGE = "position-imagen";
-    public static String IMAGE_TAG_CLASS = "image";
-    public static String SPAN = "span";
+    public static final String MAIN_CONTENT = "main-content";
+    public static final String RESULT_LINK = "resultado link";
+    public static final String TITLE_TITLE_RESULT = "titulo titulo--resultado";
+    public static final String ATTRIBUTE_HREF = "href";
+    public static final String A_TAG = "a";
+    public static final String POSITION_IMAGE = "position-imagen";
+    public static final String IMAGE_TAG_CLASS = "image";
+    public static final String SPAN = "span";
 
-    public static String NEWLINE = "\n";
-    public static String DIVISION_SING = "%";
+    public static final String NEWLINE = "\n";
+    public static final String DIVISION_SING = "%";
 
 
     /*REALTIME FIRE DATABASE KEYS */
     public static String FIRE_BASE_REFERENCE = "free-cuisine-default-rtdb";
-    public static String LINKS_FIRE_BASE_REFERENCE = "links";
+    public static final String LINKS_FIRE_BASE_REFERENCE = "links";
+    public static final String MAIN_URL_FIRE_BASE_REFERENCE = "main_urls";
     public static final String LINK_COLUMN = "link";
     public static final String TAG_COLUMN = "tag";
 
-    public static String PATTER_FOR_YOUTUBE_ID = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
+    public static final String PATTER_FOR_YOUTUBE_ID = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
 
-    public static String TEST_URL =
-            "https://www.recetasgratis.net/receta-de-sushi-maki-de-atun-75179.html";
 
-    public static  String LIST_URL =
-            "https://www.recetasgratis.net/Recetas-de-Carne-listado_receta-10_1.html";
-    public static final String TEST_NAME = "Receta de Sushi maki de atún";
+    /*HOME TAGS*/
+    public static final String HOME_RECOMMENDED_MAIN_TAG = "bloquegroup clear padding-left-1";
+    public static final String BLOQUE_LINK = "bloque link";
+    public static final String RECETA_GRATIS_COLUMN = "recetasgratis";
+    public static final String TITLE_TITLE_BLOCK = "titulo titulo--bloque";
+    public static final String CATEGORIA_CLASS = "categoria";
+    public static final String ETIQUETA_CLASS = "etiqueta";
 
 }

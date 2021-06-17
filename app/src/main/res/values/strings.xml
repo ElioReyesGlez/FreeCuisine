@@ -93,5 +93,6 @@
     <string name="reload">Presione para recargar</string>
     <string name="steps">Pasos por Paso</string>
     <string name="dinner">cena</string>
+    <string name="recommend">#recomendado</string>
 
 </resources>

@@ -130,7 +130,8 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener {
                     .findViewById(R.id.relative_recipes_type_container);
 
 
-            recipe.setTags(tags); // From Bundle Args
+            if (tags != null && !tags.isEmpty())
+                recipe.setTags(tags); // From Bundle Args
             recipeTitle.setText(recipe.getTitle());
             recipeDescription.setText(recipe.getDescription());
 
@@ -225,7 +226,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener {
     }
 
     @Override
-    public void onRecipesLoaded(ArrayList<RecipeModel> auxList) {
+    public void onRecipesLoaded(ArrayList<RecipeModel> recipes) {
         //Empty
     }
 }

@@ -9,5 +9,5 @@ import java.util.ArrayList;
 public interface OnRecipeListener {
     void onRecipeClick(int position, View view);
     void onSingleRecipeLoaded(RecipeModel recipe);
-    void onRecipesLoaded(ArrayList<RecipeModel> auxList);
+    void onRecipesLoaded(ArrayList<RecipeModel> recipes);
 }

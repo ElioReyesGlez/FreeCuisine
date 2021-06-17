@@ -4,15 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorOnPrimary"
     tools:context=".ui.HomeFragment">
 
-    <TextView
-        android:id="@+id/text_home"
-        android:layout_width="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerviewRecommendRecipe"
+        android:scrollbars="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textSize="20sp"
-        android:layout_centerInParent="true"/>
+        android:layout_centerHorizontal="true"
+        tools:listitem="@layout/item_recommend_recipe_card"
+        android:layout_margin="@dimen/default_margin"/>
+
+
 </RelativeLayout>
