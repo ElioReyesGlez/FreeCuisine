@@ -1,59 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.RecipesFragment">
-
-    <!--<com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <androidx.appcompat.widget.Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/notification"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_centerVertical="true"
-                    android:tint="@color/my_colorToolBarIcons"
-                    android:src="@drawable/ic_bell"/>
-
-                <TextView
-                    android:layout_toEndOf="@+id/notification"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:textAlignment="center"
-                    android:layout_toStartOf="@+id/search"
-                    android:textStyle="bold"
-                    android:text="@string/recipes"
-                    android:textColor="@color/my_colorToolBarIcons"
-                    tools:ignore="RelativeOverlap" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/search"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_loupe"
-                    android:tint="@color/my_colorToolBarIcons" />
-
-            </RelativeLayout>
-
-        </androidx.appcompat.widget.Toolbar>
-
-    </com.google.android.material.appbar.AppBarLayout>-->
 
     <FrameLayout
         android:id="@+id/fragment_layout_container"
@@ -68,13 +19,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:adjustViewBounds="true"
+            android:contentDescription="@string/empty"
             android:cropToPadding="true"
             android:scaleType="centerInside"
-            android:contentDescription="@string/empty"
-            app:lottie_speed="2.5"
             app:lottie_autoPlay="true"
             app:lottie_fileName="loading_round.json"
-            app:lottie_loop="true"/>
+            app:lottie_loop="true"
+            app:lottie_speed="2.5" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottie_anim_empty"
@@ -83,32 +34,44 @@
             android:layout_gravity="center"
             android:layout_margin="@dimen/default_padding"
             android:adjustViewBounds="true"
-            android:cropToPadding="true"
-            android:scaleType="centerInside"
-            android:contentDescription="@string/empty"
             android:clickable="true"
+            android:contentDescription="@string/empty"
+            android:cropToPadding="true"
             android:focusable="true"
+            android:scaleType="centerInside"
+            android:visibility="gone"
             app:lottie_autoPlay="true"
             app:lottie_fileName="empty_box.json"
-            android:visibility="gone"
             app:lottie_loop="true" />
-
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_recipes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/container_height"
-            tools:listitem="@layout/item_recipe_card"
-            android:visibility="gone"/>
+            android:layout_marginTop="103dp"
+            android:visibility="invisible"
+            tools:listitem="@layout/item_recipe_card" />
 
         <com.yalantis.filter.widget.Filter
             android:id="@+id/filter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="invisible"/>
+            android:layout_marginTop="49dp"
+            android:padding="1dp"
+            android:visibility="invisible"
+            app:collapsedBackground="@color/custom_white_text_color"
+            app:expandedBackground="@color/custom_white_text_color" />
+
+        <SearchView
+            android:id="@+id/searcher"
+            android:layout_width="match_parent"
+            android:layout_height="47dp"
+            android:background="@drawable/background_accent_bottom"
+            android:padding="@dimen/default_padding"
+            android:queryHint="@string/search"
+            android:searchIcon="@drawable/ic_loupe"
+            android:visibility="invisible" />
 
     </FrameLayout>
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

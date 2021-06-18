@@ -28,7 +28,7 @@
             android:padding="@dimen/regular_window_padding"
             android:text="@string/recommend"
             android:textAlignment="center"
-            android:textColor="@color/md_red_200"
+            android:textColor="@color/gray_btn_bg_darker_color"
             android:textSize="@dimen/description_text_size"
             android:textStyle="bold" />
 

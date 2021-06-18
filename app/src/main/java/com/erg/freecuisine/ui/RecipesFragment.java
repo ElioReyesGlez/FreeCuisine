@@ -3,9 +3,6 @@ package com.erg.freecuisine.ui;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -33,7 +30,6 @@ import com.erg.freecuisine.models.LinkModel;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
 import com.erg.freecuisine.util.Util;
-import com.yalantis.filter.animator.FiltersListItemAnimator;
 import com.yalantis.filter.listener.FilterListener;
 import com.yalantis.filter.widget.Filter;
 
@@ -54,6 +50,7 @@ public class RecipesFragment extends Fragment implements
     private View rootView;
     private RecyclerView recyclerViewRecipes;
     private LottieAnimationView lottie_anim_empty, lottie_anim_loading;
+    private SearchView searcher;
     private Animation scaleUP, scaleDown;
 
     public List<RecipeModel> recipes;
@@ -63,15 +60,12 @@ public class RecipesFragment extends Fragment implements
     private AsyncDataLoad asyncDataLoad;
     private Filter<TagModel> filter;
     public RecipesAdapter recipesAdapter;
-    private RecipesFilterAdapter filterAdapter;
 
     private FireBaseHelper fireBaseHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setHasOptionsMenu(true);
-
         recipes = new ArrayList<>();
         tags = new ArrayList<>();
         asyncDataLoad = new AsyncDataLoad();
@@ -83,6 +77,7 @@ public class RecipesFragment extends Fragment implements
                              ViewGroup container, Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_recipes, container, false);
+
         lottie_anim_loading = rootView.findViewById(R.id.lottie_anim_loading);
         lottie_anim_empty = rootView.findViewById(R.id.lottie_anim_empty);
         Util.showView(null, lottie_anim_loading);
@@ -97,10 +92,13 @@ public class RecipesFragment extends Fragment implements
     public void setUpView() {
 
         filter = rootView.findViewById(R.id.filter);
-
+        searcher = rootView.findViewById(R.id.searcher);
         recyclerViewRecipes = rootView.findViewById(R.id.recycler_view_recipes);
         scaleUP = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
         scaleDown = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_down);
+
+        searcher.setSubmitButtonEnabled(true);
+        searcher.setOnQueryTextListener(this);
 
         int numberOfColumns = 2;
         StaggeredGridLayoutManager gridLayoutManager =
@@ -109,7 +107,6 @@ public class RecipesFragment extends Fragment implements
         recyclerViewRecipes.setHasFixedSize(true);
         GridItemDecoration gridItemDecoration = new GridItemDecoration(12, 9);
         recyclerViewRecipes.addItemDecoration(gridItemDecoration);
-//        recyclerViewRecipes.setItemAnimator(new FiltersListItemAnimator());
 
         recipesAdapter = new RecipesAdapter(recipes, requireContext(), this);
         recyclerViewRecipes.setAdapter(recipesAdapter);
@@ -148,7 +145,7 @@ public class RecipesFragment extends Fragment implements
         tags.clear();
         tags = getTags(links);
 
-        filterAdapter = new RecipesFilterAdapter(tags,
+        RecipesFilterAdapter filterAdapter = new RecipesFilterAdapter(tags,
                 colors, requireContext());
         filter.setAdapter(filterAdapter);
         filter.setListener(this);
@@ -165,10 +162,12 @@ public class RecipesFragment extends Fragment implements
             Util.hideView(null, lottie_anim_empty);
             Util.showView(scaleUP, recyclerViewRecipes);
             Util.showView(scaleUP, filter);
+            Util.showView(scaleUP, searcher);
         } else {
             Util.showView(scaleUP, lottie_anim_empty);
             Util.hideView(scaleDown, recyclerViewRecipes);
             Util.hideView(scaleDown, filter);
+            Util.hideView(scaleUP, searcher);
         }
     }
 
@@ -264,16 +263,6 @@ public class RecipesFragment extends Fragment implements
     }
 
     @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.main_menu, menu);
-        MenuItem menuItem = menu.findItem(R.id.menu_search);
-        SearchView searchView = (SearchView) menuItem.getActionView();
-        searchView.setSubmitButtonEnabled(true);
-        searchView.setOnQueryTextListener(this);
-    }
-
-    @Override
     public boolean onQueryTextSubmit(String query) {
         if (query != null && !query.isEmpty()) {
             filter(query);
@@ -300,5 +289,21 @@ public class RecipesFragment extends Fragment implements
             }
         }
         recipesAdapter.refreshAdapter(filteredVerseList);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //Resetting Search View
+        resetSearchView();
+    }
+
+    private void resetSearchView() {
+        if (searcher != null && searcher.getVisibility() == View.VISIBLE) {
+            searcher.setQuery("", false);
+            searcher.onActionViewCollapsed();
+            searcher.clearFocus();
+            searcher.setIconified(true);
+        }
     }
 }

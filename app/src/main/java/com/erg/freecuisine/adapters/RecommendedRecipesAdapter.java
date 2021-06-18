@@ -57,6 +57,11 @@ public class RecommendedRecipesAdapter extends RecyclerView.Adapter<RecommendedR
                 .placeholder(R.drawable.ic_loading)
                 .into(holder.recipeMainImg);
         holder.recipeTitle.setText(recipe.getTitle());
+        if (recipe.getTags() != null && !recipe.getTags().isEmpty()) {
+            holder.tagView.setText(recipe.getTags().get(0).getText());
+        } else {
+            holder.tagView.setVisibility(View.GONE);
+        }
     }
 
     public List<RecipeModel> getRecipes() {
@@ -80,6 +85,7 @@ public class RecommendedRecipesAdapter extends RecyclerView.Adapter<RecommendedR
 
         ShapeableImageView recipeMainImg;
         TextView recipeTitle;
+        TextView tagView;
 
         OnRecipeListener onRecipeListener;
 
@@ -87,6 +93,7 @@ public class RecommendedRecipesAdapter extends RecyclerView.Adapter<RecommendedR
             super(itemView);
             recipeMainImg = itemView.findViewById(R.id.recipe_main_image);
             recipeTitle = itemView.findViewById(R.id.recipe_title);
+            tagView = itemView.findViewById(R.id.filter_first);
             this.onRecipeListener = onRecipeListener;
 
             itemView.setOnClickListener(this);
