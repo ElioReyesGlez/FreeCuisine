@@ -19,23 +19,24 @@
 
     <color name="my_colorToolBarIcons">#212121</color>
 
+
     <array name="colors">
         <item name="all" type="color">#827f93</item>
-        <item name="ios" type="color">#3b9aee</item>
-        <item name="primary" type="color">#deb5b2</item>
-        <item name="android" type="color">#9bc53d</item>
-        <item name="web1" type="color">#f4a261</item>
-        <item name="web2" type="color">#DD6B55</item>
-        <item name="web3" type="color">#81c784</item>
-        <item name="business" type="color">#1ed2bb</item>
-        <item name="research" type="color">#778da9</item>
-        <item name="sales" type="color">#20bf55</item>
-        <item name="quality" type="color">#9f9fed</item>
-        <item name="customer1" type="color">#fc6177</item>
-        <item name="customer2" type="color">#9e9e9e</item>
-        <item name="customer3" type="color">#fff59d</item>
-        <item name="green" type="color">#388e3c</item>
-        <item name="other" type="color">#bcbcbc</item>
+        <item name="ios" type="color">#db9cc4</item>
+        <item name="primary" type="color">#f0b3c5</item>
+        <item name="android" type="color">#dda59f</item>
+        <item name="web1" type="color">#f6cfba</item>
+        <item name="web2" type="color">#dacab8</item>
+        <item name="web3" type="color">#9ca76d</item>
+        <item name="business" type="color">#2d4d64</item>
+        <item name="research" type="color">#5394b5</item>
+        <item name="sales" type="color">#7ca3b8</item>
+        <item name="quality" type="color">#9e9e9e</item>
+        <item name="customer1" type="color">#81c784</item>
+        <item name="customer2" type="color">#d2928d</item>
+        <item name="customer3" type="color">#d9b466</item>
+        <item name="green" type="color">#DD6B55</item>
+        <item name="other" type="color">#ef9a9a</item>
     </array>
 
 

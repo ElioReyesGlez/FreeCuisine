@@ -15,7 +15,8 @@
         android:theme="@style/Theme.FreeCuisine">
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,9 +24,10 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".services.JobServiceWebScraping"
+        <service
+            android:name=".services.JobServiceWebScraping"
             android:label="JobServiceWebScraping"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
     </application>
 

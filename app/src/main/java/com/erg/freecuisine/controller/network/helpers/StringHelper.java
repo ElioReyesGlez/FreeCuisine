@@ -117,8 +117,6 @@ public class StringHelper {
         return strDiners.split(SPACE_REGEX)[0];
     }
 
-    /*https://www.youtube.com/embed/xhpM6XMLZS8?autoplay=0&enablejsapi=1&origin=https%3A%2F%2Fwww.recetasgratis.net&widgetid=1*/
-
     public static String extractIdFromUrl(String url) {
         Pattern compiledPatter = Pattern.compile(PATTER_FOR_YOUTUBE_ID);
         Matcher matcher = compiledPatter.matcher(url);
@@ -129,7 +127,7 @@ public class StringHelper {
     }
 
     public static String extractTag(String tag) {
-        String aux = tag.replaceAll(SPACE_REGEX, "");
+        String aux = tag.replaceAll(SPACE_REGEX, "").toLowerCase();
         return NUMERAL + aux;
     }
 }

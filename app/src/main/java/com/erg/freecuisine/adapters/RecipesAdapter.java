@@ -10,14 +10,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
-import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.erg.freecuisine.R;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
-import com.erg.freecuisine.util.Constants;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.squareup.picasso.Picasso;
 
@@ -51,6 +49,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
         RecipeModel recipe = recipes.get(position);
 
         Picasso.get()
@@ -119,7 +118,6 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
             firstFilter = itemView.findViewById(R.id.filter_first);
             secondFilter = itemView.findViewById(R.id.filter_second);
             this.onRecipeListener = onRecipeListener;
-
             itemView.setOnClickListener(this);
         }
 

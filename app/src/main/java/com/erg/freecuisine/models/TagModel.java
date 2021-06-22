@@ -57,7 +57,7 @@ public class TagModel implements FilterModel, Parcelable {
         if (!(o instanceof TagModel)) return false;
 
         TagModel tag = (TagModel) o;
-        return getText().contains(tag.getText());
+        return getText().toLowerCase().contains(tag.getText().toLowerCase());
     }
 
     @Override

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/default_margin"
+    android:elevation="@dimen/default_elevation"
+    app:cardBackgroundColor="@color/float_transparent"
+    app:cardCornerRadius="6dp">
+
+    <RelativeLayout
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:background="@drawable/selector_white">
+
+        <com.elyeproj.loaderviewlibrary.LoaderTextView
+            android:id="@+id/filter_first"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="@dimen/default_margin"
+            android:background="@drawable/background_gray"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:padding="@dimen/regular_window_padding"
+            android:textAlignment="center"
+            android:textColor="@color/gray_btn_bg_darker_color"
+            android:textSize="@dimen/description_text_size"
+            android:textStyle="bold" />
+
+        <com.elyeproj.loaderviewlibrary.LoaderImageView
+            android:id="@+id/recipe_main_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/recipe_title"
+            android:layout_below="@+id/filter_first"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="@dimen/default_margin"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/recipe_image"
+            android:cropToPadding="false"
+            android:scaleType="centerCrop"
+            android:transitionName="@string/recipe_image_transition_name"
+            app:shapeAppearanceOverlay="@style/circleImageView" />
+
+        <com.elyeproj.loaderviewlibrary.LoaderTextView
+            android:id="@+id/recipe_title"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="@dimen/default_margin"
+            android:padding="@dimen/default_padding"
+            android:textAlignment="center"
+            android:textColor="@color/md_grey_700"
+            android:textSize="@dimen/titles_text_size"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+</com.google.android.material.card.MaterialCardView>

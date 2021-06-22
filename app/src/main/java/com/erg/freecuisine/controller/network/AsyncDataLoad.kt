@@ -16,27 +16,17 @@ class AsyncDataLoad {
     private val scopeLoader2 = CoroutineScope(Dispatchers.IO + CoroutineName("scopeLoader2"))
     private val scopeLoader3 = CoroutineScope(Dispatchers.IO + CoroutineName("scopeLoader3"))
 
-
-    fun loadRecommendRecipesAsync(contextActivity: FragmentActivity,
-                         onRecipeListener: OnRecipeListener, link: LinkModel) {
-        scopeLoader3.launch {
-            val recipes: ArrayList<RecipeModel> = JsoupController.getRecommendedRecipe(link)
+    fun loadRecipesAsync(contextActivity: FragmentActivity,
+                         onRecipeListener: OnRecipeListener,
+                         links: List<LinkModel>) {
+        scopeLoader.launch {
+            val recipes: ArrayList<RecipeModel> = ArrayList()
+            for (link in links) {
+                recipes.addAll(JsoupController.getRecipesByLink(link))
+            }
             if (recipes.isNotEmpty()) {
                 contextActivity.runOnUiThread {
                     onRecipeListener.onRecipesLoaded(recipes)
-                    if (isActive) cancel()
-                }
-            }
-        }
-    }
-
-    fun loadRecipesAsync(contextActivity: FragmentActivity,
-                         onRecipeListener: OnRecipeListener, link: LinkModel) {
-        scopeLoader.launch {
-            val auxList: ArrayList<RecipeModel> = JsoupController.getRecipesByLink(link)
-            if (auxList.isNotEmpty()) {
-                contextActivity.runOnUiThread {
-                    onRecipeListener.onRecipesLoaded(auxList)
                     if (isActive) cancel()
                 }
             }
@@ -56,5 +46,18 @@ class AsyncDataLoad {
             }
         }
         return recipe
+    }
+
+    fun loadRecommendRecipesAsync(contextActivity: FragmentActivity,
+                                  onRecipeListener: OnRecipeListener, link: LinkModel) {
+        scopeLoader3.launch {
+            val recipes: ArrayList<RecipeModel> = JsoupController.getRecommendedRecipe(link)
+            if (recipes.isNotEmpty()) {
+                contextActivity.runOnUiThread {
+                    onRecipeListener.onRecipesLoaded(recipes)
+                    if (isActive) cancel()
+                }
+            }
+        }
     }
 }

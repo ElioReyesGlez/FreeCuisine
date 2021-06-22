@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="@dimen/default_elevation"
+    app:cardBackgroundColor="@color/float_transparent"
+    app:cardCornerRadius="6dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_white">
+
+        <HorizontalScrollView
+            android:id="@+id/scroll_tags_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_margin"
+            android:scrollbars="none"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true">
+
+            <LinearLayout
+                android:id="@+id/tags_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="2dp"
+                android:elevation="@dimen/default_elevation">
+
+                <com.elyeproj.loaderviewlibrary.LoaderTextView
+                    android:id="@+id/filter_first"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/regular_window_padding"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:textAlignment="center"
+                    android:textColor="@color/gray_btn_bg_darker_color"
+                    android:background="@drawable/background_gray"
+                    android:textStyle="bold"/>
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
+        <com.elyeproj.loaderviewlibrary.LoaderImageView
+            android:id="@+id/recipe_main_image"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_margin="@dimen/default_margin"
+            android:cropToPadding="false"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/circleImageView"
+            android:adjustViewBounds="true"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/scroll_tags_container"
+            android:contentDescription="@string/recipe_image"
+            android:transitionName="@string/recipe_image_transition_name"/>
+
+        <LinearLayout
+            android:id="@+id/recipe_text_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_below="@+id/recipe_main_image"
+            android:layout_centerHorizontal="true">
+
+            <com.elyeproj.loaderviewlibrary.LoaderTextView
+                android:id="@+id/recipe_title"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:textColor="@color/md_grey_700"
+                android:textSize="@dimen/titles_text_size"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/recipes_cooking_time_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/recipe_text_container"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="@dimen/default_margin">
+
+            <com.elyeproj.loaderviewlibrary.LoaderTextView
+                android:id="@+id/tv_cocking_time"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="2dp"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="@color/md_grey_700"
+                android:textAlignment="center"
+                android:layout_centerVertical="true"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</com.google.android.material.card.MaterialCardView>

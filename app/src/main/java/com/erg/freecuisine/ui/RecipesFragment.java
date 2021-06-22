@@ -7,10 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -20,6 +19,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.erg.freecuisine.R;
+import com.erg.freecuisine.adapters.LoadingAdapter;
 import com.erg.freecuisine.adapters.RecipesAdapter;
 import com.erg.freecuisine.adapters.RecipesFilterAdapter;
 import com.erg.freecuisine.controller.network.AsyncDataLoad;
@@ -49,42 +49,41 @@ public class RecipesFragment extends Fragment implements
 
     private View rootView;
     private RecyclerView recyclerViewRecipes;
-    private LottieAnimationView lottie_anim_empty, lottie_anim_loading;
+    private LottieAnimationView lottie_anim_empty;
     private SearchView searcher;
+    private String currentSearchQuery = "";
     private Animation scaleUP, scaleDown;
 
     public List<RecipeModel> recipes;
     public List<TagModel> tags;
+    public ArrayList<TagModel> tagsSelected;
+    public List<LinkModel> links;
     private int[] colors;
 
     private AsyncDataLoad asyncDataLoad;
     private Filter<TagModel> filter;
     public RecipesAdapter recipesAdapter;
 
-    private FireBaseHelper fireBaseHelper;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: ");
+
         recipes = new ArrayList<>();
         tags = new ArrayList<>();
+        tagsSelected = new ArrayList<>();
         asyncDataLoad = new AsyncDataLoad();
         colors = getResources().getIntArray(R.array.colors);
-        fireBaseHelper = new FireBaseHelper();
+
+        //Load everything
+        new FireBaseHelper().getLinks(this);
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
-        rootView = inflater.inflate(R.layout.fragment_recipes, container, false);
-
-        lottie_anim_loading = rootView.findViewById(R.id.lottie_anim_loading);
-        lottie_anim_empty = rootView.findViewById(R.id.lottie_anim_empty);
-        Util.showView(null, lottie_anim_loading);
-        Util.hideView(null, lottie_anim_empty);
-
-        setUpView();
         Log.d(TAG, "onCreateView: ");
+        rootView = inflater.inflate(R.layout.fragment_recipes, container, false);
+        setUpView();
 
         return rootView;
     }
@@ -94,11 +93,14 @@ public class RecipesFragment extends Fragment implements
         filter = rootView.findViewById(R.id.filter);
         searcher = rootView.findViewById(R.id.searcher);
         recyclerViewRecipes = rootView.findViewById(R.id.recycler_view_recipes);
+        lottie_anim_empty = rootView.findViewById(R.id.lottie_anim_empty);
+
         scaleUP = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
         scaleDown = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_down);
 
         searcher.setSubmitButtonEnabled(true);
         searcher.setOnQueryTextListener(this);
+//        searcher.setOnSearchClickListener(this);
 
         int numberOfColumns = 2;
         StaggeredGridLayoutManager gridLayoutManager =
@@ -108,31 +110,34 @@ public class RecipesFragment extends Fragment implements
         GridItemDecoration gridItemDecoration = new GridItemDecoration(12, 9);
         recyclerViewRecipes.addItemDecoration(gridItemDecoration);
 
-        recipesAdapter = new RecipesAdapter(recipes, requireContext(), this);
-        recyclerViewRecipes.setAdapter(recipesAdapter);
+        LoadingAdapter loadingAdapter = new LoadingAdapter(
+                getLoadingList(), requireContext(),
+                R.layout.loading_item_recipe_card);
+        recyclerViewRecipes.setAdapter(loadingAdapter);
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        fireBaseHelper.getLinks(this);
-        Log.d(TAG, "onViewCreated: ");
+    private List<RecipeModel> getLoadingList() {
+        ArrayList<RecipeModel> aux = new ArrayList<>();
+        for (int i = 0; i < 14; i++) {
+            aux.add(new RecipeModel());
+        }
+        return aux;
     }
-
-    @Override
-    public void onRecipesLoaded(ArrayList<RecipeModel> recipes) {
-        this.recipes.addAll(recipes);
-        recipesAdapter.refreshAdapter(this.recipes);
-        refreshView();
-    }
-
 
     @Override
     public void onLinksLoaded(List<LinkModel> links, List<String> keys) {
+        this.links = links;
         setUpFilterView(links);
-        for (LinkModel link : links) {
-            asyncDataLoad.loadRecipesAsync(requireActivity(), this, link);
-        }
+        asyncDataLoad.loadRecipesAsync(requireActivity(), this, links);
+    }
+
+
+    @Override
+    public void onRecipesLoaded(ArrayList<RecipeModel> recipes) {
+        this.recipes = recipes;
+        recipesAdapter = new RecipesAdapter(this.recipes, requireContext(), this);
+        recyclerViewRecipes.setAdapter(recipesAdapter);
+        refreshView();
     }
 
     @Override
@@ -157,7 +162,6 @@ public class RecipesFragment extends Fragment implements
 
 
     public void refreshView() {
-        Util.hideView(null, lottie_anim_loading);
         if (recipes != null && !recipes.isEmpty()) {
             Util.hideView(null, lottie_anim_empty);
             Util.showView(scaleUP, recyclerViewRecipes);
@@ -179,7 +183,6 @@ public class RecipesFragment extends Fragment implements
         // The rest
         for (int i = 0; i < links.size(); ++i) {
             String tag = links.get(i).getTag();
-//            tag = tag.replace('_', '&');  ToDo
             tags.add(new TagModel(tag, colors[i]));
         }
         return tags;
@@ -195,11 +198,13 @@ public class RecipesFragment extends Fragment implements
             if (tagModel.getText().contains(tags.get(0).getText())) {
                 filter.deselectAll();
                 filter.collapse();
+                tagsSelected.clear();
             }
     }
 
     @Override
     public void onNothingSelected() {
+        tagsSelected.clear();
         if (recyclerViewRecipes != null && !recipes.isEmpty()) {
             recipesAdapter.refreshAdapter(recipes);
         }
@@ -207,6 +212,7 @@ public class RecipesFragment extends Fragment implements
 
     @Override
     public void onFiltersSelected(@NotNull ArrayList<TagModel> tags) {
+        tagsSelected = tags;
         List<RecipeModel> oldRecipes = recipesAdapter.getRecipes();
         List<RecipeModel> newRecipes = Util.findByTags(tags, recipes);
         recipesAdapter.refreshAdapter(newRecipes);
@@ -264,6 +270,7 @@ public class RecipesFragment extends Fragment implements
 
     @Override
     public boolean onQueryTextSubmit(String query) {
+//        currentSearchQuery = query;
         if (query != null && !query.isEmpty()) {
             filter(query);
         }
@@ -272,14 +279,28 @@ public class RecipesFragment extends Fragment implements
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        filter(newText);
+//        currentSearchQuery = newText;
+        if (newText != null && !newText.isEmpty()) {
+            filter(newText);
+        }
+        if (newText != null && newText.isEmpty()) {
+            resetRecipeList();
+        }
         return true;
+    }
+
+    private void resetRecipeList() {
+        if (tagsSelected.isEmpty())
+            recipesAdapter.refreshAdapter(recipes);
+        else
+            onFiltersSelected(tagsSelected);
     }
 
     private void filter(@NotNull String query) {
         final String lowerCaseQuery = query.toLowerCase();
+        List<RecipeModel> oldRecipes = recipes;
         ArrayList<RecipeModel> filteredVerseList = new ArrayList<>();
-        for (RecipeModel recipe : recipes) {
+        for (RecipeModel recipe : oldRecipes) {
             final String title = recipe.getTitle().toLowerCase();
             final String description = recipe.getDescription().toLowerCase();
             final List<TagModel> tags = recipe.getTags();
@@ -289,13 +310,39 @@ public class RecipesFragment extends Fragment implements
             }
         }
         recipesAdapter.refreshAdapter(filteredVerseList);
+        calculateDiff(oldRecipes, filteredVerseList);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        if (getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED))
+        restoreState();
+        Log.d(TAG, "onResume: ");
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(TAG, "onPause: ");
         //Resetting Search View
         resetSearchView();
+    }
+
+
+    private void restoreState() {
+        if (!currentSearchQuery.isEmpty()) {
+            searcher.setQuery(currentSearchQuery, false);
+            Log.d(TAG, "restoreState: QUERY: " + currentSearchQuery);
+        }
+        if (links != null && !links.isEmpty()) {
+            setUpFilterView(links);
+            Log.d(TAG, "restoreState: LINKS: " + links.toString());
+        }
+        if (tagsSelected != null && !tagsSelected.isEmpty()) {
+            onFiltersSelected(tagsSelected);
+            Log.d(TAG, "restoreState: TAGS SELECTED: " + tagsSelected.toString());
+        }
     }
 
     private void resetSearchView() {
