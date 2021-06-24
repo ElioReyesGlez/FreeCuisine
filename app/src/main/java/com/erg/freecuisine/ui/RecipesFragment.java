@@ -73,6 +73,7 @@ public class RecipesFragment extends Fragment implements
     private RecipesAdapter recipesAdapter;
     private Job recipesLoaderJob;
     private Context mContext;
+    private boolean isDataLoaded;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -148,10 +149,11 @@ public class RecipesFragment extends Fragment implements
     @Override
     public void onRecipesLoaded(ArrayList<RecipeModel> recipes) {
         this.recipes = recipes;
-        if (mContext != null && isVisible()) {
+        if (mContext != null && isVisible() && !this.recipes.isEmpty()) {
             recipesAdapter = new RecipesAdapter(this.recipes, requireContext(), this);
             recyclerViewRecipes.setAdapter(recipesAdapter);
             refreshView();
+            isDataLoaded = true;
         }
     }
 
@@ -342,20 +344,26 @@ public class RecipesFragment extends Fragment implements
         Log.d(TAG, "onPause: ");
     }
 
+    @Override
+    public void onStop() {
+        Log.d(TAG, "onStop: ");
+        super.onStop();
+    }
+
     private void restoreState() {
         if (recipes != null && !recipes.isEmpty()) {
             recipesAdapter = new RecipesAdapter(this.recipes, requireContext(), this);
-            recyclerViewRecipes.swapAdapter(recipesAdapter, true);
+            recyclerViewRecipes.swapAdapter(recipesAdapter, false);
 
             if (links != null && !links.isEmpty() && isVisible() && isResumed()) {
                 setUpFilterView(links);
                 Log.d(TAG, "restoreState: LINKS: " + links.toString());
             }
-        }
 
-        if (tagsSelected != null && !tagsSelected.isEmpty()) {
-            onFiltersSelected(tagsSelected);
-            Log.d(TAG, "restoreState: TAGS SELECTED: " + tagsSelected.toString());
+            if (tagsSelected != null && !tagsSelected.isEmpty()) {
+                onFiltersSelected(tagsSelected);
+                Log.d(TAG, "restoreState: TAGS SELECTED: " + tagsSelected.toString());
+            }
         }
     }
 

@@ -58,6 +58,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     private SharedPreferencesHelper spHelper;
     private ViewGroup container;
     private Context mContext;
+    private boolean isDataLoaded;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -221,9 +222,10 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     @Override
     public void onRecipesLoaded(ArrayList<RecipeModel> recipes) {
         this.recipes = recipes;
-        if (mContext != null && isVisible()) {
+        isDataLoaded = true;
+        if (mContext != null && isVisible() && !this.recipes.isEmpty()) {
             adapter = new RecommendedRecipesAdapter(
-                    recipes, requireContext(), this);
+                    this.recipes, requireContext(), this);
             recyclerviewRecommendRecipe.setAdapter(adapter);
         }
     }
@@ -237,14 +239,24 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     public void onResume() {
         Log.d(TAG, "onResume: ");
         super.onResume();
-        restoreState();
+        if (recipes != null && !recipes.isEmpty())
+            restoreState();
+    }
+
+    @Override
+    public void onPause() {
+        Log.d(TAG, "onPause: ");
+        super.onPause();
+        isDataLoaded = false;
     }
 
     private void restoreState() {
-        if (recipes != null && !recipes.isEmpty()) {
-            adapter = new RecommendedRecipesAdapter(
-                    recipes, requireContext(), this);
+        adapter = new RecommendedRecipesAdapter(
+                recipes, requireContext(), this);
+        if (isDataLoaded) {
             recyclerviewRecommendRecipe.swapAdapter(adapter, true);
+        } else {
+            recyclerviewRecommendRecipe.setAdapter(adapter);
         }
     }
 
