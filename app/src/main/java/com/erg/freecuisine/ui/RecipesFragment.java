@@ -1,5 +1,7 @@
 package com.erg.freecuisine.ui;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +26,8 @@ import com.erg.freecuisine.adapters.RecipesAdapter;
 import com.erg.freecuisine.adapters.RecipesFilterAdapter;
 import com.erg.freecuisine.controller.network.AsyncDataLoad;
 import com.erg.freecuisine.controller.network.helpers.FireBaseHelper;
+import com.erg.freecuisine.controller.network.helpers.SharedPreferencesHelper;
+import com.erg.freecuisine.controller.network.helpers.TimeHelper;
 import com.erg.freecuisine.interfaces.OnFireBaseListenerDataStatus;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.LinkModel;
@@ -36,7 +40,10 @@ import com.yalantis.filter.widget.Filter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+
+import kotlinx.coroutines.Job;
 
 import static com.erg.freecuisine.util.Constants.TAG_KEY;
 import static com.erg.freecuisine.util.Constants.URL_KEY;
@@ -51,18 +58,21 @@ public class RecipesFragment extends Fragment implements
     private RecyclerView recyclerViewRecipes;
     private LottieAnimationView lottie_anim_empty;
     private SearchView searcher;
-    private String currentSearchQuery = "";
+    private final String currentSearchQuery = "";
     private Animation scaleUP, scaleDown;
 
-    public List<RecipeModel> recipes;
-    public List<TagModel> tags;
-    public ArrayList<TagModel> tagsSelected;
-    public List<LinkModel> links;
+    private List<RecipeModel> recipes;
+    private List<TagModel> tags;
+    private ArrayList<TagModel> tagsSelected;
+    private List<LinkModel> links;
     private int[] colors;
 
     private AsyncDataLoad asyncDataLoad;
     private Filter<TagModel> filter;
-    public RecipesAdapter recipesAdapter;
+    private RecipesFilterAdapter filterAdapter;
+    private RecipesAdapter recipesAdapter;
+    private Job recipesLoaderJob;
+    private Context mContext;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,7 +85,9 @@ public class RecipesFragment extends Fragment implements
         asyncDataLoad = new AsyncDataLoad();
         colors = getResources().getIntArray(R.array.colors);
 
-        //Load everything
+        if (recipesLoaderJob != null && recipesLoaderJob.isActive()) {
+            recipesLoaderJob.cancel(recipesLoaderJob.getCancellationException());
+        }
         new FireBaseHelper().getLinks(this);
     }
 
@@ -128,16 +140,19 @@ public class RecipesFragment extends Fragment implements
     public void onLinksLoaded(List<LinkModel> links, List<String> keys) {
         this.links = links;
         setUpFilterView(links);
-        asyncDataLoad.loadRecipesAsync(requireActivity(), this, links);
+        recipesLoaderJob = asyncDataLoad.loadRecipesAsync(
+                requireActivity(), this, links);
     }
 
 
     @Override
     public void onRecipesLoaded(ArrayList<RecipeModel> recipes) {
         this.recipes = recipes;
-        recipesAdapter = new RecipesAdapter(this.recipes, requireContext(), this);
-        recyclerViewRecipes.setAdapter(recipesAdapter);
-        refreshView();
+        if (mContext != null && isVisible()) {
+            recipesAdapter = new RecipesAdapter(this.recipes, requireContext(), this);
+            recyclerViewRecipes.setAdapter(recipesAdapter);
+            refreshView();
+        }
     }
 
     @Override
@@ -145,12 +160,11 @@ public class RecipesFragment extends Fragment implements
         //Empty
     }
 
-
     private void setUpFilterView(List<LinkModel> links) {
         tags.clear();
         tags = getTags(links);
 
-        RecipesFilterAdapter filterAdapter = new RecipesFilterAdapter(tags,
+        filterAdapter = new RecipesFilterAdapter(tags,
                 colors, requireContext());
         filter.setAdapter(filterAdapter);
         filter.setListener(this);
@@ -290,10 +304,12 @@ public class RecipesFragment extends Fragment implements
     }
 
     private void resetRecipeList() {
-        if (tagsSelected.isEmpty())
-            recipesAdapter.refreshAdapter(recipes);
-        else
+        if (tagsSelected.isEmpty()) {
+            if (recipesAdapter != null)
+                recipesAdapter.refreshAdapter(recipes);
+        } else {
             onFiltersSelected(tagsSelected);
+        }
     }
 
     private void filter(@NotNull String query) {
@@ -316,7 +332,6 @@ public class RecipesFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-//        if (getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED))
         restoreState();
         Log.d(TAG, "onResume: ");
     }
@@ -325,20 +340,19 @@ public class RecipesFragment extends Fragment implements
     public void onPause() {
         super.onPause();
         Log.d(TAG, "onPause: ");
-        //Resetting Search View
-        resetSearchView();
     }
 
-
     private void restoreState() {
-        if (!currentSearchQuery.isEmpty()) {
-            searcher.setQuery(currentSearchQuery, false);
-            Log.d(TAG, "restoreState: QUERY: " + currentSearchQuery);
+        if (recipes != null && !recipes.isEmpty()) {
+            recipesAdapter = new RecipesAdapter(this.recipes, requireContext(), this);
+            recyclerViewRecipes.swapAdapter(recipesAdapter, true);
+
+            if (links != null && !links.isEmpty() && isVisible() && isResumed()) {
+                setUpFilterView(links);
+                Log.d(TAG, "restoreState: LINKS: " + links.toString());
+            }
         }
-        if (links != null && !links.isEmpty()) {
-            setUpFilterView(links);
-            Log.d(TAG, "restoreState: LINKS: " + links.toString());
-        }
+
         if (tagsSelected != null && !tagsSelected.isEmpty()) {
             onFiltersSelected(tagsSelected);
             Log.d(TAG, "restoreState: TAGS SELECTED: " + tagsSelected.toString());
@@ -352,5 +366,17 @@ public class RecipesFragment extends Fragment implements
             searcher.clearFocus();
             searcher.setIconified(true);
         }
+    }
+
+    @Override
+    public void onAttach(@NotNull Context context) {
+        super.onAttach(requireContext());
+        mContext = context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mContext = null;
     }
 }

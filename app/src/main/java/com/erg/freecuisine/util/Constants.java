@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Constants {
+    /*UTILS*/
+    public static final int DECIMAL_PLACE = 1;
+
     /*VIBRATION*/
     public static final long VIBRATE_TIME = 12;
     public static final long SPECIAL_VIBRATE_TIME = 70;
@@ -92,5 +95,13 @@ public class Constants {
     public static final String TITLE_TITLE_BLOCK = "titulo titulo--bloque";
     public static final String CATEGORIA_CLASS = "categoria";
     public static final String ETIQUETA_CLASS = "etiqueta";
+
+
+    /*SHARED PREFERENCES KEYS*/
+    public static final String SHARED_PREF_NAME = "free_cuisine_shared_pref";
+    public static final String LAST_USAGE_KEY = "last_usage_key";
+    public static final String PREF_APP_FIRST_LAUNCH_KEY = "first_launch_key";
+    public static final String OPEN_TIME_USAGE_KEY = "open_time_usage_key";
+    public static final String LAST_RECIPE_READ_KEY = "last_recipe_key";
 
 }

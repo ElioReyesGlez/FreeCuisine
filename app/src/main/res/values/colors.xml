@@ -20,6 +20,8 @@
     <color name="my_colorToolBarIcons">#212121</color>
 
 
+    <color name="text_second_color">#616161</color>
+
     <array name="colors">
         <item name="all" type="color">#827f93</item>
         <item name="ios" type="color">#db9cc4</item>

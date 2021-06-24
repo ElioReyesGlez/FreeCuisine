@@ -94,5 +94,31 @@
     <string name="steps">Pasos por Paso</string>
     <string name="dinner">cena</string>
     <string name="recommend">#recomendado</string>
+    <string name="user_activity_header_icon">Icono</string>
+    <string name="activity">#actividad</string>
+    <string name="ic_graphic">Icono grafico</string>
+    <string name="statistics">Grafica de uso</string>
+
+    <string name="minutes_ago">\ minutos atrás</string>
+    <string name="one_second_ago">un segundo atrás</string>
+    <string name="seconds_ago">\ segundos atrás</string>
+    <string name="a_minute_ago">un minuto atrás</string>
+    <string name="an_hour_ago">una hora atrás</string>
+    <string name="hours_ago">\ horas atrás</string>
+    <string name="yesterday">ayer</string>
+    <string name="days_ago">\ días atrás</string>
+    <string name="last_reading">Última lectura</string>
+    <string name="ic_last_recipe">Icono ultima receta</string>
+
+
+    <string-array name="day_codes">
+        <item>mon_</item>
+        <item>tue_</item>
+        <item>wed_</item>
+        <item>thu_</item>
+        <item>fri_</item>
+        <item>sat_</item>
+        <item>sun_</item>
+    </string-array>
 
 </resources>

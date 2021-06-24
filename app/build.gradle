@@ -18,8 +18,9 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        viewBinding {
-            enabled = true
+
+        buildFeatures {
+            viewBinding true
         }
     }
 
@@ -77,4 +78,8 @@ dependencies {
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
     /*-------------------------------Loading view--------------------------------------------*/
     implementation 'com.elyeproj.libraries:loaderviewlibrary:1.0.3'
+    //-----------------------------Chart Graphic------------------------------------
+    implementation 'im.dacer:AndroidCharts:1.0.4'
+    //-----------------------------Joda Time------------------------------------
+    implementation 'joda-time:joda-time:2.10.6'
 }

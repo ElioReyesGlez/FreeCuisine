@@ -23,7 +23,9 @@ import androidx.transition.TransitionInflater;
 import com.airbnb.lottie.LottieAnimationView;
 import com.erg.freecuisine.R;
 import com.erg.freecuisine.controller.network.AsyncDataLoad;
+import com.erg.freecuisine.controller.network.helpers.SharedPreferencesHelper;
 import com.erg.freecuisine.controller.network.helpers.StringHelper;
+import com.erg.freecuisine.controller.network.helpers.TimeHelper;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.StepModel;
@@ -38,6 +40,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import static com.erg.freecuisine.util.Constants.TAG_KEY;
 import static com.erg.freecuisine.util.Constants.URL_KEY;
@@ -55,7 +58,9 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener {
     private ArrayList<TagModel> tags;
     private AsyncDataLoad asyncDataLoad;
     private YouTubePlayerView videoView;
+    private RecipeModel recipe;
 
+    private SharedPreferencesHelper spHelper;
 
     public SingleRecipeFragment() {
         // Required empty public constructor
@@ -81,6 +86,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener {
             }
         }
 
+        spHelper = new SharedPreferencesHelper(requireContext());
         asyncDataLoad = new AsyncDataLoad();
         scaleUp = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
         scaleDown = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_down);
@@ -119,6 +125,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener {
 
         Util.hideView(null, lottie_anim_loading);
         if (recipe != null && !recipe.getTitle().isEmpty()) {
+            this.recipe = recipe;
 
             ShapeableImageView recipeImg = rootView.findViewById(R.id.recipe_main_image);
             AppCompatTextView type = rootView.findViewById(R.id.tv_type);
@@ -167,7 +174,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener {
             Picasso.get()
                     .load(recipe.getImage().getUrl())
                     .error(R.drawable.ic_lunch_chef)
-                    .placeholder(R.drawable.ic_loading)
+                    .placeholder(R.drawable.ic_loading_icon)
                     .into(recipeImg);
 
             LinearLayout linear_preparation_container = rootView.findViewById(R.id.linear_preparation_container);
@@ -195,7 +202,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener {
                 linear_preparation_container.addView(view);
             }
 
-            Util.showView(scaleUp, relative_container_recipe_main_info);
+            Util.showView(null, relative_container_recipe_main_info);
             Util.hideView(null, linear_layout_empty_container);
         } else {
             Util.showView(scaleUp, linear_layout_empty_container);
@@ -214,10 +221,74 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener {
     }
 
     @Override
+    public void onStart() {
+        Log.d(TAG, "onStart: Usage = " + spHelper.getUsageOpenTime());
+        super.onStart();
+        spHelper.saveUsageOpenTime(System.currentTimeMillis());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (recipe != null) {
+            saveUsageByWeekDay();
+            spHelper.saveLastRecipeRead(recipe);
+        }
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         if (videoView != null)
             videoView.release();
+    }
+
+    private void saveUsageByWeekDay() {
+
+        String dayCodeKey;
+        String[] dayCodes = getResources().getStringArray(R.array.day_codes);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setFirstDayOfWeek(Calendar.MONDAY);
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
+
+        long currentTime = System.currentTimeMillis();
+        long openTimeUsage = spHelper.getUsageOpenTime();
+        long diff = TimeHelper.getDifferenceInMinutes(currentTime, openTimeUsage);
+        float usageScore = Util.calculateUsageScore(diff);
+
+        Log.d(TAG, "saveUsageScoreByWeekDay: Memorizing difference: " + diff);
+        Log.d(TAG, "saveUsageScoreByWeekDay: UsageScore: " + usageScore);
+
+        switch (day) {
+            case Calendar.MONDAY:
+                dayCodeKey = dayCodes[0] + 1;
+                spHelper.increasesUsageValue(dayCodeKey, usageScore);
+                break;
+            case Calendar.TUESDAY:
+                dayCodeKey = dayCodes[1] + 2;
+                spHelper.increasesUsageValue(dayCodeKey, usageScore);
+                break;
+            case Calendar.WEDNESDAY:
+                dayCodeKey = dayCodes[2] + 3;
+                spHelper.increasesUsageValue(dayCodeKey, usageScore);
+                break;
+            case Calendar.THURSDAY:
+                dayCodeKey = dayCodes[3] + 4;
+                spHelper.increasesUsageValue(dayCodeKey, usageScore);
+                break;
+            case Calendar.FRIDAY:
+                dayCodeKey = dayCodes[4] + 5;
+                spHelper.increasesUsageValue(dayCodeKey, usageScore);
+                break;
+            case Calendar.SATURDAY:
+                dayCodeKey = dayCodes[5] + 6;
+                spHelper.increasesUsageValue(dayCodeKey, usageScore);
+                break;
+            case Calendar.SUNDAY:
+                dayCodeKey = dayCodes[6] + 7;
+                spHelper.increasesUsageValue(dayCodeKey, usageScore);
+                break;
+        }
     }
 
     @Override

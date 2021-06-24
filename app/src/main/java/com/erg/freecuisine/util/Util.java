@@ -14,6 +14,7 @@ import com.erg.freecuisine.models.TagModel;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,5 +121,36 @@ public class Util {
 
     public static String[] extractIngredients (String strIngredients) {
         return strIngredients.split(DIVISION_SING);
+    }
+
+    public static float round(float d, int decimalPlace) {
+        BigDecimal bd = new BigDecimal(Float.toString(d));
+        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+        return bd.floatValue();
+    }
+
+    public static float calculateUsageScore(Long time) {
+
+        float aux = Math.round(time.floatValue());
+        Log.d(TAG, "calculateUsageScore: Time Float value: " + aux);
+
+        if (aux == 0.0f)
+            return 0.073f;
+        if ( aux > 0.0f  && aux < 4.9f)
+            return 0.5f;
+        if ( aux > 5.0f  && aux < 5.9f)
+            return 1.0f;
+        if ( aux > 6.0f  && aux < 6.9f)
+            return 1.5f;
+        if ( aux > 7.0f  && time < 7.9f)
+            return 2.0f;
+        if ( aux > 8.0f  && aux < 8.9f)
+            return 2.5f;
+        if ( aux > 9.0f  && aux < 9.9f)
+            return 3.0f;
+        if ( aux > 10f)
+            return 4.0f;
+
+        return 0.0f;
     }
 }

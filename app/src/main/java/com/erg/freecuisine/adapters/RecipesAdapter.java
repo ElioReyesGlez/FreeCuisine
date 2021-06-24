@@ -55,7 +55,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
         Picasso.get()
                 .load(recipe.getImage().getUrl())
                 .error(R.drawable.ic_lunch_chef)
-                .placeholder(R.drawable.ic_loading)
+                .placeholder(R.drawable.ic_loading_icon)
                 .into(holder.recipeMainImg);
         holder.recipeTitle.setText(recipe.getTitle());
         holder.recipeDescription.setText(recipe.getDescription());
@@ -96,15 +96,15 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
         return this.recipes.size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        ShapeableImageView recipeMainImg;
-        TextView recipeTitle;
-        TextView recipeDescription;
-        AppCompatTextView cockingTime;
-        AppCompatTextView peopleAmount;
-        TextView firstFilter;
-        TextView secondFilter;
+        public ShapeableImageView recipeMainImg;
+        public TextView recipeTitle;
+        public TextView recipeDescription;
+        public AppCompatTextView cockingTime;
+        public AppCompatTextView peopleAmount;
+        public TextView firstFilter;
+        public TextView secondFilter;
 
         OnRecipeListener onRecipeListener;
 

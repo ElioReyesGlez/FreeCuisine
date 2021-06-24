@@ -1,10 +1,12 @@
 package com.erg.freecuisine.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,17 +18,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.erg.freecuisine.R;
 import com.erg.freecuisine.adapters.LoadingAdapter;
+import com.erg.freecuisine.adapters.RecipesAdapter;
 import com.erg.freecuisine.adapters.RecommendedRecipesAdapter;
 import com.erg.freecuisine.controller.network.AsyncDataLoad;
 import com.erg.freecuisine.controller.network.helpers.FireBaseHelper;
+import com.erg.freecuisine.controller.network.helpers.SharedPreferencesHelper;
+import com.erg.freecuisine.controller.network.helpers.TimeHelper;
 import com.erg.freecuisine.interfaces.OnFireBaseListenerDataStatus;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.LinkModel;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
 import com.erg.freecuisine.util.Util;
+import com.erg.freecuisine.views.CustomLineView;
+import com.squareup.picasso.Picasso;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.erg.freecuisine.util.Constants.TAG_KEY;
@@ -43,15 +53,20 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     private List<RecipeModel> recipes;
     private RecommendedRecipesAdapter adapter;
     private RecyclerView recyclerviewRecommendRecipe;
+    private LinearLayout userActivityContainer;
+    private View lastReadingView, staticsGraphView;
+    private SharedPreferencesHelper spHelper;
+    private ViewGroup container;
+    private Context mContext;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: ");
         recipes = new ArrayList<>();
-        asyncDataLoad = new AsyncDataLoad();
-        fireBaseHelper = new FireBaseHelper();
+        spHelper = new SharedPreferencesHelper(requireContext());
 
+        new FireBaseHelper().getMainUrl(this);
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -63,18 +78,15 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        fireBaseHelper.getMainUrl(this);
-    }
-
-    @Override
     public void onMainUrlLoaded(LinkModel link) {
-        asyncDataLoad.loadRecommendRecipesAsync(requireActivity(), this, link);
+        Log.d(TAG, "onMainUrlLoaded: LINK = " + link.getUrl());
+        new AsyncDataLoad().loadRecommendRecipesAsync(requireActivity(), this, link);
     }
 
     private void setUpView() {
         recyclerviewRecommendRecipe = rootView.findViewById(R.id.recyclerviewRecommendRecipe);
+        userActivityContainer = rootView.findViewById(R.id.ll_activity_history_container);
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(
                 requireContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerviewRecommendRecipe.setLayoutManager(layoutManager);
@@ -83,7 +95,82 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
                 getLoadingList(), requireContext(),
                 R.layout.loading_item_recommend_recipe_card);
         recyclerviewRecommendRecipe.setAdapter(loadingAdapter);
+
+        addUserActivityViews();
     }
+
+    private void addUserActivityViews() {
+
+        lastReadingView = getLayoutInflater()
+                .inflate(R.layout.user_activity_last_reading_view, container, false);
+        staticsGraphView = getLayoutInflater()
+                .inflate(R.layout.user_statics_graphic_view, container, false);
+
+        setLastReading();
+        setStatics();
+
+        userActivityContainer.addView(lastReadingView);
+        userActivityContainer.addView(staticsGraphView);
+    }
+
+    private void setLastReading() {
+
+        RecipesAdapter.ViewHolder holder = new RecipesAdapter.ViewHolder(lastReadingView, this);
+        RecipeModel recipe = spHelper.getLastRecipeRead();
+
+        if (recipe != null) {
+            Picasso.get()
+                    .load(recipe.getImage().getUrl())
+                    .error(R.drawable.ic_lunch_chef)
+                    .placeholder(R.drawable.ic_loading_icon)
+                    .into(holder.recipeMainImg);
+            holder.recipeTitle.setText(recipe.getTitle());
+            holder.recipeDescription.setText(recipe.getDescription());
+            holder.cockingTime.setText(recipe.getTime());
+            holder.peopleAmount.setText(String.valueOf(recipe.getDiners()));
+
+
+            if (recipe.getTags() != null && !recipe.getTags().isEmpty()) {
+                List<TagModel> tags = recipe.getTags();
+                if (tags.get(0) != null) {
+                    TagModel firstTag = recipe.getTags().get(0);
+                    holder.firstFilter.setText(firstTag.getText());
+                }
+
+                if (tags.size() > 1 && tags.get(1) != null) {
+                    TagModel secondTag = recipe.getTags().get(1);
+                    holder.secondFilter.setText(secondTag.getText());
+                } else {
+                    holder.secondFilter.setVisibility(View.INVISIBLE);
+                }
+            }
+        } else {
+            Util.hideView(null, lastReadingView);
+        }
+    }
+
+
+    private void setStatics() {
+
+        ArrayList<Float> userActivity = spHelper.getUserActivity();
+        ArrayList<String> weekDays = TimeHelper.getCurrentWeekDays();
+        int[] colors = new int[]{
+                getResources().getColor(R.color.red_default),
+        };
+
+        Log.d(TAG, " weekDays: " + weekDays.toString());
+        Log.d(TAG, " userActivity: " + userActivity.toString());
+
+        CustomLineView customLineView = staticsGraphView.findViewById(R.id.custom_line_view);
+        customLineView.setDrawDotLine(false);
+        customLineView.setShowPopup(CustomLineView.SHOW_POPUPS_MAX_MIN_ONLY);
+        customLineView.setColorArray(colors);
+
+        customLineView.setBottomTextList(weekDays);
+        ArrayList<ArrayList<Float>> dataList = new ArrayList<>(Collections.singleton(userActivity));
+        customLineView.setFloatDataList(dataList);
+    }
+
 
     @Override
     public void onRecipeClick(int position, View view) {
@@ -102,15 +189,28 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     }
 
     private void loadFragment(int position, View view) {
-        RecipeModel currentRecipe = adapter.getRecipes().get(position);
-        Bundle args = new Bundle();
-        args.putString(URL_KEY, currentRecipe.getLink());
-        ArrayList<TagModel> tagModels = new ArrayList<>(currentRecipe.getTags());
-        args.putParcelableArrayList(TAG_KEY, tagModels);
+        if (view.getId() == R.id.last_reading_main_card_container) {
+            RecipeModel currentRecipe = spHelper.getLastRecipeRead();
+            Bundle args = new Bundle();
+            args.putString(URL_KEY, currentRecipe.getLink());
+            ArrayList<TagModel> tagModels = new ArrayList<>(currentRecipe.getTags());
+            args.putParcelableArrayList(TAG_KEY, tagModels);
 
-        NavController navController = Navigation
-                .findNavController(requireActivity(), R.id.nav_host_fragment);
-        navController.navigate(R.id.action_navigation_home_to_singleRecipeFragment, args);
+            NavController navController = Navigation
+                    .findNavController(requireActivity(), R.id.nav_host_fragment);
+            navController.navigate(R.id.action_navigation_home_to_singleRecipeFragment, args);
+
+        } else {
+            RecipeModel currentRecipe = adapter.getRecipes().get(position);
+            Bundle args = new Bundle();
+            args.putString(URL_KEY, currentRecipe.getLink());
+            ArrayList<TagModel> tagModels = new ArrayList<>(currentRecipe.getTags());
+            args.putParcelableArrayList(TAG_KEY, tagModels);
+
+            NavController navController = Navigation
+                    .findNavController(requireActivity(), R.id.nav_host_fragment);
+            navController.navigate(R.id.action_navigation_home_to_singleRecipeFragment, args);
+        }
     }
 
     @Override
@@ -121,9 +221,11 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     @Override
     public void onRecipesLoaded(ArrayList<RecipeModel> recipes) {
         this.recipes = recipes;
-        adapter = new RecommendedRecipesAdapter(
-                recipes, requireContext(), this);
-        recyclerviewRecommendRecipe.setAdapter(adapter);
+        if (mContext != null && isVisible()) {
+            adapter = new RecommendedRecipesAdapter(
+                    recipes, requireContext(), this);
+            recyclerviewRecommendRecipe.setAdapter(adapter);
+        }
     }
 
     @Override
@@ -131,4 +233,30 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         //Empty
     }
 
+    @Override
+    public void onResume() {
+        Log.d(TAG, "onResume: ");
+        super.onResume();
+        restoreState();
+    }
+
+    private void restoreState() {
+        if (recipes != null && !recipes.isEmpty()) {
+            adapter = new RecommendedRecipesAdapter(
+                    recipes, requireContext(), this);
+            recyclerviewRecommendRecipe.swapAdapter(adapter, true);
+        }
+    }
+
+    @Override
+    public void onAttach(@NotNull Context context) {
+        super.onAttach(requireContext());
+        mContext = context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mContext = null;
+    }
 }
