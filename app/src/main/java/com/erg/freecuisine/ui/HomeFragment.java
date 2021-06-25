@@ -23,6 +23,7 @@ import com.erg.freecuisine.adapters.RecommendedRecipesAdapter;
 import com.erg.freecuisine.controller.network.AsyncDataLoad;
 import com.erg.freecuisine.controller.network.helpers.FireBaseHelper;
 import com.erg.freecuisine.controller.network.helpers.SharedPreferencesHelper;
+import com.erg.freecuisine.controller.network.helpers.StringHelper;
 import com.erg.freecuisine.controller.network.helpers.TimeHelper;
 import com.erg.freecuisine.interfaces.OnFireBaseListenerDataStatus;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
@@ -31,6 +32,7 @@ import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
 import com.erg.freecuisine.util.Util;
 import com.erg.freecuisine.views.CustomLineView;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +41,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import kotlinx.coroutines.Job;
+
+import static com.erg.freecuisine.util.Constants.LINK_KEY;
+import static com.erg.freecuisine.util.Constants.RECIPE_KEY;
+import static com.erg.freecuisine.util.Constants.SAVED_STATE_KEY;
 import static com.erg.freecuisine.util.Constants.TAG_KEY;
 import static com.erg.freecuisine.util.Constants.URL_KEY;
 
@@ -58,7 +65,8 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     private SharedPreferencesHelper spHelper;
     private ViewGroup container;
     private Context mContext;
-    private boolean isDataLoaded;
+    private Bundle savedState = null;
+    private Job recommendLoaderJob;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,7 +75,10 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         recipes = new ArrayList<>();
         spHelper = new SharedPreferencesHelper(requireContext());
 
-        new FireBaseHelper().getMainUrl(this);
+        if (savedInstanceState != null && savedState == null) {
+            savedState = savedInstanceState.getBundle(SAVED_STATE_KEY);
+            Log.d(TAG, "onCreate: SAVED INSTANCE = " + savedState);
+        }
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -78,12 +89,6 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         return rootView;
     }
 
-    @Override
-    public void onMainUrlLoaded(LinkModel link) {
-        Log.d(TAG, "onMainUrlLoaded: LINK = " + link.getUrl());
-        new AsyncDataLoad().loadRecommendRecipesAsync(requireActivity(), this, link);
-    }
-
     private void setUpView() {
         recyclerviewRecommendRecipe = rootView.findViewById(R.id.recyclerviewRecommendRecipe);
         userActivityContainer = rootView.findViewById(R.id.ll_activity_history_container);
@@ -92,16 +97,27 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
                 requireContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerviewRecommendRecipe.setLayoutManager(layoutManager);
 
-        LoadingAdapter loadingAdapter = new LoadingAdapter(
-                getLoadingList(), requireContext(),
-                R.layout.loading_item_recommend_recipe_card);
-        recyclerviewRecommendRecipe.setAdapter(loadingAdapter);
+        if (savedState != null) {
+            String recipesJson = savedState.getString(RECIPE_KEY);
+            recipes = StringHelper.getRecipesFromStringJson(recipesJson);
 
+            restoreState();
+        } else {
+            LoadingAdapter loadingAdapter = new LoadingAdapter(
+                    getLoadingList(), requireContext(),
+                    R.layout.loading_item_recommend_recipe_card);
+            recyclerviewRecommendRecipe.setAdapter(loadingAdapter);
+
+            if (recommendLoaderJob != null && recommendLoaderJob.isActive()) {
+                recommendLoaderJob.cancel(recommendLoaderJob.getCancellationException());
+            }
+            new FireBaseHelper().getMainUrl(this);
+        }
         addUserActivityViews();
+        savedState = null;
     }
 
     private void addUserActivityViews() {
-
         lastReadingView = getLayoutInflater()
                 .inflate(R.layout.user_activity_last_reading_view, container, false);
         staticsGraphView = getLayoutInflater()
@@ -150,7 +166,6 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         }
     }
 
-
     private void setStatics() {
 
         ArrayList<Float> userActivity = spHelper.getUserActivity();
@@ -172,6 +187,19 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         customLineView.setFloatDataList(dataList);
     }
 
+    @Override
+    public void onMainUrlLoaded(LinkModel link) {
+        Log.d(TAG, "onMainUrlLoaded: LINK = " + link.getUrl());
+        recommendLoaderJob = new AsyncDataLoad()
+                .loadRecommendRecipesAsync(requireActivity(), this, link);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBundle(SAVED_STATE_KEY, (savedState != null) ? savedState : saveState());
+        Log.d(TAG, "onSaveInstanceState: outState = " + outState);
+    }
 
     @Override
     public void onRecipeClick(int position, View view) {
@@ -222,7 +250,6 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     @Override
     public void onRecipesLoaded(ArrayList<RecipeModel> recipes) {
         this.recipes = recipes;
-        isDataLoaded = true;
         if (mContext != null && isVisible() && !this.recipes.isEmpty()) {
             adapter = new RecommendedRecipesAdapter(
                     this.recipes, requireContext(), this);
@@ -236,27 +263,26 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     }
 
     @Override
-    public void onResume() {
-        Log.d(TAG, "onResume: ");
-        super.onResume();
-        if (recipes != null && !recipes.isEmpty())
-            restoreState();
+    public void onDestroyView() {
+        super.onDestroyView();
+        savedState = saveState();
+        Log.d(TAG, "onDestroyView: savedState = " + savedState);
     }
 
-    @Override
-    public void onPause() {
-        Log.d(TAG, "onPause: ");
-        super.onPause();
-        isDataLoaded = false;
+    private Bundle saveState() {
+        Bundle state = new Bundle();
+        if (recipes != null && !recipes.isEmpty()) {
+            String recipesJson = new Gson().toJson(recipes);
+            state.putString(RECIPE_KEY, recipesJson);
+        }
+        return state;
     }
 
     private void restoreState() {
-        adapter = new RecommendedRecipesAdapter(
-                recipes, requireContext(), this);
-        if (isDataLoaded) {
+        if (recipes != null && !recipes.isEmpty()) {
+            adapter = new RecommendedRecipesAdapter(
+                    recipes, requireContext(), this);
             recyclerviewRecommendRecipe.swapAdapter(adapter, true);
-        } else {
-            recyclerviewRecommendRecipe.setAdapter(adapter);
         }
     }
 

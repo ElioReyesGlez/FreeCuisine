@@ -1,13 +1,19 @@
 package com.erg.freecuisine.controller.network.helpers;
 
 import com.erg.freecuisine.models.ImageModel;
+import com.erg.freecuisine.models.LinkModel;
+import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.StepModel;
+import com.erg.freecuisine.models.TagModel;
 import com.erg.freecuisine.models.VideoModel;
 import com.erg.freecuisine.util.Constants;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -129,5 +135,23 @@ public class StringHelper {
     public static String extractTag(String tag) {
         String aux = tag.replaceAll(SPACE_REGEX, "").toLowerCase();
         return NUMERAL + aux;
+    }
+
+    public static List<RecipeModel> getRecipesFromStringJson(String recipesJson) {
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<RecipeModel>>() {}.getType();
+        return gson.fromJson(recipesJson, type);
+    }
+
+    public static List<LinkModel> getLinksFromStringJson(String linksStringJson) {
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<LinkModel>>() {}.getType();
+        return gson.fromJson(linksStringJson, type);
+    }
+
+    public static ArrayList<TagModel> getSelectedTagsFromStringJson(String tagsStringJson) {
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<TagModel>>() {}.getType();
+        return gson.fromJson(tagsStringJson, type);
     }
 }

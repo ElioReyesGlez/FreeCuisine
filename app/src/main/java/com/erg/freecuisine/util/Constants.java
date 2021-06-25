@@ -21,7 +21,9 @@ public class Constants {
     public static final String SEPARATOR_SING = "%";
 
     /*KEYS*/
+    public static final String SAVED_STATE_KEY = "saved_state_key";
     public static final String RECIPE_KEY = "recipe_key";
+    public static final String LINK_KEY = "link_key";
     public static final String URL_KEY = "url";
     public static final String TAG_KEY = "tag_key";
     public static final String SPACE_REGEX = "\\s+";

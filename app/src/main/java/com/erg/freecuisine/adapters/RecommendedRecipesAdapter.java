@@ -54,7 +54,7 @@ public class RecommendedRecipesAdapter extends RecyclerView.Adapter<RecommendedR
         Picasso.get()
                 .load(recipe.getImage().getUrl())
                 .error(R.drawable.ic_lunch_chef)
-                .placeholder(R.drawable.ic_loading)
+                .placeholder(R.drawable.ic_loading_icon)
                 .into(holder.recipeMainImg);
         holder.recipeTitle.setText(recipe.getTitle());
         if (recipe.getTags() != null && !recipe.getTags().isEmpty()) {

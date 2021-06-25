@@ -19,7 +19,8 @@ class AsyncDataLoad {
     fun loadRecipesAsync(contextActivity: FragmentActivity,
                          onRecipeListener: OnRecipeListener,
                          links: List<LinkModel>): Job {
-        val job = scopeLoader.launch {
+
+        return scopeLoader.launch {
             val recipes: ArrayList<RecipeModel> = ArrayList()
             for (link in links) {
                 recipes.addAll(JsoupController.getRecipesByLink(link))
@@ -31,8 +32,6 @@ class AsyncDataLoad {
                 }
             }
         }
-
-        return job
     }
 
     fun loadSingleRecipeAsync(contextActivity: FragmentActivity,
@@ -51,8 +50,8 @@ class AsyncDataLoad {
     }
 
     fun loadRecommendRecipesAsync(contextActivity: FragmentActivity,
-                                  onRecipeListener: OnRecipeListener, link: LinkModel) {
-        scopeLoader3.launch {
+                                  onRecipeListener: OnRecipeListener, link: LinkModel): Job {
+        return scopeLoader3.launch {
             val recipes: ArrayList<RecipeModel> = JsoupController.getRecommendedRecipe(link)
             if (recipes.isNotEmpty()) {
                 contextActivity.runOnUiThread {
