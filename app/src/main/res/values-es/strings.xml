@@ -8,6 +8,7 @@
         Mauris ut metus et quam faucibus lobortis dictum id ligula.</string>
     <string name="recipe_image">recipe image</string>
     <string name="recipe_image_transition_name">recipe_image_transition_name</string>
+    <string name="recipe_title_transition_name">recipe_title_transition_name</string>
     <string name="bullet">\u2022</string>
 
     <string name="str_all_selected">Todas las categorias</string>

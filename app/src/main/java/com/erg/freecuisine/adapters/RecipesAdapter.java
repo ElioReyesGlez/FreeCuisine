@@ -103,6 +103,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
         public TextView recipeDescription;
         public AppCompatTextView cockingTime;
         public AppCompatTextView peopleAmount;
+        public AppCompatTextView type;
         public TextView firstFilter;
         public TextView secondFilter;
 
@@ -115,6 +116,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
             recipeDescription = itemView.findViewById(R.id.recipe_description);
             cockingTime = itemView.findViewById(R.id.tv_cocking_time);
             peopleAmount = itemView.findViewById(R.id.tv_people_amount);
+            type = itemView.findViewById(R.id.tv_type);
             firstFilter = itemView.findViewById(R.id.filter_first);
             secondFilter = itemView.findViewById(R.id.filter_second);
             this.onRecipeListener = onRecipeListener;

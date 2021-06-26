@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.Fragment;
+import androidx.transition.ChangeBounds;
 import androidx.transition.Transition;
 import androidx.transition.TransitionInflater;
 
@@ -51,10 +52,10 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener {
     public static final String TAG = "RecipeFragment";
     private String url;
     private View rootView;
-    public RelativeLayout relative_container_recipe_main_info;
-    public LinearLayout linear_layout_empty_container;
-    public LottieAnimationView lottie_anim_loading;
-    public Animation scaleUp, scaleDown;
+    private RelativeLayout relative_container_recipe_main_info;
+    private LinearLayout linear_layout_empty_container;
+    private LottieAnimationView lottie_anim_loading;
+    private Animation scaleUp, scaleDown;
     private ArrayList<TagModel> tags;
     private AsyncDataLoad asyncDataLoad;
     private YouTubePlayerView videoView;
@@ -157,7 +158,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener {
                 TextView textView = view.findViewById(R.id.textViewIngredient);
                 textView.setText(ingredient);
                 view.setId(i);
-                if (i < ingredients.length / 2) {
+                if (i <= ingredients.length / 2) {
                     linearColumn1.addView(view);
                 } else {
                     linearColumn2.addView(view);

@@ -12,7 +12,11 @@
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_navigation_home_to_singleRecipeFragment"
-            app:destination="@id/singleRecipeFragment" />
+            app:destination="@id/singleRecipeFragment"
+            app:enterAnim="@anim/custom_enter_anim"
+            app:exitAnim="@anim/custom_exit_anim"
+            app:popEnterAnim="@anim/custom_enter_anim"
+            app:popExitAnim="@anim/custom_exit_anim" />
     </fragment>
 
     <fragment
@@ -22,7 +26,11 @@
         tools:layout="@layout/fragment_recipes" >
         <action
             android:id="@+id/action_navigation_recipes_to_recipeFragment"
-            app:destination="@id/singleRecipeFragment" />
+            app:destination="@id/singleRecipeFragment"
+            app:enterAnim="@anim/custom_enter_anim"
+            app:exitAnim="@anim/custom_exit_anim"
+            app:popEnterAnim="@anim/custom_enter_anim"
+            app:popExitAnim="@anim/custom_exit_anim" />
     </fragment>
 
     <fragment

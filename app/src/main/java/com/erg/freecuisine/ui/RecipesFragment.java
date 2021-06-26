@@ -9,9 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -41,6 +43,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 
 import kotlinx.coroutines.Job;
 
@@ -60,7 +63,8 @@ public class RecipesFragment extends Fragment implements
     private RecyclerView recyclerViewRecipes;
     private LottieAnimationView lottie_anim_empty;
     private SearchView searcher;
-    private final String currentSearchQuery = "";
+    private CoordinatorLayout filter_container;
+    private Filter<TagModel> filter;
     private Animation scaleUP, scaleDown;
 
     private List<RecipeModel> recipes;
@@ -70,8 +74,6 @@ public class RecipesFragment extends Fragment implements
     private int[] colors;
 
     private AsyncDataLoad asyncDataLoad;
-    private Filter<TagModel> filter;
-    private RecipesFilterAdapter filterAdapter;
     private RecipesAdapter recipesAdapter;
     private Job recipesLoaderJob;
     private Context mContext;
@@ -113,7 +115,7 @@ public class RecipesFragment extends Fragment implements
 
     public void setUpView() {
 
-        filter = rootView.findViewById(R.id.filter);
+        filter_container = rootView.findViewById(R.id.container_for_filter);
         searcher = rootView.findViewById(R.id.searcher);
         recyclerViewRecipes = rootView.findViewById(R.id.recycler_view_recipes);
         lottie_anim_empty = rootView.findViewById(R.id.lottie_anim_empty);
@@ -132,6 +134,7 @@ public class RecipesFragment extends Fragment implements
         recyclerViewRecipes.setHasFixedSize(true);
         GridItemDecoration gridItemDecoration = new GridItemDecoration(12, 9);
         recyclerViewRecipes.addItemDecoration(gridItemDecoration);
+        recyclerViewRecipes.setVerticalScrollBarEnabled(false); // disable temporally scroll bar
 
         if (savedState != null) {
             String recipesJson = savedState.getString(RECIPE_KEY);
@@ -149,10 +152,11 @@ public class RecipesFragment extends Fragment implements
             LoadingAdapter loadingAdapter = new LoadingAdapter(
                     getLoadingList(), requireContext(),
                     R.layout.loading_item_recipe_card);
+            recyclerViewRecipes.setNestedScrollingEnabled(false);
             recyclerViewRecipes.setAdapter(loadingAdapter);
 
             if (recipesLoaderJob != null && recipesLoaderJob.isActive()) {
-                recipesLoaderJob.cancel(recipesLoaderJob.getCancellationException());
+                recipesLoaderJob.cancel(new CancellationException());
             }
             new FireBaseHelper().getLinks(this);
         }
@@ -180,10 +184,13 @@ public class RecipesFragment extends Fragment implements
     public void onRecipesLoaded(ArrayList<RecipeModel> recipes) {
         Log.d(TAG, "onRecipesLoaded: Recipes = " + recipes.toString());
         this.recipes = recipes;
-        if (mContext != null && isVisible() && !this.recipes.isEmpty()) {
-            setUpFilterView(links);
+        if (mContext != null && isVisible() && !this.recipes.isEmpty()
+                && isVisible()) {
             recipesAdapter = new RecipesAdapter(this.recipes, requireContext(), this);
             recyclerViewRecipes.setAdapter(recipesAdapter);
+            recyclerViewRecipes.setNestedScrollingEnabled(true);
+            recyclerViewRecipes.setVerticalScrollBarEnabled(true);
+            setUpFilterView(links);
             refreshView();
         }
     }
@@ -194,17 +201,24 @@ public class RecipesFragment extends Fragment implements
     }
 
     private void setUpFilterView(List<LinkModel> links) {
-        tags.clear();
         tags = getTags(links);
+        RecipesFilterAdapter filterAdapter = new RecipesFilterAdapter(tags,
+                colors, requireActivity());
 
-        filterAdapter = new RecipesFilterAdapter(tags,
-                colors, requireContext());
+        filter = new Filter<>(requireContext());
+        CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(
+                CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT);
+        filter.setLayoutParams(params);
+        filter.setCollapsedBackground(getResources().getColor(R.color.custom_white_text_color));
+        filter.setExpandedBackground(getResources().getColor(R.color.custom_white_text_color));
         filter.setAdapter(filterAdapter);
         filter.setListener(this);
 
         //the text to show when there's no selected items
         filter.setNoSelectedItemText(getString(R.string.str_all_selected));
         filter.build();
+        filter_container.addView(filter);
+        Util.showView(scaleUP, filter_container);
     }
 
     public void refreshView() {
@@ -241,7 +255,7 @@ public class RecipesFragment extends Fragment implements
     @Override
     public void onFilterSelected(TagModel tagModel) {
         Log.d(TAG, "onFilterSelected: ");
-        if (!tags.isEmpty())
+        if (!tags.isEmpty() && filter != null)
             if (tagModel.getText().contains(tags.get(0).getText())) {
                 filter.deselectAll();
                 filter.collapse();
@@ -366,6 +380,16 @@ public class RecipesFragment extends Fragment implements
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        if (recipesLoaderJob != null && recipesLoaderJob.isActive()) {
+            recipesLoaderJob.cancel(new CancellationException());
+            Log.d(TAG, "onDestroyView: CANCELING JOB = "
+                    + recipesLoaderJob.isCancelled());
+        }
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         savedState = saveState();
@@ -394,6 +418,7 @@ public class RecipesFragment extends Fragment implements
         if (recipes != null && !recipes.isEmpty()) {
             recipesAdapter = new RecipesAdapter(this.recipes, requireContext(), this);
             recyclerViewRecipes.swapAdapter(recipesAdapter, false);
+            recyclerViewRecipes.setVerticalScrollBarEnabled(true);
             Log.d(TAG, "restoreState: RECIPES = " + recipes.toString());
 
             if (links != null && !links.isEmpty()) {

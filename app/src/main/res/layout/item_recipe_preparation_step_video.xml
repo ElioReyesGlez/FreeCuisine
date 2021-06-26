@@ -18,7 +18,7 @@
             android:id="@+id/tv_preparation_number_order"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/background_accent"
+            android:background="@drawable/background_accent_light"
             android:textStyle="bold"
             android:textSize="@dimen/titles_text_size_full_view"
             android:text="1"

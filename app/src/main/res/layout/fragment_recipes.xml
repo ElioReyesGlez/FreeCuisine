@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorOnPrimary"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.RecipesFragment">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_anim_empty"
@@ -29,8 +30,24 @@
         android:id="@+id/recycler_view_recipes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="104dp"
+        android:layout_marginTop="107dp"
+        android:fadeScrollbars="true"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbarThumbVertical="@drawable/ic_scroll_bar"
+        android:scrollbars="vertical"
         tools:listitem="@layout/item_recipe_card" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/container_for_filter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="51dp"
+        android:visibility="gone">
+
+        <!--Filled from java code-->
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searcher"
@@ -40,14 +57,5 @@
         app:defaultQueryHint="@string/search"
         app:searchIcon="@drawable/ic_loupe" />
 
-    <com.yalantis.filter.widget.Filter
-        android:id="@+id/filter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:elevation="@dimen/default_elevation"
-        android:padding="2dp"
-        app:collapsedBackground="@color/custom_white_text_color"
-        app:expandedBackground="@color/custom_white_text_color" />
 
 </FrameLayout>

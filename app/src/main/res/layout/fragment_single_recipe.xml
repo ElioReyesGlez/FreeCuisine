@@ -1,345 +1,350 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorOnPrimary"
-    android:fillViewport="true"
     tools:context=".ui.SingleRecipeFragment">
 
-    <RelativeLayout
-        android:id="@+id/relativeLayout_main_container"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottie_anim_loading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/empty"
-            android:cropToPadding="true"
-            android:scaleType="centerInside"
-            app:lottie_autoPlay="true"
-            app:lottie_fileName="loading_round.json"
-            app:lottie_loop="true"
-            app:lottie_speed="2.5" />
-
-        <LinearLayout
-            android:id="@+id/linear_layout_empty_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:background="@drawable/selector_gray_light"
-            android:clickable="true"
-            android:focusable="true"
-            android:orientation="vertical"
-            android:padding="@dimen/default_padding"
-            android:visibility="gone">
+        <RelativeLayout
+            android:id="@+id/relativeLayout_main_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/lottie_anim_empty"
+                android:id="@+id/lottie_anim_loading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                android:layout_centerInParent="true"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/empty"
                 android:cropToPadding="true"
                 android:scaleType="centerInside"
                 app:lottie_autoPlay="true"
-                app:lottie_fileName="empty_box.json"
-                app:lottie_loop="true" />
+                app:lottie_fileName="loading_round.json"
+                app:lottie_loop="true"
+                app:lottie_speed="2.5" />
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/linear_layout_empty_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/empty"
-                android:textAlignment="center"
-                android:textSize="15sp"
-                android:textStyle="bold|italic" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                android:layout_centerInParent="true"
+                android:background="@drawable/selector_gray_light"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
                 android:padding="@dimen/default_padding"
-                android:text="@string/reload"
-                android:textAlignment="center"
-                android:textSize="13sp"
-                android:textStyle="italic" />
+                android:visibility="gone">
 
-        </LinearLayout>
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/lottie_anim_empty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/empty"
+                    android:cropToPadding="true"
+                    android:scaleType="centerInside"
+                    app:lottie_autoPlay="true"
+                    app:lottie_fileName="empty_box.json"
+                    app:lottie_loop="true" />
 
-        <RelativeLayout
-            android:id="@+id/relative_container_recipe_main_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:visibility="gone">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/empty"
+                    android:textAlignment="center"
+                    android:textSize="15sp"
+                    android:textStyle="bold|italic" />
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/recipe_main_image"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="@dimen/default_padding"
+                    android:text="@string/reload"
+                    android:textAlignment="center"
+                    android:textSize="13sp"
+                    android:textStyle="italic" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/relative_container_recipe_main_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_margin="@dimen/default_margin"
-                android:layout_marginTop="@dimen/margin_top"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/recipe_image"
-                android:cropToPadding="false"
-                android:elevation="@dimen/default_elevation"
-                android:scaleType="centerCrop"
-                android:transitionName="@string/recipe_image_transition_name"
-                app:shapeAppearanceOverlay="@style/circleImageView" />
+                android:visibility="gone">
 
-
-            <LinearLayout
-                android:id="@+id/linear_amounts_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/recipe_main_image"
-                android:layout_margin="@dimen/default_margin"
-                android:background="@drawable/background_white"
-                android:elevation="@dimen/default_elevation"
-                android:gravity="center"
-                android:weightSum="3"
-                android:orientation="horizontal"
-                android:baselineAligned="false">
-
-                <RelativeLayout
-                    android:id="@+id/relative_recipes_type_container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_margin="@dimen/default_margin"
-                    android:layout_weight="1">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/iv_menu"
-                        android:layout_width="21dp"
-                        android:layout_height="20dp"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_margin="1dp"
-                        android:src="@drawable/ic_menu" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_type"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="2dp"
-                        android:layout_toEndOf="@+id/iv_menu"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:text="@string/dinner"
-                        android:textAlignment="center"
-                        android:textColor="@color/md_grey_700"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                </RelativeLayout>
-
-
-                <RelativeLayout
-                    android:id="@+id/recipes_cooking_time_container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/default_margin"
-                    android:gravity="center"
-                    android:layout_weight="1">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/iv_clock"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_margin="1dp"
-                        android:src="@drawable/ic_clock" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_cocking_time"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="2dp"
-                        android:layout_toEndOf="@+id/iv_clock"
-                        android:text="45m"
-                        android:textAlignment="center"
-                        android:textColor="@color/md_grey_700"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/recipes_amount_container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/default_margin"
-                    android:gravity="center"
-                    android:layout_weight="1">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/iv_people_amount"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_margin="1dp"
-                        android:src="@drawable/ic_users" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_people_amount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="2dp"
-                        android:layout_toEndOf="@+id/iv_people_amount"
-                        android:text="4"
-                        android:textAlignment="center"
-                        android:textColor="@color/md_grey_700"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                </RelativeLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/recipe_sub_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/linear_amounts_container"
-                android:layout_centerHorizontal="true"
-                android:layout_margin="2dp"
-                android:elevation="@dimen/default_elevation"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="@dimen/default_padding">
-
-                <LinearLayout
-                    android:id="@+id/recipe_text_container"
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/recipe_main_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/selector_white"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center"
-                    android:elevation="@dimen/default_elevation"
-                    android:orientation="vertical"
-                    android:padding="@dimen/default_padding">
-
-                    <TextView
-                        android:id="@+id/recipe_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="@string/app_name"
-                        android:textAlignment="center"
-                        android:textColor="@color/md_grey_700"
-                        android:textSize="@dimen/titles_text_size_full_view"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/recipe_description"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/default_margin"
-                        android:ellipsize="end"
-                        android:maxLines="7"
-                        android:padding="@dimen/default_padding"
-                        android:text="@string/lorem_ipsum"
-                        android:textColor="@color/md_grey_500"
-                        android:textSize="@dimen/description_text_size_full_view" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/table_recipe_ingredients_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="@dimen/default_margin"
                     android:layout_marginTop="@dimen/margin_top"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/recipe_image"
+                    android:cropToPadding="false"
+                    android:elevation="@dimen/default_elevation"
+                    android:scaleType="centerCrop"
+                    app:shapeAppearanceOverlay="@style/circleImageView" />
+
+
+                <LinearLayout
+                    android:id="@+id/linear_amounts_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/recipe_main_image"
+                    android:layout_margin="@dimen/default_margin"
                     android:background="@drawable/background_white"
                     android:elevation="@dimen/default_elevation"
                     android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="@dimen/default_padding">
+                    android:weightSum="3"
+                    android:orientation="horizontal"
+                    android:baselineAligned="false">
 
-                    <TextView
-                        android:id="@+id/mainLabel"
+                    <RelativeLayout
+                        android:id="@+id/relative_recipes_type_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_margin="@dimen/default_margin"
+                        android:layout_weight="1">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/iv_menu"
+                            android:layout_width="21dp"
+                            android:layout_height="20dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:layout_margin="1dp"
+                            android:src="@drawable/ic_menu" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_type"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="2dp"
+                            android:layout_toEndOf="@+id/iv_menu"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="@string/dinner"
+                            android:textAlignment="center"
+                            android:textColor="@color/md_grey_700"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                    </RelativeLayout>
+
+
+                    <RelativeLayout
+                        android:id="@+id/recipes_cooking_time_container"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/default_margin"
                         android:gravity="center"
-                        android:text="@string/ingredients"
-                        android:textColor="@color/md_grey_700"
-                        android:textSize="@dimen/titles_text_size_full_view"
-                        android:textStyle="bold" />
+                        android:layout_weight="1">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/iv_clock"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:layout_margin="1dp"
+                            android:src="@drawable/ic_clock" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_cocking_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="2dp"
+                            android:layout_toEndOf="@+id/iv_clock"
+                            android:text="45m"
+                            android:textAlignment="center"
+                            android:textColor="@color/md_grey_700"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/recipes_amount_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
+                        android:gravity="center"
+                        android:layout_weight="1">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/iv_people_amount"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:layout_margin="1dp"
+                            android:src="@drawable/ic_users" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_people_amount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="2dp"
+                            android:layout_toEndOf="@+id/iv_people_amount"
+                            android:text="4"
+                            android:textAlignment="center"
+                            android:textColor="@color/md_grey_700"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/recipe_sub_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/linear_amounts_container"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="2dp"
+                    android:elevation="@dimen/default_elevation"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="@dimen/default_padding">
 
                     <LinearLayout
+                        android:id="@+id/recipe_text_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/margin"
-                        android:baselineAligned="false"
+                        android:background="@drawable/selector_white"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:gravity="center"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
+                        android:elevation="@dimen/default_elevation"
+                        android:orientation="vertical"
+                        android:padding="@dimen/default_padding">
 
-                        <LinearLayout
-                            android:id="@+id/linear_column_1"
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/recipe_title"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_weight="1"
-                            android:orientation="vertical" />
+                            android:text="@string/app_name"
+                            android:textAlignment="center"
+                            android:textColor="@color/md_grey_700"
+                            android:textSize="@dimen/titles_text_size_full_view"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/recipe_description"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/default_margin"
+                            android:ellipsize="end"
+                            android:maxLines="7"
+                            android:padding="@dimen/default_padding"
+                            android:text="@string/lorem_ipsum"
+                            android:textColor="@color/md_grey_500"
+                            android:textSize="@dimen/description_text_size_full_view" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/table_recipe_ingredients_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_top"
+                        android:background="@drawable/background_white"
+                        android:elevation="@dimen/default_elevation"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="@dimen/default_padding">
+
+                        <TextView
+                            android:id="@+id/mainLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/default_margin"
+                            android:gravity="center"
+                            android:text="@string/ingredients"
+                            android:textColor="@color/md_grey_700"
+                            android:textSize="@dimen/titles_text_size_full_view"
+                            android:textStyle="bold" />
 
                         <LinearLayout
-                            android:id="@+id/linear_column_2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_weight="1"
-                            android:orientation="vertical" />
+                            android:layout_margin="@dimen/margin"
+                            android:baselineAligned="false"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
+
+                            <LinearLayout
+                                android:id="@+id/linear_column_1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="1"
+                                android:orientation="vertical" />
+
+                            <LinearLayout
+                                android:id="@+id/linear_column_2"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="1"
+                                android:orientation="vertical" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_preparation_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_top"
+                        android:background="@drawable/background_white"
+                        android:elevation="@dimen/default_elevation"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_steps"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/default_margin"
+                            android:gravity="center"
+                            android:text="@string/steps"
+                            android:textColor="@color/md_grey_700"
+                            android:textSize="@dimen/titles_text_size_full_view"
+                            android:textStyle="bold" />
+
+
+                        <!--Filled from Java-->
 
                     </LinearLayout>
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/linear_preparation_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_top"
-                    android:background="@drawable/background_white"
-                    android:elevation="@dimen/default_elevation"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_steps"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/default_margin"
-                        android:gravity="center"
-                        android:text="@string/steps"
-                        android:textColor="@color/md_grey_700"
-                        android:textSize="@dimen/titles_text_size_full_view"
-                        android:textStyle="bold" />
-
-
-                    <!--Filled from Java-->
-
-                </LinearLayout>
-
-            </LinearLayout>
-
+            </RelativeLayout>
         </RelativeLayout>
-    </RelativeLayout>
 
-</ScrollView>
+    </ScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

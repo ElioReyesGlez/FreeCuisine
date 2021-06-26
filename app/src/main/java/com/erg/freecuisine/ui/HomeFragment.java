@@ -7,12 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.FragmentNavigator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 
 import kotlinx.coroutines.Job;
 
@@ -109,7 +112,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
             recyclerviewRecommendRecipe.setAdapter(loadingAdapter);
 
             if (recommendLoaderJob != null && recommendLoaderJob.isActive()) {
-                recommendLoaderJob.cancel(recommendLoaderJob.getCancellationException());
+                recommendLoaderJob.cancel(new CancellationException());
             }
             new FireBaseHelper().getMainUrl(this);
         }
@@ -144,8 +147,15 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
             holder.recipeTitle.setText(recipe.getTitle());
             holder.recipeDescription.setText(recipe.getDescription());
             holder.cockingTime.setText(recipe.getTime());
-            holder.peopleAmount.setText(String.valueOf(recipe.getDiners()));
 
+            RelativeLayout typeContainer = lastReadingView
+                    .findViewById(R.id.relative_recipes_type_container);
+            if (!recipe.getType().isEmpty()) {
+                Util.showView(null, typeContainer);
+                holder.type.setText(recipe.getType());
+            } else {
+                Util.hideView(null, typeContainer);
+            }
 
             if (recipe.getTags() != null && !recipe.getTags().isEmpty()) {
                 List<TagModel> tags = recipe.getTags();
@@ -218,28 +228,27 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     }
 
     private void loadFragment(int position, View view) {
+
+        NavController navController = Navigation
+                .findNavController(requireActivity(), R.id.nav_host_fragment);
+
+        Bundle args;
         if (view.getId() == R.id.last_reading_main_card_container) {
-            RecipeModel currentRecipe = spHelper.getLastRecipeRead();
-            Bundle args = new Bundle();
-            args.putString(URL_KEY, currentRecipe.getLink());
-            ArrayList<TagModel> tagModels = new ArrayList<>(currentRecipe.getTags());
+            args = new Bundle();
+            RecipeModel lastRecipeRead = spHelper.getLastRecipeRead();
+            args.putString(URL_KEY, lastRecipeRead.getLink());
+            ArrayList<TagModel> tagModels = new ArrayList<>(lastRecipeRead.getTags());
             args.putParcelableArrayList(TAG_KEY, tagModels);
-
-            NavController navController = Navigation
-                    .findNavController(requireActivity(), R.id.nav_host_fragment);
-            navController.navigate(R.id.action_navigation_home_to_singleRecipeFragment, args);
-
         } else {
+            args = new Bundle();
             RecipeModel currentRecipe = adapter.getRecipes().get(position);
-            Bundle args = new Bundle();
             args.putString(URL_KEY, currentRecipe.getLink());
             ArrayList<TagModel> tagModels = new ArrayList<>(currentRecipe.getTags());
             args.putParcelableArrayList(TAG_KEY, tagModels);
-
-            NavController navController = Navigation
-                    .findNavController(requireActivity(), R.id.nav_host_fragment);
-            navController.navigate(R.id.action_navigation_home_to_singleRecipeFragment, args);
         }
+
+        navController.navigate(R.id.action_navigation_home_to_singleRecipeFragment, args);
+
     }
 
     @Override

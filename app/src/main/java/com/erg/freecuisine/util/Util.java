@@ -8,6 +8,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 
+import androidx.navigation.NavOptions;
+
+import com.erg.freecuisine.R;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
 
@@ -152,5 +155,11 @@ public class Util {
             return 4.0f;
 
         return 0.0f;
+    }
+
+    public static NavOptions getNavOption() {
+        return new NavOptions.Builder()
+                .setLaunchSingleTop(true)
+                .build();
     }
 }
