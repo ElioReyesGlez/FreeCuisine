@@ -34,6 +34,7 @@ import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.LinkModel;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
+import com.erg.freecuisine.util.Constants;
 import com.erg.freecuisine.util.Util;
 import com.google.gson.Gson;
 import com.yalantis.filter.listener.FilterListener;
@@ -47,6 +48,7 @@ import java.util.concurrent.CancellationException;
 
 import kotlinx.coroutines.Job;
 
+import static com.erg.freecuisine.util.Constants.FILTER_ID;
 import static com.erg.freecuisine.util.Constants.LINK_KEY;
 import static com.erg.freecuisine.util.Constants.RECIPE_KEY;
 import static com.erg.freecuisine.util.Constants.SAVED_STATE_KEY;
@@ -114,8 +116,12 @@ public class RecipesFragment extends Fragment implements
     }
 
     public void setUpView() {
-
+        Log.d(TAG, "setUpView: ");
         filter_container = rootView.findViewById(R.id.container_for_filter);
+        if (filter_container.findViewById(FILTER_ID) == null) {
+            filter = new Filter<>(rootView.getContext());
+            filter.setId(Constants.FILTER_ID);
+        }
         searcher = rootView.findViewById(R.id.searcher);
         recyclerViewRecipes = rootView.findViewById(R.id.recycler_view_recipes);
         lottie_anim_empty = rootView.findViewById(R.id.lottie_anim_empty);
@@ -155,9 +161,7 @@ public class RecipesFragment extends Fragment implements
             recyclerViewRecipes.setNestedScrollingEnabled(false);
             recyclerViewRecipes.setAdapter(loadingAdapter);
 
-            if (recipesLoaderJob != null && recipesLoaderJob.isActive()) {
-                recipesLoaderJob.cancel(new CancellationException());
-            }
+            stopLoading();
             new FireBaseHelper().getLinks(this);
         }
         savedState = null;
@@ -205,7 +209,6 @@ public class RecipesFragment extends Fragment implements
         RecipesFilterAdapter filterAdapter = new RecipesFilterAdapter(tags,
                 colors, requireActivity());
 
-        filter = new Filter<>(requireContext());
         CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(
                 CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT);
         filter.setLayoutParams(params);
@@ -217,6 +220,7 @@ public class RecipesFragment extends Fragment implements
         //the text to show when there's no selected items
         filter.setNoSelectedItemText(getString(R.string.str_all_selected));
         filter.build();
+        filter_container.removeAllViews();
         filter_container.addView(filter);
         Util.showView(scaleUP, filter_container);
     }
@@ -338,27 +342,30 @@ public class RecipesFragment extends Fragment implements
         if (query != null && !query.isEmpty()) {
             filter(query);
         }
-        return true;
+        return false;
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
-//        currentSearchQuery = newText;
-        if (newText != null && !newText.isEmpty()) {
-            filter(newText);
+        Log.d(TAG, "onQueryTextChange: newText = " + newText);
+        if (newText != null) {
+            if (!newText.isEmpty()) {
+                filter(newText);
+            } else {
+                resetRecipeList();
+            }
         }
-        if (newText != null && newText.isEmpty()) {
-            resetRecipeList();
-        }
-        return true;
+        return false;
     }
 
     private void resetRecipeList() {
-        if (tagsSelected != null && tagsSelected.isEmpty()) {
-            if (recipesAdapter != null)
-                recipesAdapter.refreshAdapter(recipes);
-        } else if (tagsSelected != null) {
-            onFiltersSelected(tagsSelected);
+        if (tagsSelected != null) {
+            if (tagsSelected.isEmpty()) {
+                if (recipesAdapter != null)
+                    recipesAdapter.refreshAdapter(recipes);
+            } else {
+                onFiltersSelected(tagsSelected);
+            }
         }
     }
 
@@ -382,6 +389,10 @@ public class RecipesFragment extends Fragment implements
     @Override
     public void onPause() {
         super.onPause();
+        stopLoading();
+    }
+
+    private void stopLoading() {
         if (recipesLoaderJob != null && recipesLoaderJob.isActive()) {
             recipesLoaderJob.cancel(new CancellationException());
             Log.d(TAG, "onDestroyView: CANCELING JOB = "
@@ -424,11 +435,11 @@ public class RecipesFragment extends Fragment implements
             if (links != null && !links.isEmpty()) {
                 setUpFilterView(links);
                 Log.d(TAG, "restoreState: LINKS: " + links.toString());
-            }
 
-            if (tagsSelected != null && !tagsSelected.isEmpty()) {
-                onFiltersSelected(tagsSelected);
-                Log.d(TAG, "restoreState: TAGS SELECTED: " + tagsSelected.toString());
+                if (tagsSelected != null && !tagsSelected.isEmpty()) {
+                    onFiltersSelected(tagsSelected);
+                    Log.d(TAG, "restoreState: TAGS SELECTED: " + tagsSelected.toString());
+                }
             }
         }
     }

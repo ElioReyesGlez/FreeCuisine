@@ -106,4 +106,7 @@ public class Constants {
     public static final String OPEN_TIME_USAGE_KEY = "open_time_usage_key";
     public static final String LAST_RECIPE_READ_KEY = "last_recipe_key";
 
+    /*VIEWS IDS*/
+    public static final int FILTER_ID = 1000431;
+
 }
