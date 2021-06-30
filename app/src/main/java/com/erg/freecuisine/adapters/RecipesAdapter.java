@@ -16,6 +16,7 @@ import com.erg.freecuisine.R;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
+import com.erg.freecuisine.util.Util;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.squareup.picasso.Picasso;
 
@@ -28,22 +29,21 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
     private static final String TAG = "RecipesAdapter";
 
     private List<RecipeModel> recipes;
-    private Context context;
-    private LayoutInflater inflater;
-    private OnRecipeListener onRecipeListener;
+    private final Context context;
+    private final OnRecipeListener onRecipeListener;
 
     public RecipesAdapter(List<RecipeModel> recipes, Context context,
                           OnRecipeListener onRecipeListener) {
         this.recipes = recipes;
         this.context = context;
         this.onRecipeListener = onRecipeListener;
-        inflater = LayoutInflater.from(context);
     }
 
     @NotNull
     @Override
     public ViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.item_recipe_card, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_recipe_card, parent, false);
         return new ViewHolder(view, onRecipeListener);
     }
 
@@ -54,7 +54,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
 
         Picasso.get()
                 .load(recipe.getImage().getUrl())
-                .error(R.drawable.ic_lunch_chef)
+                .error(R.drawable.ic_lunch_chef_mini)
                 .placeholder(R.drawable.ic_loading_icon)
                 .into(holder.recipeMainImg);
         holder.recipeTitle.setText(recipe.getTitle());
@@ -74,7 +74,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
                 TagModel secondTag = recipe.getTags().get(1);
                 holder.secondFilter.setText(secondTag.getText());
             } else {
-                holder.secondFilter.setVisibility(View.INVISIBLE);
+                Util.hideView(null, holder.secondFilter);
             }
         }
     }
@@ -101,9 +101,9 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
         public ShapeableImageView recipeMainImg;
         public TextView recipeTitle;
         public TextView recipeDescription;
-        public AppCompatTextView cockingTime;
-        public AppCompatTextView peopleAmount;
-        public AppCompatTextView type;
+        public TextView cockingTime;
+        public TextView peopleAmount;
+        public TextView type;
         public TextView firstFilter;
         public TextView secondFilter;
 
@@ -128,6 +128,11 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
             Log.d(TAG, "onClick: Item clicked!");
             onRecipeListener.onRecipeClick(getAdapterPosition(), v);
         }
+    }
+
+    public void clearAll() {
+        this.recipes.clear();
+        notifyDataSetChanged();
     }
 
     public void refreshAdapter(List<RecipeModel> list) {

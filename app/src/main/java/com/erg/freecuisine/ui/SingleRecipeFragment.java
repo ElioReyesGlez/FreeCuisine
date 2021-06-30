@@ -17,7 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.Fragment;
-import androidx.transition.ChangeBounds;
 import androidx.transition.Transition;
 import androidx.transition.TransitionInflater;
 
@@ -32,7 +31,6 @@ import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.StepModel;
 import com.erg.freecuisine.models.TagModel;
 import com.erg.freecuisine.models.VideoModel;
-import com.erg.freecuisine.util.Constants;
 import com.erg.freecuisine.util.Util;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
@@ -42,7 +40,11 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.concurrent.CancellationException;
 
+import kotlinx.coroutines.Job;
+
+import static com.erg.freecuisine.util.Constants.RECIPE_KEY;
 import static com.erg.freecuisine.util.Constants.TAG_KEY;
 import static com.erg.freecuisine.util.Constants.URL_KEY;
 
@@ -62,6 +64,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener {
     private RecipeModel recipe;
 
     private SharedPreferencesHelper spHelper;
+    private Job recipeLoaderJob;
 
     public SingleRecipeFragment() {
         // Required empty public constructor
@@ -113,14 +116,24 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        asyncDataLoad.loadSingleRecipeAsync(requireActivity(), this, url, tags);
+
+        stopLoading();
+        recipeLoaderJob = asyncDataLoad.loadSingleRecipeAsync(requireActivity(),
+                this, url, tags);
+    }
+
+    private void stopLoading() {
+        if (recipeLoaderJob != null && recipeLoaderJob.isActive()) {
+            recipeLoaderJob.cancel(new CancellationException());
+            Log.d(TAG, "onDestroyView: CANCELING JOB = "
+                    + recipeLoaderJob.isCancelled());
+        }
     }
 
     @Override
     public void onSingleRecipeLoaded(RecipeModel recipe) {
         setUpView(recipe);
     }
-
 
     public void setUpView(RecipeModel recipe) {
 
@@ -174,7 +187,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener {
 
             Picasso.get()
                     .load(recipe.getImage().getUrl())
-                    .error(R.drawable.ic_lunch_chef)
+                    .error(R.drawable.ic_lunch_chef_mini)
                     .placeholder(R.drawable.ic_loading_icon)
                     .into(recipeImg);
 

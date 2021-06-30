@@ -1,6 +1,12 @@
 package com.erg.freecuisine.util;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -8,9 +14,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 
+import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
+import androidx.navigation.Navigation;
 
 import com.erg.freecuisine.R;
+import com.erg.freecuisine.controller.network.helpers.SharedPreferencesHelper;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
 
@@ -20,6 +29,7 @@ import org.jsoup.select.Elements;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.erg.freecuisine.util.Constants.DIVISION_SING;
 import static com.erg.freecuisine.util.Constants.MIN_VIBRATE_TIME;
@@ -67,8 +77,8 @@ public class Util {
 
     public static void vibrate(Context context) {
 //        ToDo
-//        SharedPreferencesHelper spHelper = new SharedPreferencesHelper(context);
-//        if (spHelper.getVibrationStatus()) {
+        SharedPreferencesHelper spHelper = new SharedPreferencesHelper(context);
+        if (spHelper.getVibrationStatus()) {
             long VIBRATION_TIME = getRightVibrationTime(context, true);
             Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -81,12 +91,12 @@ public class Util {
                 v.vibrate(VIBRATION_TIME);
                 Log.d(TAG, "regular vibrate: VIBRATE_TIME :" + VIBRATION_TIME);
             }
-//        }
+        }
     }
 
     public static void vibrateMin(Context context) {
-//        SharedPreferencesHelper spHelper = new SharedPreferencesHelper(context);
-//        if (spHelper.getVibrationStatus()) {
+        SharedPreferencesHelper spHelper = new SharedPreferencesHelper(context);
+        if (spHelper.getVibrationStatus()) {
             long VIBRATION_TIME = getRightVibrationTime(context, false);
             Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -99,7 +109,7 @@ public class Util {
                 v.vibrate(VIBRATION_TIME);
                 Log.d(TAG, "vibrateMin: MIN_VIBRATE_TIME " + VIBRATION_TIME);
             }
-//        }
+        }
     }
 
     private static long getRightVibrationTime(Context context, boolean isRegular) {
@@ -122,7 +132,7 @@ public class Util {
         }
     }
 
-    public static String[] extractIngredients (String strIngredients) {
+    public static String[] extractIngredients(String strIngredients) {
         return strIngredients.split(DIVISION_SING);
     }
 
@@ -139,27 +149,50 @@ public class Util {
 
         if (aux == 0.0f)
             return 0.073f;
-        if ( aux > 0.0f  && aux < 4.9f)
+        if (aux > 0.0f && aux < 4.9f)
             return 0.5f;
-        if ( aux > 5.0f  && aux < 5.9f)
+        if (aux > 5.0f && aux < 5.9f)
             return 1.0f;
-        if ( aux > 6.0f  && aux < 6.9f)
+        if (aux > 6.0f && aux < 6.9f)
             return 1.5f;
-        if ( aux > 7.0f  && time < 7.9f)
+        if (aux > 7.0f && time < 7.9f)
             return 2.0f;
-        if ( aux > 8.0f  && aux < 8.9f)
+        if (aux > 8.0f && aux < 8.9f)
             return 2.5f;
-        if ( aux > 9.0f  && aux < 9.9f)
+        if (aux > 9.0f && aux < 9.9f)
             return 3.0f;
-        if ( aux > 10f)
+        if (aux > 10f)
             return 4.0f;
 
         return 0.0f;
     }
 
-    public static NavOptions getNavOption() {
-        return new NavOptions.Builder()
-                .setLaunchSingleTop(true)
-                .build();
+    public static boolean isNetworkAvailable(Activity activity) {
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        boolean isConnected;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Network nw = connectivityManager.getActiveNetwork();
+            if (nw == null) return false;
+            NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(nw);
+            isConnected = capabilities != null && (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) ||
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH));
+            Log.d(TAG, "isNetworkAvailable: CAPABILITIES, CONNECTED = " + isConnected);
+        } else {
+            NetworkInfo nwInfo = connectivityManager.getActiveNetworkInfo();
+            isConnected = nwInfo != null && nwInfo.isConnected();
+            Log.d(TAG, "isNetworkAvailable: NETWORK INFO, CONNECTED = " + isConnected);
+        }
+        return isConnected;
+    }
+
+    public static void refreshCurrentFragment(Activity activity) {
+        NavController navController = Navigation
+                .findNavController(activity, R.id.nav_host_fragment);
+        int id = Objects.requireNonNull(navController.getCurrentDestination()).getId();
+        navController.popBackStack(id, true);
+        navController.navigate(id);
     }
 }

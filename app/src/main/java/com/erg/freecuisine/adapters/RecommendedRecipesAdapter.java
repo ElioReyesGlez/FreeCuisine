@@ -8,14 +8,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.erg.freecuisine.R;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.RecipeModel;
-import com.erg.freecuisine.models.TagModel;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.squareup.picasso.Picasso;
 
@@ -53,7 +51,7 @@ public class RecommendedRecipesAdapter extends RecyclerView.Adapter<RecommendedR
 
         Picasso.get()
                 .load(recipe.getImage().getUrl())
-                .error(R.drawable.ic_lunch_chef)
+                .error(R.drawable.ic_lunch_chef_mini)
                 .placeholder(R.drawable.ic_loading_icon)
                 .into(holder.recipeMainImg);
         holder.recipeTitle.setText(recipe.getTitle());

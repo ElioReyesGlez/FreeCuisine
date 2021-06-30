@@ -1,61 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_layout_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorOnPrimary"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.RecipesFragment">
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lottie_anim_empty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="@dimen/default_padding"
-        android:adjustViewBounds="true"
-        android:clickable="true"
-        android:contentDescription="@string/empty"
-        android:cropToPadding="true"
-        android:focusable="true"
-        android:scaleType="centerInside"
-        android:visibility="gone"
-        app:lottie_autoPlay="true"
-        app:lottie_fileName="empty_box.json"
-        app:lottie_loop="true" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_recipes"
+    <FrameLayout
+        android:id="@+id/fragment_layout_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="107dp"
-        android:fadeScrollbars="true"
-        android:scrollbarAlwaysDrawVerticalTrack="true"
-        android:scrollbarStyle="insideOverlay"
-        android:scrollbarThumbVertical="@drawable/ic_scroll_bar"
-        android:scrollbars="vertical"
-        tools:listitem="@layout/item_recipe_card" />
+        android:layout_height="match_parent">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/container_for_filter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="51dp"
-        android:visibility="gone">
+        <LinearLayout
+            android:id="@+id/linear_layout_empty_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/selector_gray_light"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:padding="@dimen/default_padding"
+            android:visibility="gone">
 
-        <!--Filled from java code-->
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottie_anim_empty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/empty"
+                android:cropToPadding="true"
+                android:scaleType="centerInside"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="empty_box.json"
+                app:lottie_loop="true" />
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/empty"
+                android:textAlignment="center"
+                android:textSize="15sp"
+                android:textStyle="bold|italic" />
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/searcher"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/background_accent_bottom"
-        app:defaultQueryHint="@string/search"
-        app:searchIcon="@drawable/ic_loupe" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:padding="@dimen/default_padding"
+                android:text="@string/reload"
+                android:textAlignment="center"
+                android:textSize="13sp"
+                android:textStyle="italic" />
 
+        </LinearLayout>
 
-</FrameLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_recipes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="107dp"
+            android:fadeScrollbars="true"
+            android:padding="@dimen/default_padding"
+            android:scrollbarStyle="insideOverlay"
+            android:scrollbars="vertical"
+            tools:listitem="@layout/item_recipe_card" />
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/container_for_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="52dp"
+            android:visibility="gone">
+
+            <!--Filled from java code-->
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searcher"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_accent_bottom"
+            android:layoutDirection="rtl"
+            app:defaultQueryHint="@string/search"/>
+
+    </FrameLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

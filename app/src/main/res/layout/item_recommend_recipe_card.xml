@@ -43,7 +43,7 @@
             android:cropToPadding="false"
             android:scaleType="centerCrop"
             android:transitionName="@string/recipe_image_transition_name"
-            app:shapeAppearanceOverlay="@style/circleImageView" />
+            app:shapeAppearanceOverlay="@style/roundCornerView" />
 
         <TextView
             android:id="@+id/recipe_title"

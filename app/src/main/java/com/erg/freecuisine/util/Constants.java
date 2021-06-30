@@ -26,6 +26,7 @@ public class Constants {
     public static final String LINK_KEY = "link_key";
     public static final String URL_KEY = "url";
     public static final String TAG_KEY = "tag_key";
+    public static final String QUERY_KEY = "query_key";
     public static final String SPACE_REGEX = "\\s+";
     public static final String SPACE = " ";
 
@@ -105,8 +106,15 @@ public class Constants {
     public static final String PREF_APP_FIRST_LAUNCH_KEY = "first_launch_key";
     public static final String OPEN_TIME_USAGE_KEY = "open_time_usage_key";
     public static final String LAST_RECIPE_READ_KEY = "last_recipe_key";
+    public static final String VIBRATION_STATUS_FLAG_KEY = "vibration_status_key";
+    public static final String SHUFFLE_STATUS_FLAG_KEY = "shuffle_status_key";
 
     /*VIEWS IDS*/
     public static final int FILTER_ID = 1000431;
 
+    public static final String URL_DEVELOPER = "https://www.linkedin.com/in/elioenai-reyes-gonzález";
+    public static final String INSTAGRAM_PACKAGE = "com.instagram.android";
+    public static final String LINKEDIN_PACKAGE = "com.linkedin.android";
+    public static final String MARKET_APP_DETAILS_URL = "market://details?id=";
+    public static final String GOOGLE_APP_DETAILS_URL = "http://play.google.com/store/apps/details?id=";
 }

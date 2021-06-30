@@ -12,6 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
@@ -21,13 +22,13 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.erg.freecuisine.R;
 import com.erg.freecuisine.adapters.LoadingAdapter;
 import com.erg.freecuisine.adapters.RecipesAdapter;
 import com.erg.freecuisine.adapters.RecipesFilterAdapter;
 import com.erg.freecuisine.controller.network.AsyncDataLoad;
 import com.erg.freecuisine.controller.network.helpers.FireBaseHelper;
+import com.erg.freecuisine.controller.network.helpers.SharedPreferencesHelper;
 import com.erg.freecuisine.controller.network.helpers.StringHelper;
 import com.erg.freecuisine.interfaces.OnFireBaseListenerDataStatus;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
@@ -43,6 +44,7 @@ import com.yalantis.filter.widget.Filter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 
@@ -50,6 +52,7 @@ import kotlinx.coroutines.Job;
 
 import static com.erg.freecuisine.util.Constants.FILTER_ID;
 import static com.erg.freecuisine.util.Constants.LINK_KEY;
+import static com.erg.freecuisine.util.Constants.QUERY_KEY;
 import static com.erg.freecuisine.util.Constants.RECIPE_KEY;
 import static com.erg.freecuisine.util.Constants.SAVED_STATE_KEY;
 import static com.erg.freecuisine.util.Constants.TAG_KEY;
@@ -57,13 +60,12 @@ import static com.erg.freecuisine.util.Constants.URL_KEY;
 
 public class RecipesFragment extends Fragment implements
         FilterListener<TagModel>, OnRecipeListener, OnFireBaseListenerDataStatus,
-        SearchView.OnQueryTextListener {
+        SearchView.OnQueryTextListener, SearchView.OnCloseListener, View.OnClickListener {
 
     private static final String TAG = "RecipesFragment";
 
     private View rootView;
     private RecyclerView recyclerViewRecipes;
-    private LottieAnimationView lottie_anim_empty;
     private SearchView searcher;
     private CoordinatorLayout filter_container;
     private Filter<TagModel> filter;
@@ -80,6 +82,9 @@ public class RecipesFragment extends Fragment implements
     private Job recipesLoaderJob;
     private Context mContext;
     private Bundle savedState = null;
+    private SharedPreferencesHelper spHelper;
+    private LinearLayout linearEmptyContainer;
+    private String currentSearchQuery = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,6 +95,7 @@ public class RecipesFragment extends Fragment implements
         tags = new ArrayList<>();
         tagsSelected = new ArrayList<>();
         asyncDataLoad = new AsyncDataLoad();
+        spHelper = new SharedPreferencesHelper(requireContext());
         colors = getResources().getIntArray(R.array.colors);
 
         if (savedInstanceState != null && savedState == null) {
@@ -102,10 +108,15 @@ public class RecipesFragment extends Fragment implements
                              ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: savedInstanceState = " + savedInstanceState);
         rootView = inflater.inflate(R.layout.fragment_recipes, container, false);
-
         setUpView();
-
         return rootView;
+    }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Log.d(TAG, "onViewCreated: ");
     }
 
     @Override
@@ -124,23 +135,17 @@ public class RecipesFragment extends Fragment implements
         }
         searcher = rootView.findViewById(R.id.searcher);
         recyclerViewRecipes = rootView.findViewById(R.id.recycler_view_recipes);
-        lottie_anim_empty = rootView.findViewById(R.id.lottie_anim_empty);
-
+        linearEmptyContainer = rootView.findViewById(R.id.linear_layout_empty_container);
         scaleUP = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
         scaleDown = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_down);
 
         searcher.setSubmitButtonEnabled(true);
         searcher.setOnQueryTextListener(this);
+        searcher.setOnCloseListener(this);
+        linearEmptyContainer.setOnClickListener(this);
 //        searcher.setOnSearchClickListener(this);
 
-        int numberOfColumns = 2;
-        StaggeredGridLayoutManager gridLayoutManager =
-                new StaggeredGridLayoutManager(numberOfColumns, StaggeredGridLayoutManager.VERTICAL);
-        recyclerViewRecipes.setLayoutManager(gridLayoutManager);
-        recyclerViewRecipes.setHasFixedSize(true);
-        GridItemDecoration gridItemDecoration = new GridItemDecoration(12, 9);
-        recyclerViewRecipes.addItemDecoration(gridItemDecoration);
-        recyclerViewRecipes.setVerticalScrollBarEnabled(false); // disable temporally scroll bar
+        setUpRecyclerView();
 
         if (savedState != null) {
             String recipesJson = savedState.getString(RECIPE_KEY);
@@ -152,13 +157,14 @@ public class RecipesFragment extends Fragment implements
             String tagsSelectedJson = savedState.getString(TAG_KEY);
             tagsSelected = StringHelper.getSelectedTagsFromStringJson(tagsSelectedJson);
 
+            currentSearchQuery = savedState.getString(QUERY_KEY, "");
+
             restoreState();
 
         } else {
             LoadingAdapter loadingAdapter = new LoadingAdapter(
                     getLoadingList(), requireContext(),
                     R.layout.loading_item_recipe_card);
-            recyclerViewRecipes.setNestedScrollingEnabled(false);
             recyclerViewRecipes.setAdapter(loadingAdapter);
 
             stopLoading();
@@ -188,13 +194,17 @@ public class RecipesFragment extends Fragment implements
     public void onRecipesLoaded(ArrayList<RecipeModel> recipes) {
         Log.d(TAG, "onRecipesLoaded: Recipes = " + recipes.toString());
         this.recipes = recipes;
-        if (mContext != null && isVisible() && !this.recipes.isEmpty()
-                && isVisible()) {
-            recipesAdapter = new RecipesAdapter(this.recipes, requireContext(), this);
-            recyclerViewRecipes.setAdapter(recipesAdapter);
-            recyclerViewRecipes.setNestedScrollingEnabled(true);
-            recyclerViewRecipes.setVerticalScrollBarEnabled(true);
-            setUpFilterView(links);
+        if (mContext != null && isVisible()) {
+
+            if (!this.recipes.isEmpty()) {
+                if (spHelper.getShuffleStatus()) {
+                    Collections.shuffle(this.recipes);
+                }
+                setUpRecyclerView();
+                recipesAdapter = new RecipesAdapter(this.recipes, requireContext(), this);
+                recyclerViewRecipes.setAdapter(recipesAdapter);
+                setUpFilterView(links);
+            }
             refreshView();
         }
     }
@@ -202,6 +212,18 @@ public class RecipesFragment extends Fragment implements
     @Override
     public void onMainUrlLoaded(LinkModel link) {
         //Empty
+    }
+
+    private void setUpRecyclerView() {
+
+        int numberOfColumns = 2;
+        StaggeredGridLayoutManager gridLayoutManager =
+                new StaggeredGridLayoutManager(numberOfColumns, StaggeredGridLayoutManager.VERTICAL);
+        recyclerViewRecipes.setLayoutManager(gridLayoutManager);
+        recyclerViewRecipes.setHasFixedSize(true);
+        GridItemDecoration gridItemDecoration = new GridItemDecoration(7, 3);
+        recyclerViewRecipes.addItemDecoration(gridItemDecoration);
+
     }
 
     private void setUpFilterView(List<LinkModel> links) {
@@ -227,12 +249,12 @@ public class RecipesFragment extends Fragment implements
 
     public void refreshView() {
         if (recipes != null && !recipes.isEmpty()) {
-            Util.hideView(null, lottie_anim_empty);
+            Util.hideView(null, linearEmptyContainer);
             Util.showView(scaleUP, recyclerViewRecipes);
             Util.showView(scaleUP, filter);
             Util.showView(scaleUP, searcher);
         } else {
-            Util.showView(scaleUP, lottie_anim_empty);
+            Util.showView(scaleUP, linearEmptyContainer);
             Util.hideView(scaleDown, recyclerViewRecipes);
             Util.hideView(scaleDown, filter);
             Util.hideView(scaleUP, searcher);
@@ -273,13 +295,16 @@ public class RecipesFragment extends Fragment implements
         if (tagsSelected != null)
             tagsSelected.clear();
         if (recyclerViewRecipes != null && !recipes.isEmpty()) {
-            recipesAdapter.refreshAdapter(recipes);
+            if (!currentSearchQuery.isEmpty()) {
+                searcher.setQuery(currentSearchQuery, false);
+            } else if (recipesAdapter != null)
+                recipesAdapter.refreshAdapter(recipes);
         }
     }
 
     @Override
     public void onFiltersSelected(@NotNull ArrayList<TagModel> tags) {
-        Log.d(TAG, "onFiltersSelected: ");
+        Log.d(TAG, "onFiltersSelected: tags = " + tags);
         tagsSelected = tags;
         List<RecipeModel> oldRecipes = recipesAdapter.getRecipes();
         List<RecipeModel> newRecipes = Util.findByTags(tags, recipes);
@@ -318,8 +343,16 @@ public class RecipesFragment extends Fragment implements
         loadFragment(position, view);
     }
 
+    @Override
+    public void onClick(View v) {
+        Util.vibrate(requireContext());
+        if (v.getId() == R.id.linear_layout_empty_container) {
+            Util.refreshCurrentFragment(requireActivity());
+        }
+    }
+
     private void loadFragment(int position, View view) {
-        Util.vibrateMin(requireContext());
+        Util.vibrate(requireContext());
         RecipeModel currentRecipe = recipesAdapter.getRecipes().get(position);
         Bundle args = new Bundle();
         args.putString(URL_KEY, currentRecipe.getLink());
@@ -338,7 +371,7 @@ public class RecipesFragment extends Fragment implements
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-//        currentSearchQuery = query;
+        currentSearchQuery = query;
         if (query != null && !query.isEmpty()) {
             filter(query);
         }
@@ -347,7 +380,8 @@ public class RecipesFragment extends Fragment implements
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        Log.d(TAG, "onQueryTextChange: newText = " + newText);
+        currentSearchQuery = newText;
+        Log.d(TAG, "onQueryTextChange: newText =" + newText);
         if (newText != null) {
             if (!newText.isEmpty()) {
                 filter(newText);
@@ -358,13 +392,21 @@ public class RecipesFragment extends Fragment implements
         return false;
     }
 
+    @Override
+    public boolean onClose() {
+        Log.d(TAG, "onClose: ");
+        resetRecipeList();
+        currentSearchQuery = "";
+        return false;
+    }
+
     private void resetRecipeList() {
-        if (tagsSelected != null) {
-            if (tagsSelected.isEmpty()) {
-                if (recipesAdapter != null)
-                    recipesAdapter.refreshAdapter(recipes);
-            } else {
+        Log.d(TAG, "resetRecipeList: ");
+        if (recipes != null && !recipes.isEmpty()) {
+            if (tagsSelected != null && !tagsSelected.isEmpty()) {
                 onFiltersSelected(tagsSelected);
+            } else {
+                recipesAdapter.refreshAdapter(recipes);
             }
         }
     }
@@ -404,6 +446,7 @@ public class RecipesFragment extends Fragment implements
     public void onDestroyView() {
         super.onDestroyView();
         savedState = saveState();
+        recyclerViewRecipes.setAdapter(null);
         Log.d(TAG, "onDestroyView: savedState = " + savedState);
     }
 
@@ -421,18 +464,28 @@ public class RecipesFragment extends Fragment implements
             String tagsSelectedJson = new Gson().toJson(tagsSelected);
             state.putString(TAG_KEY, tagsSelectedJson);
         }
+
+        if (!currentSearchQuery.isEmpty()) {
+            state.putString(QUERY_KEY, currentSearchQuery);
+        }
+
         return state;
     }
 
     private void restoreState() {
         Log.d(TAG, "restoreState: savedState = " + savedState);
         if (recipes != null && !recipes.isEmpty()) {
+            setUpRecyclerView();
             recipesAdapter = new RecipesAdapter(this.recipes, requireContext(), this);
-            recyclerViewRecipes.swapAdapter(recipesAdapter, false);
-            recyclerViewRecipes.setVerticalScrollBarEnabled(true);
+            recyclerViewRecipes.setAdapter(recipesAdapter);
             Log.d(TAG, "restoreState: RECIPES = " + recipes.toString());
 
-            if (links != null && !links.isEmpty()) {
+            if (!currentSearchQuery.isEmpty()) {
+                searcher.setQuery(currentSearchQuery, false);
+                if (links != null && !links.isEmpty()) {
+                    setUpFilterView(links);
+                }
+            } else if (links != null && !links.isEmpty()) {
                 setUpFilterView(links);
                 Log.d(TAG, "restoreState: LINKS: " + links.toString());
 

@@ -49,6 +49,30 @@
     <string name="days_ago">\ días atrás</string>
     <string name="last_reading">Última lectura</string>
     <string name="ic_last_recipe">Icono ultima receta</string>
+    <string name="test_email">elioworkemail@gmail.com</string>
+    <string name="login">registrar</string>
+    <string name="language">Idioma</string>
+    <string name="vibration">Vibración</string>
+    <string name="arrow">Flecha</string>
+    <string name="email_about_page">dememoteam@gmail.com</string>
+    <string name="app_version_about_page">Version: 1.0.0</string>
+    <string name="play_store_about_page">Califíquenos en Play Store</string>
+    <string name="instagram_about_page">Síganos en Instagram</string>
+    <string name="contact_us_about_page">Contáctenos vía E-mail</string>
+    <string name="title1_about_page">#realimentación</string>
+    <string name="title2_about_page">#desarrollador</string>
+    <string name="developer1_about_page">Elioenai Reyes</string>
+    <string name="version">Versión:</string>
+    <string name="icon">Icono</string>
+    <string name="about">Acerca de</string>
+
+    <string name="description_about_page">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam dapibus, risus in pretium
+        tristique, ante metus consectetur felis, eu ultricies nisi lectus ac sem. Mauris lacinia
+        nulla sed libero dignissim, quis pellentesque diam semper. Donec id finibus eros, et luctus
+        nulla. Etiam non massa ornare, hendrerit lacus sit amet, fermentum odio.</string>
+    <string name="shuffle">Mezcla automática</string>
+    <string name="network_error">¡Error de red! Por favor revisar su conexion a internet</string>
 
     <string-array name="day_codes">
         <item>mon_</item>

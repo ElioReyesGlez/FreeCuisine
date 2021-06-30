@@ -13,15 +13,61 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>
         <!-- Customize your theme here. -->
         <item name="android:windowContentTransitions">true</item>
+
+        <item name="materialCardViewStyle">@style/Widget.App.CardView</item>
+
+        <!-- Active thumb color & Active track color(30% transparency) -->
+        <item name="colorControlActivated">@color/colorPrimary</item>
+        <!-- Inactive thumb color -->
+        <item name="colorSwitchThumbNormal">@color/gray_btn_bg_color_light</item>
+
+    </style>
+
+    <style name="Widget.App.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Card</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Card" parent="">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorSurface">@color/colorPrimaryVariant</item>
+        <item name="colorOnSurface">@color/colorOnPrimary</item>
     </style>
 
     <style name="checkbox_check_color" parent="Theme.AppCompat">
         <item name="colorAccent">@color/colorPrimary</item>
     </style>
 
-    <style name="circleImageView" parent="">
+    <style name="roundCornerView" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">3%</item>
         <item name="borderWidth">1dp</item>
     </style>
+
+    <style name="circleImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+        <item name="borderWidth">1dp</item>
+    </style>
+
+    <style name="ok_button" parent="android:Widget.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">33dp</item>
+        <item name="android:background">@drawable/selector_gray_light</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:textColor">@color/dark_gray_btn_bg_color</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
+
+    <style name="tag_textView_title" parent="android:Widget.TextView">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textSize">@dimen/titles_text_size</item>
+        <item name="android:textColor">@color/md_red_200</item>
+    </style>
+
+
 </resources>

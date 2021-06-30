@@ -21,6 +21,8 @@ import static com.erg.freecuisine.util.Constants.LAST_USAGE_KEY;
 import static com.erg.freecuisine.util.Constants.OPEN_TIME_USAGE_KEY;
 import static com.erg.freecuisine.util.Constants.PREF_APP_FIRST_LAUNCH_KEY;
 import static com.erg.freecuisine.util.Constants.SHARED_PREF_NAME;
+import static com.erg.freecuisine.util.Constants.SHUFFLE_STATUS_FLAG_KEY;
+import static com.erg.freecuisine.util.Constants.VIBRATION_STATUS_FLAG_KEY;
 
 public class SharedPreferencesHelper {
 
@@ -61,18 +63,24 @@ public class SharedPreferencesHelper {
         return sharedPref.contains(key);
     }
 
-    public Long getLastSyncDate(String key) {
-        return sharedPref.getLong(key, 0);
-    }
-
-    public void setLastSync(String key, long date) {
+    public void setVibrationStatus(boolean flag) {
         editor = sharedPref.edit();
-        editor.putLong(key, date);
+        editor.putBoolean(VIBRATION_STATUS_FLAG_KEY, flag);
         editor.apply();
     }
 
-    public boolean getEvaluatorInfoMessageStatus(String tag) {
-        return sharedPref.getBoolean(tag, false);
+    public boolean getVibrationStatus() {
+        return sharedPref.getBoolean(VIBRATION_STATUS_FLAG_KEY, false);
+    }
+
+    public void setShuffleStatus(boolean flag) {
+        editor = sharedPref.edit();
+        editor.putBoolean(SHUFFLE_STATUS_FLAG_KEY, flag);
+        editor.apply();
+    }
+
+    public boolean getShuffleStatus() {
+        return sharedPref.getBoolean(SHUFFLE_STATUS_FLAG_KEY, false);
     }
 
     public ArrayList<Float> getUserActivity() {

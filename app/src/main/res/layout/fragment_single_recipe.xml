@@ -98,7 +98,7 @@
                     android:cropToPadding="false"
                     android:elevation="@dimen/default_elevation"
                     android:scaleType="centerCrop"
-                    app:shapeAppearanceOverlay="@style/circleImageView" />
+                    app:shapeAppearanceOverlay="@style/roundCornerView" />
 
 
                 <LinearLayout

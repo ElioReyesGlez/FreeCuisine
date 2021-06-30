@@ -29,4 +29,6 @@
     <dimen name="default_margin">3dp</dimen>
     <dimen name="default_margin_1dp">1dp</dimen>
     <dimen name="regular_window_padding">2dp</dimen>
+    <dimen name="settings_item_margin_horizontal">20dp</dimen>
+
 </resources>

@@ -64,7 +64,7 @@
             android:layout_marginBottom="@dimen/margin"
             android:cropToPadding="false"
             android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/circleImageView"
+            app:shapeAppearanceOverlay="@style/roundCornerView"
             android:adjustViewBounds="true"
             android:layout_below="@+id/tv_preparation_description"/>
 

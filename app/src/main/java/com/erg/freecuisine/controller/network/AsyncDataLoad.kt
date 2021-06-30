@@ -37,16 +37,14 @@ class AsyncDataLoad {
     fun loadSingleRecipeAsync(contextActivity: FragmentActivity,
                               onRecipeListener: OnRecipeListener,
                               link: String,
-                              tags: ArrayList<TagModel>): RecipeModel {
-        var recipe = RecipeModel()
-        scopeLoader2.launch {
-            recipe = JsoupController.getRecipe(link, tags)
+                              tags: ArrayList<TagModel>): Job {
+        return scopeLoader2.launch {
+            val recipe = JsoupController.getRecipe(link, tags)
             contextActivity.runOnUiThread {
                 onRecipeListener.onSingleRecipeLoaded(recipe)
                 if (isActive) cancel()
             }
         }
-        return recipe
     }
 
     fun loadRecommendRecipesAsync(contextActivity: FragmentActivity,

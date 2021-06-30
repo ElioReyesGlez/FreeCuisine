@@ -1,4 +1,4 @@
-package com.erg.freecuisine.controller.network.helpers;
+    package com.erg.freecuisine.controller.network.helpers;
 
 import android.util.Log;
 
@@ -24,7 +24,7 @@ public class FireBaseHelper {
     private static final String TAG = "FireBaseHelper";
 
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference linksReference, mainUrl;
+    private DatabaseReference linksReference;
 
 
     public FireBaseHelper() {

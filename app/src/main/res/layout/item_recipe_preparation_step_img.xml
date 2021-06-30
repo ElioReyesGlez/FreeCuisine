@@ -5,7 +5,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    card_view:cardBackgroundColor="@color/custom_white_text_color"
     card_view:cardCornerRadius="6dp"
     card_view:cardUseCompatPadding="true">
 
@@ -20,7 +19,6 @@
             android:id="@+id/tv_preparation_number_order"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/background_accent_light"
             android:textStyle="bold"
             android:textSize="@dimen/titles_text_size_full_view"
             android:text="1"
@@ -64,7 +62,7 @@
             android:layout_marginBottom="@dimen/margin"
             android:cropToPadding="false"
             android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/circleImageView"
+            app:shapeAppearanceOverlay="@style/roundCornerView"
             android:adjustViewBounds="true"
             android:layout_below="@+id/tv_preparation_description"/>
 
