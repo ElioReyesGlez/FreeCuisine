@@ -6,6 +6,7 @@
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
         Etiam ac orci massa. Suspendisse a libero a dolor elementum fringilla faucibus vitae leo.
         Mauris ut metus et quam faucibus lobortis dictum id ligula.</string>
+    <string name="lorem_ipsum_small">Lorem ipsum dolor sit amet</string>
     <string name="recipe_image">recipe image</string>
     <string name="recipe_image_transition_name">recipe_image_transition_name</string>
     <string name="recipe_title_transition_name">recipe_title_transition_name</string>
@@ -72,7 +73,20 @@
         nulla sed libero dignissim, quis pellentesque diam semper. Donec id finibus eros, et luctus
         nulla. Etiam non massa ornare, hendrerit lacus sit amet, fermentum odio.</string>
     <string name="shuffle">Mezcla automática</string>
-    <string name="network_error">¡Error de red! Por favor revisar su conexion a internet</string>
+    <string name="network_error">¡Error de red! Por favor revise su conexion a internet</string>
+    <string name="zero">0</string>
+    <string name="recipe_cont">Recipes</string>
+    <string name="last_sync">Última Sync</string>
+    <string name="blank">---</string>
+    <string name="usage">Uso</string>
+    <string name="bookmarks">Marcadores</string>
+    <string name="vibration_description">Respuesta vibratoria para obtener una mejor experiencia de
+        navegación a través de la pantalla táctil.</string>
+    <string name="shuffle_description">Mezcla automática aleatoria de la lista de recetas para
+        obtener un orden diferente cada vez que es mostrada al usuario.</string>
+    <string name="sync">Sincronizar</string>
+    <string name="refresh">refrescar</string>
+    <string name="some_error">Algo malo paso, por favor carge la vista denuevo</string>
 
     <string-array name="day_codes">
         <item>mon_</item>

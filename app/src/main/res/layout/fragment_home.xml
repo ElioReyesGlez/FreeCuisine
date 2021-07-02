@@ -77,14 +77,17 @@
                         android:text="@string/empty"
                         android:textAlignment="center"
                         android:textSize="@dimen/titles_text_size"
+                        android:textColor="@color/text_second_color"
                         android:textStyle="bold|italic" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
+                        android:padding="@dimen/default_padding"
                         android:text="@string/reload"
                         android:textAlignment="center"
+                        android:textColor="@color/text_second_color"
                         android:textSize="@dimen/description_text_size"
                         android:textStyle="italic" />
 

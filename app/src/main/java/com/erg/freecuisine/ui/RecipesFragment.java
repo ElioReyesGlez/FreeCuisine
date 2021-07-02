@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,6 +29,7 @@ import com.erg.freecuisine.adapters.RecipesAdapter;
 import com.erg.freecuisine.adapters.RecipesFilterAdapter;
 import com.erg.freecuisine.controller.network.AsyncDataLoad;
 import com.erg.freecuisine.controller.network.helpers.FireBaseHelper;
+import com.erg.freecuisine.controller.network.helpers.MessageHelper;
 import com.erg.freecuisine.controller.network.helpers.SharedPreferencesHelper;
 import com.erg.freecuisine.controller.network.helpers.StringHelper;
 import com.erg.freecuisine.interfaces.OnFireBaseListenerDataStatus;
@@ -43,6 +45,8 @@ import com.yalantis.filter.widget.Filter;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -85,12 +89,14 @@ public class RecipesFragment extends Fragment implements
     private SharedPreferencesHelper spHelper;
     private LinearLayout linearEmptyContainer;
     private String currentSearchQuery = "";
+    private FireBaseHelper fireBaseHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: savedInstanceState = " + savedInstanceState);
 
+        fireBaseHelper = new FireBaseHelper();
         recipes = new ArrayList<>();
         tags = new ArrayList<>();
         tagsSelected = new ArrayList<>();
@@ -162,13 +168,23 @@ public class RecipesFragment extends Fragment implements
             restoreState();
 
         } else {
-            LoadingAdapter loadingAdapter = new LoadingAdapter(
-                    getLoadingList(), requireContext(),
-                    R.layout.loading_item_recipe_card);
-            recyclerViewRecipes.setAdapter(loadingAdapter);
 
-            stopLoading();
-            new FireBaseHelper().getLinks(this);
+            if (Util.isNetworkAvailable(requireActivity())) {
+
+                LoadingAdapter loadingAdapter = new LoadingAdapter(
+                        getLoadingList(), requireContext(),
+                        R.layout.loading_item_recipe_card);
+                recyclerViewRecipes.setAdapter(loadingAdapter);
+
+                fireBaseHelper.init(this);
+            } else {
+                MessageHelper.showInfoMessageWarning(
+                        requireActivity(),
+                        getString(R.string.network_error),
+                        rootView);
+                stopLoading();
+                refreshView();
+            }
         }
         savedState = null;
     }
@@ -182,13 +198,36 @@ public class RecipesFragment extends Fragment implements
     }
 
     @Override
+    public void onConnectionListener(boolean isConnected) {
+        Log.d(TAG, "onConnectionListener: CONNECTED = " + isConnected);
+        if (isConnected) {
+            fireBaseHelper.getLinks(this);
+        } else {
+            if (isVisible())
+                MessageHelper.showInfoMessageWarning(
+                        requireActivity(),
+                        getString(R.string.network_error),
+                        rootView);
+            stopLoading();
+            refreshView();
+        }
+    }
+
+    @Override
     public void onLinksLoaded(List<LinkModel> links, List<String> keys) {
         Log.d(TAG, "onLinksLoaded: LINKS = " + links.toString());
         this.links = links;
-        recipesLoaderJob = asyncDataLoad.loadRecipesAsync(
-                requireActivity(), this, links);
+        stopLoading();
+        if (isAdded()) {
+            recipesLoaderJob = asyncDataLoad.loadRecipesAsync(
+                    requireActivity(), this, links);
+        }
     }
 
+    @Override
+    public void onMainUrlsLoaded(List<LinkModel> links, List<String> keys) {
+        /*Empty*/
+    }
 
     @Override
     public void onRecipesLoaded(ArrayList<RecipeModel> recipes) {
@@ -210,9 +249,43 @@ public class RecipesFragment extends Fragment implements
     }
 
     @Override
-    public void onMainUrlLoaded(LinkModel link) {
-        //Empty
+    public void onLoaderFailed(ArrayList<RecipeModel> recipes, Exception e) {
+        Log.d(TAG, "onRecipesLoadedFailed: ERROR = " + e.toString());
+        if (e instanceof SocketTimeoutException) {
+            showTimeOutMessage();
+        } else {
+            showErrorMessage();
+        }
     }
+
+    private void showTimeOutMessage() {
+        if (isVisible()) {
+            requireActivity().runOnUiThread(() -> {
+                MessageHelper.showInfoMessageError(
+                        requireActivity(), getString(R.string.network_error),
+                        rootView);
+                refreshView();
+            });
+        } else {
+            Toast.makeText(requireContext(),
+                    getString(R.string.some_error), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void showErrorMessage() {
+        if (isVisible()) {
+            requireActivity().runOnUiThread(() -> {
+                MessageHelper.showInfoMessageError(
+                        requireActivity(), getString(R.string.some_error),
+                        rootView);
+                refreshView();
+            });
+        } else {
+            Toast.makeText(requireContext(),
+                    getString(R.string.some_error), Toast.LENGTH_LONG).show();
+        }
+    }
+
 
     private void setUpRecyclerView() {
 
@@ -249,15 +322,15 @@ public class RecipesFragment extends Fragment implements
 
     public void refreshView() {
         if (recipes != null && !recipes.isEmpty()) {
-            Util.hideView(null, linearEmptyContainer);
-            Util.showView(scaleUP, recyclerViewRecipes);
-            Util.showView(scaleUP, filter);
-            Util.showView(scaleUP, searcher);
+            Util.hideView(scaleDown, linearEmptyContainer);
+            Util.showView(null, recyclerViewRecipes);
+            Util.showView(null, filter);
+            Util.showView(null, searcher);
         } else {
             Util.showView(scaleUP, linearEmptyContainer);
-            Util.hideView(scaleDown, recyclerViewRecipes);
-            Util.hideView(scaleDown, filter);
-            Util.hideView(scaleUP, searcher);
+            Util.hideView(null, recyclerViewRecipes);
+            Util.hideView(null, filter);
+            Util.hideView(null, searcher);
         }
     }
 
@@ -355,7 +428,7 @@ public class RecipesFragment extends Fragment implements
         Util.vibrate(requireContext());
         RecipeModel currentRecipe = recipesAdapter.getRecipes().get(position);
         Bundle args = new Bundle();
-        args.putString(URL_KEY, currentRecipe.getLink());
+        args.putString(URL_KEY, currentRecipe.getUrl());
         ArrayList<TagModel> tagModels = new ArrayList<>(currentRecipe.getTags());
         args.putParcelableArrayList(TAG_KEY, tagModels);
 

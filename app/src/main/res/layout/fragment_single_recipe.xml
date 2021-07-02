@@ -7,6 +7,67 @@
     android:background="@color/colorOnPrimary"
     tools:context=".ui.SingleRecipeFragment">
 
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_anim_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/empty"
+        android:cropToPadding="true"
+        android:scaleType="centerInside"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="loading_round.json"
+        app:lottie_loop="true"
+        app:lottie_speed="2.5" />
+
+    <LinearLayout
+        android:id="@+id/linear_layout_empty_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/selector_gray_light"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:padding="@dimen/default_padding"
+        android:visibility="gone">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_anim_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/empty"
+            android:cropToPadding="true"
+            android:scaleType="centerInside"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="empty_box.json"
+            app:lottie_loop="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/empty"
+            android:textAlignment="center"
+            android:textSize="15sp"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="@dimen/default_padding"
+            android:text="@string/reload"
+            android:textAlignment="center"
+            android:textSize="13sp"
+            android:textStyle="italic" />
+
+    </LinearLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,74 +77,14 @@
             android:id="@+id/relativeLayout_main_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/lottie_anim_loading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/empty"
-                android:cropToPadding="true"
-                android:scaleType="centerInside"
-                app:lottie_autoPlay="true"
-                app:lottie_fileName="loading_round.json"
-                app:lottie_loop="true"
-                app:lottie_speed="2.5" />
-
-            <LinearLayout
-                android:id="@+id/linear_layout_empty_container"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:background="@drawable/selector_gray_light"
-                android:clickable="true"
-                android:focusable="true"
-                android:orientation="vertical"
-                android:padding="@dimen/default_padding"
-                android:visibility="gone">
-
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/lottie_anim_empty"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/empty"
-                    android:cropToPadding="true"
-                    android:scaleType="centerInside"
-                    app:lottie_autoPlay="true"
-                    app:lottie_fileName="empty_box.json"
-                    app:lottie_loop="true" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="@string/empty"
-                    android:textAlignment="center"
-                    android:textSize="15sp"
-                    android:textStyle="bold|italic" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:padding="@dimen/default_padding"
-                    android:text="@string/reload"
-                    android:textAlignment="center"
-                    android:textSize="13sp"
-                    android:textStyle="italic" />
-
-            </LinearLayout>
-
             <RelativeLayout
                 android:id="@+id/relative_container_recipe_main_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:visibility="gone">
+                android:visibility="gone"
+                tools:ignore="UselessParent">
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/recipe_main_image"

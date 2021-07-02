@@ -21,6 +21,8 @@ import java.util.TimeZone;
 
 public class TimeHelper {
 
+    public static final int TIME_OUT =  30000;
+
     public static long getDifferenceInMinutes(long date1, long date2) {
         Date past = new Date();
         past.setTime(date1);

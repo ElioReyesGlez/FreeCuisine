@@ -3,6 +3,8 @@ plugins {
     id 'androidx.navigation.safeargs'
     id 'com.google.gms.google-services'
     id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'realm-android'
 }
 
 android {
@@ -34,6 +36,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    ndkVersion '21.0.6113669'
 }
 
 dependencies {

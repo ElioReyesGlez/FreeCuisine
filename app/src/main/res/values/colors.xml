@@ -42,6 +42,8 @@
     </array>
 
 
+    <color name="md_yellow_50">#fffde7</color>
+
     <color name="custom_white_text_color">#f2f1f1</color>
     <color name="gray_btn_bg_color">#D0D0D0</color>
     <color name="gray_btn_bg_color_light">#e0e0e0</color>

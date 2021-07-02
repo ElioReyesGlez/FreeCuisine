@@ -6,7 +6,8 @@ import java.util.List;
 
 public interface OnFireBaseListenerDataStatus {
     void onLinksLoaded(List<LinkModel> links, List<String> keys);
-    void onMainUrlLoaded(LinkModel link);
+    void onMainUrlsLoaded(List<LinkModel> links, List<String> keys);
+    void onConnectionListener(boolean isConnected);
 //    void dataIsInserted();
 //    void dataIsUpdated();
 //    void dataIsDeleted();

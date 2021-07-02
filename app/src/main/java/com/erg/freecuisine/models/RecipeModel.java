@@ -26,7 +26,7 @@ public class RecipeModel implements Parcelable {
     //    private List<ImageModel> images;
     private ImageModel image;
     private List<TagModel> tags;
-    private String link;
+    private String url;
 
     public RecipeModel() {
     }
@@ -52,7 +52,7 @@ public class RecipeModel implements Parcelable {
     public RecipeModel(String id, String title, String description, int ratings, String time,
                        String diners, String type, List<CommentModel> comments, String ingredients,
                        List<StepModel> steps, String extra, ImageModel image,
-                       List<TagModel> tags, String link) {
+                       List<TagModel> tags, String url) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -66,7 +66,7 @@ public class RecipeModel implements Parcelable {
         this.extra = extra;
         this.image = image;
         this.tags = tags;
-        this.link = link;
+        this.url = url;
     }
 
     // Parcelling part
@@ -327,11 +327,11 @@ public class RecipeModel implements Parcelable {
         return 0;
     }
 
-    public String getLink() {
-        return link;
+    public String getUrl() {
+        return url;
     }
 
-    public void setLink(String link) {
-        this.link = link;
+    public void setUrl(String link) {
+        this.url = link;
     }
 }

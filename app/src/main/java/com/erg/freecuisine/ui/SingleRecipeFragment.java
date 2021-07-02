@@ -12,6 +12,7 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,6 +24,7 @@ import androidx.transition.TransitionInflater;
 import com.airbnb.lottie.LottieAnimationView;
 import com.erg.freecuisine.R;
 import com.erg.freecuisine.controller.network.AsyncDataLoad;
+import com.erg.freecuisine.controller.network.helpers.MessageHelper;
 import com.erg.freecuisine.controller.network.helpers.SharedPreferencesHelper;
 import com.erg.freecuisine.controller.network.helpers.StringHelper;
 import com.erg.freecuisine.controller.network.helpers.TimeHelper;
@@ -38,6 +40,8 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.Abs
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.concurrent.CancellationException;
@@ -313,5 +317,53 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener {
     @Override
     public void onRecipesLoaded(ArrayList<RecipeModel> recipes) {
         //Empty
+    }
+
+    @Override
+    public void onLoaderFailed(ArrayList<RecipeModel> recipes, Exception e) {
+        Log.d(TAG, "onRecipesLoadedFailed: ERROR = " + e.toString());
+        if (e instanceof SocketTimeoutException) {
+            showTimeOutMessage();
+        } else {
+            showErrorMessage();
+        }
+    }
+
+    private void showTimeOutMessage() {
+        if (isVisible()) {
+            requireActivity().runOnUiThread(() -> {
+                MessageHelper.showInfoMessageError(
+                        requireActivity(), getString(R.string.network_error),
+                        rootView);
+                refreshView();
+            });
+        } else {
+            Toast.makeText(requireContext(),
+                    getString(R.string.some_error), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void showErrorMessage() {
+        if (isVisible()) {
+            requireActivity().runOnUiThread(() -> {
+                MessageHelper.showInfoMessageError(
+                        requireActivity(), getString(R.string.some_error),
+                        rootView);
+                refreshView();
+            });
+        } else {
+            Toast.makeText(requireContext(),
+                    getString(R.string.some_error), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void refreshView() {
+        if (recipe != null && !recipe.getId().isEmpty()) {
+            Util.showView(scaleUp, linear_layout_empty_container);
+            Util.hideView(null, relative_container_recipe_main_info);
+        } else {
+            Util.showView(scaleUp, relative_container_recipe_main_info);
+            Util.hideView(null, linear_layout_empty_container);
+        }
     }
 }

@@ -21,6 +21,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import java.util.ArrayList;
 
+import io.realm.Realm;
+
 public class MainActivity extends AppCompatActivity implements
         BottomNavigationView.OnNavigationItemReselectedListener {
 
@@ -30,6 +32,9 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Realm.init(this);
+
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemReselectedListener(this);
 

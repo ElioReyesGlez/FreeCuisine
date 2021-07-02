@@ -62,11 +62,14 @@ public class StringHelper {
     }
 
     public static String extractPropertyByClassTag(Element recipeInfo, String tag) {
-        Element property = recipeInfo.getElementsByClass(tag).first();
-        if (property != null)
-            return property.text();
-        else
-            return "";
+        if (recipeInfo != null) {
+            Element property = recipeInfo.getElementsByClass(tag).first();
+            if (property != null)
+                return property.text();
+            else
+                return "";
+        }
+        return  "";
     }
 
     public static String extractTextByClassTag(Element rootElement, String tag) {

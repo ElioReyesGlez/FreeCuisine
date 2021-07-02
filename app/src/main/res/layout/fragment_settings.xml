@@ -105,10 +105,236 @@
 
             </RelativeLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_top"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/tag_textView_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@string/recipes"
+                        android:textColor="@color/text_second_color"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tv_verses_cont"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@string/zero"
+                        android:contentDescription="@string/recipe_cont"
+                        android:textColor="#919191"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/tag_textView_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@string/usage"
+                        android:textColor="@color/text_second_color"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tv_user_score"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@string/zero"
+                        android:textColor="#919191"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/tag_textView_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@string/last_sync"
+                        android:textColor="@color/text_second_color"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tv_upload_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@string/blank"
+                        android:textColor="#919191"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/default_margin"
+            android:background="@drawable/background_gray"
+            android:baselineAligned="false"
+            android:elevation="@dimen/default_elevation"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="12dp">
+
+            <RelativeLayout
+                android:id="@+id/rl_sync"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_margin="@dimen/default_margin"
+                android:background="@drawable/selector_white"
+                android:padding="@dimen/default_padding">
+
+                <ImageView
+                    android:id="@+id/iv_sync_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="20dp"
+                    android:contentDescription="@string/icon"
+                    android:src="@drawable/ic_synchronize" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/default_margin"
+                    android:layout_toStartOf="@+id/iv_sync_needed"
+                    android:layout_toEndOf="@+id/iv_sync_icon"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/sync"
+                    android:textAlignment="center"
+                    android:textColor="@color/text_second_color"
+                    android:textSize="@dimen/titles_text_size"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/iv_sync_needed"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_margin="@dimen/default_padding"
+                    android:layout_toStartOf="@+id/sync_progress_circular"
+                    android:background="@drawable/selector_yellow"
+                    android:clickable="true"
+                    android:contentDescription="@string/icon"
+                    android:focusable="true"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_exclamation_mark"
+                    android:visibility="invisible" />
+
+                <ProgressBar
+                    android:id="@+id/sync_progress_circular"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="@dimen/default_padding"
+                    android:contentDescription="@string/refresh"
+                    android:visibility="invisible" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_bookmarks_container"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="@dimen/default_margin"
+                android:layout_marginEnd="@dimen/default_margin"
+                android:layout_marginBottom="@dimen/default_margin"
+                android:layout_marginTop="@dimen/settings_item_margin_horizontal"
+                android:background="@drawable/selector_white"
+                android:elevation="@dimen/default_elevation"
+                android:padding="@dimen/default_padding"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:id="@+id/icon_bookmark"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="@dimen/default_margin"
+                    android:contentDescription="@string/icon"
+                    android:src="@drawable/ic_bookmark" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@id/iv_arrow_bookmark"
+                    android:layout_toEndOf="@+id/icon_bookmark"
+                    android:text="@string/bookmarks"
+                    android:textAlignment="center"
+                    android:textColor="@color/text_second_color"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/iv_arrow_bookmark"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/arrow"
+                    android:src="@drawable/ic_arrow_right" />
+            </RelativeLayout>
+
             <RelativeLayout
                 android:id="@+id/rl_vibration_container"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginEnd="@dimen/default_margin"
                 android:layout_marginBottom="@dimen/default_margin"
@@ -130,16 +356,31 @@
                 </ImageView>
 
                 <TextView
+                    android:id="@+id/tc_vibration_main_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_marginTop="@dimen/default_margin"
+                    android:layout_centerHorizontal="true"
                     android:layout_toStartOf="@+id/switch_vibration"
                     android:layout_toEndOf="@+id/ic_vibration"
                     android:text="@string/vibration"
                     android:textAlignment="center"
                     android:textColor="@color/text_second_color"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/titles_text_size"
                     android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tc_vibration_main_text"
+                    android:layout_toStartOf="@+id/switch_vibration"
+                    android:layout_toEndOf="@+id/ic_vibration"
+                    android:layout_margin="@dimen/default_margin"
+                    android:padding="@dimen/default_padding"
+                    android:text="@string/vibration_description"
+                    android:textAlignment="center"
+                    android:textColor="@color/text_second_color"
+                    android:textSize="@dimen/description_text_size" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switch_vibration"
@@ -153,7 +394,7 @@
             <RelativeLayout
                 android:id="@+id/rl_shuffle_container"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginEnd="@dimen/default_margin"
                 android:layout_marginBottom="@dimen/default_margin"
@@ -175,16 +416,31 @@
                 </ImageView>
 
                 <TextView
+                    android:id="@+id/tv_main_text_shuffle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_marginTop="@dimen/default_margin"
+                    android:layout_centerHorizontal="true"
                     android:layout_toStartOf="@+id/switch_shuffle"
                     android:layout_toEndOf="@+id/ic_shuffle"
                     android:text="@string/shuffle"
                     android:textAlignment="center"
                     android:textColor="@color/text_second_color"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textSize="@dimen/titles_text_size"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_main_text_shuffle"
+                    android:layout_toStartOf="@+id/switch_shuffle"
+                    android:layout_toEndOf="@+id/ic_shuffle"
+                    android:layout_margin="@dimen/default_margin"
+                    android:padding="@dimen/default_padding"
+                    android:text="@string/shuffle_description"
+                    android:textAlignment="center"
+                    android:textColor="@color/text_second_color"
+                    android:textSize="@dimen/description_text_size" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switch_shuffle"
@@ -223,6 +479,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toStartOf="@id/iv_arrow_about"
+                    android:layout_toEndOf="@+id/icon_about"
                     android:text="@string/about"
                     android:textAlignment="center"
                     android:textColor="@color/text_second_color"

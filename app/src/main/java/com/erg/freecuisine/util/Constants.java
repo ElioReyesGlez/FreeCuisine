@@ -88,6 +88,9 @@ public class Constants {
     public static final String LINK_COLUMN = "link";
     public static final String TAG_COLUMN = "tag";
 
+    /*REALM KEYS*/
+    public static final String REALM_DATA_BASE_NAME = "json_recipes_db";
+
     public static final String PATTER_FOR_YOUTUBE_ID = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
 
 
@@ -95,6 +98,9 @@ public class Constants {
     public static final String HOME_RECOMMENDED_MAIN_TAG = "bloquegroup clear padding-left-1";
     public static final String BLOQUE_LINK = "bloque link";
     public static final String RECETA_GRATIS_COLUMN = "recetasgratis";
+    public static final String MAIN_RECETA_GRATIS_TAG = "#mainurl";
+    public static final String CONSEJOS_DE_COSINA_COLUMN = "consejosdecocina";
+    public static final String CONSEJOS_DE_COSINA_TAG= "#consejosdecocina";
     public static final String TITLE_TITLE_BLOCK = "titulo titulo--bloque";
     public static final String CATEGORIA_CLASS = "categoria";
     public static final String ETIQUETA_CLASS = "etiqueta";
@@ -113,7 +119,6 @@ public class Constants {
     public static final int FILTER_ID = 1000431;
 
     public static final String URL_DEVELOPER = "https://www.linkedin.com/in/elioenai-reyes-gonzález";
-    public static final String INSTAGRAM_PACKAGE = "com.instagram.android";
     public static final String LINKEDIN_PACKAGE = "com.linkedin.android";
     public static final String MARKET_APP_DETAILS_URL = "market://details?id=";
     public static final String GOOGLE_APP_DETAILS_URL = "http://play.google.com/store/apps/details?id=";

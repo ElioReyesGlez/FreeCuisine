@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.erg.freecuisine.R;
 import com.erg.freecuisine.controller.network.helpers.StringHelper;
+import com.erg.freecuisine.controller.network.helpers.TimeHelper;
+import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.ImageModel;
 import com.erg.freecuisine.models.LinkModel;
 import com.erg.freecuisine.models.RecipeModel;
@@ -24,6 +26,7 @@ import static com.erg.freecuisine.util.Constants.A_TAG;
 import static com.erg.freecuisine.util.Constants.BLOQUE_LINK;
 import static com.erg.freecuisine.util.Constants.CATEGORIA_CLASS;
 import static com.erg.freecuisine.util.Constants.CLASS_INTRO_TAG;
+import static com.erg.freecuisine.util.Constants.CONSEJOS_DE_COSINA_TAG;
 import static com.erg.freecuisine.util.Constants.ETIQUETA_CLASS;
 import static com.erg.freecuisine.util.Constants.HOME_RECOMMENDED_MAIN_TAG;
 import static com.erg.freecuisine.util.Constants.IMAGE_DATA_TAG;
@@ -47,9 +50,9 @@ public class JsoupController {
 
     private static final String TAG = "JsoupController";
 
-    public static ArrayList<RecipeModel> getRecipesByLink(LinkModel linkModel) {
+    public static ArrayList<RecipeModel> getRecipesByLink(
+            LinkModel linkModel, OnRecipeListener onRecipeListener) {
         ArrayList<RecipeModel> recipes = new ArrayList<>();
-
         try {
 
             Document document = Jsoup.connect(linkModel.getUrl()).get();
@@ -81,7 +84,7 @@ public class JsoupController {
 //                description = description.replaceAll()
 
                 if (!recipeLink.isEmpty()) {
-                    recipe.setLink(recipeLink);
+                    recipe.setUrl(recipeLink);
                     recipe.setId(recipeLink);
                 }
                 if (!imgUrl.isEmpty())
@@ -108,13 +111,14 @@ public class JsoupController {
 
             return recipes;
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+        } catch (Exception e) {
+            onRecipeListener.onLoaderFailed(recipes, e);
+            return recipes;
         }
     }
 
-    public static RecipeModel getRecipe(String url, List<TagModel> tags) {
+    public static RecipeModel getRecipe(String url, List<TagModel> tags,
+                                        OnRecipeListener onRecipeListener) {
         RecipeModel recipe;
         try {
 
@@ -147,17 +151,18 @@ public class JsoupController {
 
         } catch (IOException e) {
             Log.e(TAG, "getRecipe: ERROR: " + e.getMessage());
+            onRecipeListener.onLoaderFailed(null, e);
             return null;
         }
     }
 
 
-    public static ArrayList<RecipeModel> getRecommendedRecipe(LinkModel link) {
+    public static ArrayList<RecipeModel> getRecommendedRecipe(LinkModel link,
+                                                              OnRecipeListener onRecipeListener) {
         ArrayList<RecipeModel> recipes = new ArrayList<>();
-
         try {
 
-            Document document = Jsoup.connect(link.getUrl()).get();
+            Document document = Jsoup.connect(link.getUrl()).timeout(TimeHelper.TIME_OUT).get();
             Element mainContent = document.getElementsByClass(MAIN_CONTENT).first();
             Element elementRecipesRoot = mainContent
                     .getElementsByClass(HOME_RECOMMENDED_MAIN_TAG)
@@ -169,7 +174,7 @@ public class JsoupController {
 
                 RecipeModel recipe = new RecipeModel();
                 Element elementRecipe = elementsRecipes.get(i);
-                String recipeLink = elementRecipe.select(A_TAG).first().attr(ATTRIBUTE_HREF);
+                String recipeUrl = elementRecipe.select(A_TAG).first().attr(ATTRIBUTE_HREF);
                 Element imageElement = elementRecipe.getElementsByClass(POSITION_IMAGE).first();
                 String imgUrl = imageElement.select(IMG_TAG).first().absUrl(IMAGE_DATA_TAG);
                 if (imgUrl == null || imgUrl.isEmpty()) {
@@ -180,30 +185,48 @@ public class JsoupController {
                 Element category = elementRecipe.getElementsByClass(CATEGORIA_CLASS).first();
                 String tag = category.getElementsByClass(ETIQUETA_CLASS).first().text();
 
-                if (!recipeLink.isEmpty()) {
-                    recipe.setLink(recipeLink);
-                    recipe.setId(recipeLink);
+                if (!recipeUrl.isEmpty()) {
+                    recipe.setUrl(recipeUrl);
+                    recipe.setId(recipeUrl);
                 }
                 if (!imgUrl.isEmpty())
                     recipe.setImage(new ImageModel(imgUrl));
                 if (!title.isEmpty())
                     recipe.setTitle(title);
-                if (!recipeLink.isEmpty() && tag != null && !tag.isEmpty()) {
-                    link.setTag(StringHelper.extractTag(tag));
-                    TagModel tagModel = new TagModel(link.getTag(), R.color.colorPrimary);
+                if (!recipeUrl.isEmpty() && tag != null && !tag.isEmpty()) {
+                    String fixedTag = StringHelper.extractTag(tag);
+                    TagModel tagModel = new TagModel(fixedTag, R.color.colorPrimary);
                     List<TagModel> tags = new ArrayList<>();
                     tags.add(tagModel);
                     recipe.setTags(tags);
                 }
 
-                if (!recipe.getTitle().isEmpty() && !recipe.getLink().isEmpty()) {
-                    recipes.add(recipe);
+                if (!recipe.getTitle().isEmpty() && !recipe.getUrl().isEmpty()) {
+
+                    /*leaving out Recipe if its Tips Recipe*/
+                    boolean isTipsRecipe = false;
+                    if (recipe.getTags() != null && !recipe.getTags().isEmpty()) {
+                        for (TagModel auxTag : recipe.getTags()) {
+                            if (auxTag.getText().equalsIgnoreCase(CONSEJOS_DE_COSINA_TAG)) {
+                                isTipsRecipe = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!isTipsRecipe)
+                        recipes.add(recipe);
                 }
             }
             return recipes;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+        } catch (Exception e) {
+            onRecipeListener.onLoaderFailed(recipes, e);
+            return recipes;
         }
+    }
+
+    public static ArrayList<RecipeModel> getTipRecipes(LinkModel link) {
+        Log.d(TAG, "getTipRecipes: LINK = " + link.toString());
+        return new ArrayList<>(); // ToDo
     }
 }
