@@ -147,7 +147,10 @@
         obtener un orden diferente cada vez que es mostrada al usuario.</string>
     <string name="sync">Sincronizar</string>
     <string name="refresh">refrescar</string>
-    <string name="some_error">Algo malo paso, por favor carge la vista denuevo</string>
+    <string name="some_error">Algo malo paso, por favor cargue la vista de nuevo</string>
+    <string name="saved">¡Salva en marcadores con éxito!</string>
+    <string name="removed">¡Retiro de marcadores con éxito!</string>
+    <string name="empty_list">Nada que mostrar</string>
 
     <string-array name="day_codes">
         <item>mon_</item>

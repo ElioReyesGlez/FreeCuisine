@@ -114,6 +114,8 @@ public class Constants {
     public static final String LAST_RECIPE_READ_KEY = "last_recipe_key";
     public static final String VIBRATION_STATUS_FLAG_KEY = "vibration_status_key";
     public static final String SHUFFLE_STATUS_FLAG_KEY = "shuffle_status_key";
+    public static final String BOOKMARK_FLAG_KEY = "bookmark_flag_key";
+    public static final String JSON_RECIPE_KEY = "json_recipe_key";
 
     /*VIEWS IDS*/
     public static final int FILTER_ID = 1000431;

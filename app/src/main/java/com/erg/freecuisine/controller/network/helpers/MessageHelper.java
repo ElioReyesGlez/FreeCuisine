@@ -13,7 +13,7 @@ public class MessageHelper {
     public static void showInfoMessage(Activity context, String msg, View placeSnackBar) {
         if (!context.isFinishing()) {
             Snackbar snackBar = Snackbar.make(placeSnackBar, msg, Snackbar.LENGTH_SHORT);
-            snackBar.setBackgroundTint(context.getResources().getColor(R.color.colorPrimary));
+            snackBar.setBackgroundTint(context.getResources().getColor(R.color.md_green_200));
             if (!snackBar.isShown())
                 snackBar.show();
         }

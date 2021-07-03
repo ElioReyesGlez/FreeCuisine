@@ -8,6 +8,7 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
@@ -194,5 +195,13 @@ public class Util {
         int id = Objects.requireNonNull(navController.getCurrentDestination()).getId();
         navController.popBackStack(id, true);
         navController.navigate(id);
+    }
+
+    public static void refreshCurrentFragmentWithArgs(Activity activity, Bundle args) {
+        NavController navController = Navigation
+                .findNavController(activity, R.id.nav_host_fragment);
+        int id = Objects.requireNonNull(navController.getCurrentDestination()).getId();
+        navController.popBackStack(id, true);
+        navController.navigate(id,args);
     }
 }

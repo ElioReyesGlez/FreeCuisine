@@ -2,6 +2,8 @@ package com.erg.freecuisine.ui;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +29,7 @@ import com.erg.freecuisine.adapters.RecommendedRecipesAdapter;
 import com.erg.freecuisine.controller.network.AsyncDataLoad;
 import com.erg.freecuisine.controller.network.helpers.FireBaseHelper;
 import com.erg.freecuisine.controller.network.helpers.MessageHelper;
+import com.erg.freecuisine.controller.network.helpers.RealmHelper;
 import com.erg.freecuisine.controller.network.helpers.SharedPreferencesHelper;
 import com.erg.freecuisine.controller.network.helpers.StringHelper;
 import com.erg.freecuisine.controller.network.helpers.TimeHelper;
@@ -42,7 +45,6 @@ import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -77,6 +79,8 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     private Job tipsLoaderJob;
     private FireBaseHelper fireBaseHelper;
     private Animation scaleUP, scaleDown;
+    private Handler handlerMessage;
+    private Runnable runnableDelayMassage;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,7 +88,19 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         Log.d(TAG, "onCreate: ");
         recipes = new ArrayList<>();
         spHelper = new SharedPreferencesHelper(requireContext());
+        handlerMessage = new Handler(Looper.myLooper());
         fireBaseHelper = new FireBaseHelper();
+
+        runnableDelayMassage = () -> {
+            if (isAdded() && isVisible()) {
+                MessageHelper.showInfoMessageWarning(
+                        requireActivity(),
+                        getString(R.string.network_error),
+                        rootView);
+                stopLoading();
+                refreshView();
+            }
+        };
 
         if (savedInstanceState != null && savedState == null) {
             savedState = savedInstanceState.getBundle(SAVED_STATE_KEY);
@@ -196,13 +212,6 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
                     TagModel firstTag = recipe.getTags().get(0);
                     holder.firstFilter.setText(firstTag.getText());
                 }
-
-                if (tags.size() > 1 && tags.get(1) != null) {
-                    TagModel secondTag = recipe.getTags().get(1);
-                    holder.secondFilter.setText(secondTag.getText());
-                } else {
-                    holder.secondFilter.setVisibility(View.INVISIBLE);
-                }
             }
         } else {
             Util.hideView(null, lastReadingView);
@@ -235,15 +244,22 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         Log.d(TAG, "onConnectionListener: CONNECTED = " + isConnected);
         if (isConnected) {
             fireBaseHelper.getMainUrls(this);
-        } else {
-            if (isVisible())
-                MessageHelper.showInfoMessageWarning(
-                        requireActivity(),
-                        getString(R.string.network_error),
-                        rootView);
-            stopLoading();
-            refreshView();
         }
+
+        showDelayDisconnectedMessage(isConnected);
+        stopLoading();
+    }
+
+    private void showDelayDisconnectedMessage(boolean isConnected) {
+        Log.d(TAG, "showDelayDisconnectedMessage: CONNECTED = " + isConnected);
+
+        if (isConnected) {
+            Log.d(TAG, "removeCallbacks");
+            handlerMessage.removeCallbacks(runnableDelayMassage);
+            return;
+        }
+
+        handlerMessage.postDelayed(runnableDelayMassage, TimeHelper.TIME_OUT / 2);
     }
 
     @Override

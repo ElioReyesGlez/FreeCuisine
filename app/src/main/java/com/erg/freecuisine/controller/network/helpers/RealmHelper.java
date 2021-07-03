@@ -1,64 +1,65 @@
 package com.erg.freecuisine.controller.network.helpers;
 
-import com.erg.freecuisine.models.JsonRecipeModel;
+import com.erg.freecuisine.models.RealmRecipeModel;
+import com.erg.freecuisine.models.RecipeModel;
 
 import java.util.ArrayList;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.RealmQuery;
 import io.realm.RealmResults;
-import io.realm.Sort;
 
 import static com.erg.freecuisine.util.Constants.REALM_DATA_BASE_NAME;
 
 public class RealmHelper {
-    private Realm realm;
-
-    private final RealmConfiguration config;
+    private final Realm realm;
 
     public RealmHelper() {
-        config = new RealmConfiguration.Builder()
+        RealmConfiguration config = new RealmConfiguration.Builder()
                 .name(REALM_DATA_BASE_NAME)
+                .modules(new RealmRecipeModel())
                 .allowQueriesOnUiThread(true)
                 .allowWritesOnUiThread(true)
-                .compactOnLaunch()
-                .inMemory()
+                .deleteRealmIfMigrationNeeded()
                 .build();
 
         realm = Realm.getInstance(config);
     }
 
-    public JsonRecipeModel getRecipeById(String _id) {
+    public RealmRecipeModel getRecipeById(String id) {
         return realm
-                .where(JsonRecipeModel.class)
-                .equalTo("_id", _id)
+                .where(RealmRecipeModel.class)
+                .equalTo("id", id)
                 .findFirst();
     }
 
-    public void insertOrUpdate(JsonRecipeModel jsonRecipe) {
+    public void insertOrUpdate(RealmRecipeModel jsonRecipe) {
         realm.executeTransaction(r -> r.insertOrUpdate(jsonRecipe));
     }
 
-    public void addAll(ArrayList<JsonRecipeModel> jsonRecipes) {
-        for (JsonRecipeModel jsonRecipe : jsonRecipes) {
+    public boolean exists(RecipeModel recipe) {
+        return getRecipeById(recipe.getId()) != null;
+    }
+
+    public void addAll(ArrayList<RealmRecipeModel> jsonRecipes) {
+        for (RealmRecipeModel jsonRecipe : jsonRecipes) {
             insertOrUpdate(jsonRecipe);
         }
     }
 
-    public ArrayList<JsonRecipeModel> getRecipes() {
-        RealmResults<JsonRecipeModel> results = realm.where(JsonRecipeModel.class).findAll();
+    public ArrayList<RealmRecipeModel> getRecipes() {
+        RealmResults<RealmRecipeModel> results = realm.where(RealmRecipeModel.class).findAll();
         return new ArrayList<>(realm.copyFromRealm(results));
     }
 
     public void deleteAll() {
-        realm.executeTransaction(r -> r.delete(JsonRecipeModel.class));
+        realm.executeTransaction(r -> r.delete(RealmRecipeModel.class));
     }
 
-    public void deleteRecipe(JsonRecipeModel jsonRecipe) {
+    public void deleteRecipe(RealmRecipeModel realmRecipeModel) {
         realm.executeTransaction(realm -> {
-            RealmResults<JsonRecipeModel> result = realm.where(JsonRecipeModel.class)
-                    .equalTo(JsonRecipeModel.Companion.getID_COLUMN_NAME(), jsonRecipe.get_id())
+            RealmResults<RealmRecipeModel> result = realm.where(RealmRecipeModel.class)
+                    .equalTo(RealmRecipeModel.ID_COLUMN_NAME, realmRecipeModel.getId())
                     .findAll();
             result.deleteFirstFromRealm();
         });

@@ -5,14 +5,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.erg.freecuisine.R;
+import com.erg.freecuisine.controller.network.helpers.RealmHelper;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
@@ -31,12 +32,14 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
     private List<RecipeModel> recipes;
     private final Context context;
     private final OnRecipeListener onRecipeListener;
+    private final RealmHelper realmHelper;
 
     public RecipesAdapter(List<RecipeModel> recipes, Context context,
                           OnRecipeListener onRecipeListener) {
         this.recipes = recipes;
         this.context = context;
         this.onRecipeListener = onRecipeListener;
+        realmHelper = new RealmHelper();
     }
 
     @NotNull
@@ -62,6 +65,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
         holder.cockingTime.setText(recipe.getTime());
         holder.peopleAmount.setText(String.valueOf(recipe.getDiners()));
 
+        checkBookmark(realmHelper.exists(recipe), holder.ivBookmark);
 
         if (recipe.getTags() != null && !recipe.getTags().isEmpty()) {
             List<TagModel> tags = recipe.getTags();
@@ -69,13 +73,14 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
                 TagModel firstTag = recipe.getTags().get(0);
                 holder.firstFilter.setText(firstTag.getText());
             }
+        }
+    }
 
-            if (tags.size() > 1 && tags.get(1) != null) {
-                TagModel secondTag = recipe.getTags().get(1);
-                holder.secondFilter.setText(secondTag.getText());
-            } else {
-                Util.hideView(null, holder.secondFilter);
-            }
+    private void checkBookmark(boolean flag, ImageView ivBookmark) {
+        if (flag) {
+            Util.showView(null, ivBookmark);
+        } else {
+            Util.hideView(null, ivBookmark);
         }
     }
 
@@ -99,26 +104,26 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public ShapeableImageView recipeMainImg;
+        public ImageView ivBookmark;
         public TextView recipeTitle;
         public TextView recipeDescription;
         public TextView cockingTime;
         public TextView peopleAmount;
         public TextView type;
         public TextView firstFilter;
-        public TextView secondFilter;
 
         OnRecipeListener onRecipeListener;
 
         public ViewHolder(View itemView, OnRecipeListener onRecipeListener) {
             super(itemView);
             recipeMainImg = itemView.findViewById(R.id.recipe_main_image);
+            ivBookmark = itemView.findViewById(R.id.iv_bookmark);
             recipeTitle = itemView.findViewById(R.id.recipe_title);
             recipeDescription = itemView.findViewById(R.id.recipe_description);
             cockingTime = itemView.findViewById(R.id.tv_cocking_time);
             peopleAmount = itemView.findViewById(R.id.tv_people_amount);
             type = itemView.findViewById(R.id.tv_type);
             firstFilter = itemView.findViewById(R.id.filter_first);
-            secondFilter = itemView.findViewById(R.id.filter_second);
             this.onRecipeListener = onRecipeListener;
             itemView.setOnClickListener(this);
         }

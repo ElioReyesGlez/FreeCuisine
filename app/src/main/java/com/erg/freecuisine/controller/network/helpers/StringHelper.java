@@ -1,12 +1,14 @@
 package com.erg.freecuisine.controller.network.helpers;
 
+import android.util.Log;
+
 import com.erg.freecuisine.models.ImageModel;
 import com.erg.freecuisine.models.LinkModel;
+import com.erg.freecuisine.models.RealmRecipeModel;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.StepModel;
 import com.erg.freecuisine.models.TagModel;
 import com.erg.freecuisine.models.VideoModel;
-import com.erg.freecuisine.util.Constants;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -20,7 +22,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.erg.freecuisine.util.Constants.DIV_TAG;
-import static com.erg.freecuisine.util.Constants.IFRAME_TAG;
 import static com.erg.freecuisine.util.Constants.IMG_TAG;
 import static com.erg.freecuisine.util.Constants.INGREDIENTS_LABEL_TAG;
 import static com.erg.freecuisine.util.Constants.NEWLINE;
@@ -30,7 +31,6 @@ import static com.erg.freecuisine.util.Constants.PATTER_FOR_YOUTUBE_ID;
 import static com.erg.freecuisine.util.Constants.PROPERTY_INGREDIENTS_TAG;
 import static com.erg.freecuisine.util.Constants.PROPERTY_TAG_CLASS;
 import static com.erg.freecuisine.util.Constants.SEPARATOR_SING;
-import static com.erg.freecuisine.util.Constants.SPACE;
 import static com.erg.freecuisine.util.Constants.SPACE_REGEX;
 import static com.erg.freecuisine.util.Constants.SRC_TAG;
 import static com.erg.freecuisine.util.Constants.STEPS_IMG_TAG;
@@ -40,6 +40,8 @@ import static com.erg.freecuisine.util.Constants.STEPS_VIDEO_TAG;
 import static com.erg.freecuisine.util.Constants.VIDEO_ID_ATTR_TAG;
 
 public class StringHelper {
+
+    private static final String TAG = "StringHelper";
 
     public static String extractTextFromParagraph(Element rootClass, String tag) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -69,7 +71,7 @@ public class StringHelper {
             else
                 return "";
         }
-        return  "";
+        return "";
     }
 
     public static String extractTextByClassTag(Element rootElement, String tag) {
@@ -104,7 +106,7 @@ public class StringHelper {
                 int order = Integer.parseInt(orderClass.text());
                 String stepDescription = apartado.select(PARAGRAPH_TAG).first().text();
                 Element imgClass = apartado.getElementsByClass(STEPS_IMG_TAG).first();
-                if (imgClass != null ) {
+                if (imgClass != null) {
                     String url = imgClass.select(IMG_TAG).first().absUrl(SRC_TAG);
                     ImageModel image = new ImageModel(url, url);
                     list.add(new StepModel(order, stepDescription, image));
@@ -132,7 +134,7 @@ public class StringHelper {
         if (matcher.find()) {
             return matcher.group();
         } else
-            return null;
+            return "";
     }
 
     public static String extractTag(String tag) {
@@ -146,15 +148,37 @@ public class StringHelper {
         return gson.fromJson(recipesJson, type);
     }
 
+    public static List<RecipeModel> getRecipesFromStringJsonList(
+            ArrayList<RealmRecipeModel> realmRecipes) {
+        List<RecipeModel> aux = new ArrayList<>();
+        for (RealmRecipeModel realmRecipe : realmRecipes) {
+            aux.add(getSingleRecipeFromJson(realmRecipe.getJsonRecipe()));
+        }
+        return aux;
+    }
+
+    public static RecipeModel getSingleRecipeFromJson(String json) {
+        Gson gson = new Gson();
+        Type type = new TypeToken<RecipeModel>() {}.getType();
+        try {
+            return gson.fromJson(json, type);
+        } catch (Exception e) {
+            Log.e(TAG, "getLastVerseRead: ERROR: " + e.getMessage());
+            return new RecipeModel();
+        }
+    }
+
     public static List<LinkModel> getLinksFromStringJson(String linksStringJson) {
         Gson gson = new Gson();
-        Type type = new TypeToken<ArrayList<LinkModel>>() {}.getType();
+        Type type = new TypeToken<ArrayList<LinkModel>>() {
+        }.getType();
         return gson.fromJson(linksStringJson, type);
     }
 
     public static ArrayList<TagModel> getSelectedTagsFromStringJson(String tagsStringJson) {
         Gson gson = new Gson();
-        Type type = new TypeToken<ArrayList<TagModel>>() {}.getType();
+        Type type = new TypeToken<ArrayList<TagModel>>() {
+        }.getType();
         return gson.fromJson(tagsStringJson, type);
     }
 }

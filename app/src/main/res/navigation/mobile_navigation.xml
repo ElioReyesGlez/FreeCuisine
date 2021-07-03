@@ -42,7 +42,16 @@
             android:id="@+id/action_navigation_settings_to_aboutFragment"
             app:destination="@id/aboutFragment"
             app:enterAnim="@anim/slide_in_from_rigth"
-            app:popEnterAnim="@anim/custom_enter_anim" />
+            app:exitAnim="@anim/custom_exit_anim"
+            app:popEnterAnim="@anim/custom_enter_anim"
+            app:popExitAnim="@anim/custom_exit_anim" />
+        <action
+            android:id="@+id/action_navigation_settings_to_bookmarksFragment"
+            app:destination="@id/bookmarksFragment"
+            app:enterAnim="@anim/slide_in_from_rigth"
+            app:exitAnim="@anim/custom_exit_anim"
+            app:popEnterAnim="@anim/custom_enter_anim"
+            app:popExitAnim="@anim/custom_exit_anim" />
     </fragment>
 
     <fragment
@@ -56,5 +65,19 @@
         android:name="com.erg.freecuisine.ui.AboutFragment"
         android:label="fragment_about"
         tools:layout="@layout/fragment_about" />
+
+    <fragment
+        android:id="@+id/bookmarksFragment"
+        android:name="com.erg.freecuisine.ui.BookmarksFragment"
+        android:label="fragment_bookmarks"
+        tools:layout="@layout/fragment_bookmarks" >
+        <action
+            android:id="@+id/action_bookmarksFragment_to_singleRecipeFragment"
+            app:destination="@id/singleRecipeFragment"
+            app:enterAnim="@anim/custom_enter_anim"
+            app:exitAnim="@anim/custom_exit_anim"
+            app:popEnterAnim="@anim/custom_enter_anim"
+            app:popExitAnim="@anim/custom_exit_anim" />
+    </fragment>
 
 </navigation>

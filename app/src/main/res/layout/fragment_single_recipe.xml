@@ -7,7 +7,6 @@
     android:background="@color/colorOnPrimary"
     tools:context=".ui.SingleRecipeFragment">
 
-
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_anim_loading"
         android:layout_width="wrap_content"
@@ -53,7 +52,8 @@
             android:layout_gravity="center_horizontal"
             android:text="@string/empty"
             android:textAlignment="center"
-            android:textSize="15sp"
+            android:textColor="@color/text_second_color"
+            android:textSize="@dimen/titles_text_size"
             android:textStyle="bold|italic" />
 
         <TextView
@@ -63,7 +63,8 @@
             android:padding="@dimen/default_padding"
             android:text="@string/reload"
             android:textAlignment="center"
-            android:textSize="13sp"
+            android:textColor="@color/text_second_color"
+            android:textSize="@dimen/description_text_size"
             android:textStyle="italic" />
 
     </LinearLayout>
@@ -77,51 +78,71 @@
             android:id="@+id/relativeLayout_main_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <RelativeLayout
                 android:id="@+id/relative_container_recipe_main_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:visibility="gone"
-                tools:ignore="UselessParent">
+                android:layout_centerHorizontal="true">
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/recipe_main_image"
+                <RelativeLayout
+                    android:id="@+id/rl_image_section"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_margin="@dimen/default_margin"
-                    android:layout_marginTop="@dimen/margin_top"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/recipe_image"
-                    android:cropToPadding="false"
-                    android:elevation="@dimen/default_elevation"
-                    android:scaleType="centerCrop"
-                    app:shapeAppearanceOverlay="@style/roundCornerView" />
+                    android:background="@drawable/background_white"
+                    android:layout_margin="@dimen/default_margin">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/recipe_main_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="@string/recipe_image"
+                        android:cropToPadding="false"
+                        android:elevation="@dimen/default_elevation"
+                        android:scaleType="centerCrop"
+                        app:shapeAppearanceOverlay="@style/roundCornerView" />
+
+                    <ImageButton
+                        android:id="@+id/ib_bookmark"
+                        android:layout_width="50dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_margin="1dp"
+                        android:background="@drawable/selector_white"
+                        android:contentDescription="@string/bookmarks"
+                        android:elevation="@dimen/default_elevation"
+                        android:padding="@dimen/default_padding"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_bookmark_outline" />
+
+                </RelativeLayout>
 
 
                 <LinearLayout
                     android:id="@+id/linear_amounts_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/recipe_main_image"
+                    android:layout_below="@+id/rl_image_section"
                     android:layout_margin="@dimen/default_margin"
                     android:background="@drawable/background_white"
+                    android:baselineAligned="false"
                     android:elevation="@dimen/default_elevation"
                     android:gravity="center"
-                    android:weightSum="3"
                     android:orientation="horizontal"
-                    android:baselineAligned="false">
+                    android:weightSum="3">
 
                     <RelativeLayout
                         android:id="@+id/relative_recipes_type_container"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
                         android:layout_margin="@dimen/default_margin"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:gravity="center">
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/iv_menu"
@@ -155,8 +176,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/default_margin"
-                        android:gravity="center"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:gravity="center">
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/iv_clock"
@@ -187,8 +208,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/default_margin"
-                        android:gravity="center"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:gravity="center">
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/iv_people_amount"
@@ -234,9 +255,9 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/selector_white"
                         android:clickable="true"
+                        android:elevation="@dimen/default_elevation"
                         android:focusable="true"
                         android:gravity="center"
-                        android:elevation="@dimen/default_elevation"
                         android:orientation="vertical"
                         android:padding="@dimen/default_padding">
 

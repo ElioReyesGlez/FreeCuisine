@@ -48,7 +48,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     private View setUpView(View rootView) {
         RelativeLayout rlAbout = rootView.findViewById(R.id.rl_about_container);
+        RelativeLayout rlBookmarks = rootView.findViewById(R.id.rl_bookmarks_container);
         rlAbout.setOnClickListener(this);
+        rlBookmarks.setOnClickListener(this);
 
         vibrationSwitch = rootView.findViewById(R.id.switch_vibration);
         vibrationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -80,6 +82,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         switch (viewId) {
             case R.id.rl_about_container:
                 loadFragment(R.id.action_navigation_settings_to_aboutFragment);
+                break;
+            case R.id.rl_bookmarks_container:
+                loadFragment(R.id.action_navigation_settings_to_bookmarksFragment);
                 break;
         }
     }

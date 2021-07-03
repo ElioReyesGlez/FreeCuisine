@@ -3,6 +3,8 @@ package com.erg.freecuisine.ui;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +34,7 @@ import com.erg.freecuisine.controller.network.helpers.FireBaseHelper;
 import com.erg.freecuisine.controller.network.helpers.MessageHelper;
 import com.erg.freecuisine.controller.network.helpers.SharedPreferencesHelper;
 import com.erg.freecuisine.controller.network.helpers.StringHelper;
+import com.erg.freecuisine.controller.network.helpers.TimeHelper;
 import com.erg.freecuisine.interfaces.OnFireBaseListenerDataStatus;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.LinkModel;
@@ -90,6 +93,8 @@ public class RecipesFragment extends Fragment implements
     private LinearLayout linearEmptyContainer;
     private String currentSearchQuery = "";
     private FireBaseHelper fireBaseHelper;
+    private Handler handlerMessage;
+    private Runnable runnableDelayMassage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,6 +108,19 @@ public class RecipesFragment extends Fragment implements
         asyncDataLoad = new AsyncDataLoad();
         spHelper = new SharedPreferencesHelper(requireContext());
         colors = getResources().getIntArray(R.array.colors);
+
+        handlerMessage = new Handler(Looper.myLooper());
+
+        runnableDelayMassage = () -> {
+            if (isAdded() && isVisible()) {
+                MessageHelper.showInfoMessageWarning(
+                        requireActivity(),
+                        getString(R.string.network_error),
+                        rootView);
+                stopLoading();
+                refreshView();
+            }
+        };
 
         if (savedInstanceState != null && savedState == null) {
             savedState = savedInstanceState.getBundle(SAVED_STATE_KEY);
@@ -174,10 +192,12 @@ public class RecipesFragment extends Fragment implements
                 LoadingAdapter loadingAdapter = new LoadingAdapter(
                         getLoadingList(), requireContext(),
                         R.layout.loading_item_recipe_card);
+                setUpRecyclerView();
                 recyclerViewRecipes.setAdapter(loadingAdapter);
 
                 fireBaseHelper.init(this);
             } else {
+                Log.d(TAG, "Not Internet");
                 MessageHelper.showInfoMessageWarning(
                         requireActivity(),
                         getString(R.string.network_error),
@@ -202,15 +222,21 @@ public class RecipesFragment extends Fragment implements
         Log.d(TAG, "onConnectionListener: CONNECTED = " + isConnected);
         if (isConnected) {
             fireBaseHelper.getLinks(this);
-        } else {
-            if (isVisible())
-                MessageHelper.showInfoMessageWarning(
-                        requireActivity(),
-                        getString(R.string.network_error),
-                        rootView);
-            stopLoading();
-            refreshView();
         }
+
+        showDelayDisconnectedMessage(isConnected);
+    }
+
+    private void showDelayDisconnectedMessage(boolean isConnected) {
+        Log.d(TAG, "showDelayDisconnectedMessage: CONNECTED = " + isConnected);
+
+        if (isConnected) {
+            Log.d(TAG, "removeCallbacks: ");
+            handlerMessage.removeCallbacks(runnableDelayMassage);
+            return;
+        }
+
+        handlerMessage.postDelayed(runnableDelayMassage, TimeHelper.TIME_OUT / 2);
     }
 
     @Override
@@ -294,7 +320,7 @@ public class RecipesFragment extends Fragment implements
                 new StaggeredGridLayoutManager(numberOfColumns, StaggeredGridLayoutManager.VERTICAL);
         recyclerViewRecipes.setLayoutManager(gridLayoutManager);
         recyclerViewRecipes.setHasFixedSize(true);
-        GridItemDecoration gridItemDecoration = new GridItemDecoration(7, 3);
+        GridItemDecoration gridItemDecoration = new GridItemDecoration(3, 3);
         recyclerViewRecipes.addItemDecoration(gridItemDecoration);
 
     }
