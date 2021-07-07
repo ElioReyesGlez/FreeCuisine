@@ -1,5 +1,6 @@
 package com.erg.freecuisine.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,10 +27,10 @@ import com.erg.freecuisine.R;
 import com.erg.freecuisine.adapters.LoadingAdapter;
 import com.erg.freecuisine.adapters.RecipesAdapter;
 import com.erg.freecuisine.adapters.RecommendedRecipesAdapter;
+import com.erg.freecuisine.adapters.TipsRecipesAdapter;
 import com.erg.freecuisine.controller.network.AsyncDataLoad;
 import com.erg.freecuisine.controller.network.helpers.FireBaseHelper;
 import com.erg.freecuisine.controller.network.helpers.MessageHelper;
-import com.erg.freecuisine.controller.network.helpers.RealmHelper;
 import com.erg.freecuisine.controller.network.helpers.SharedPreferencesHelper;
 import com.erg.freecuisine.controller.network.helpers.StringHelper;
 import com.erg.freecuisine.controller.network.helpers.TimeHelper;
@@ -53,11 +54,12 @@ import java.util.concurrent.CancellationException;
 
 import kotlinx.coroutines.Job;
 
-import static com.erg.freecuisine.util.Constants.CONSEJOS_DE_COSINA_TAG;
+import static com.erg.freecuisine.util.Constants.CONSEJOS_TAG;
 import static com.erg.freecuisine.util.Constants.MAIN_RECETA_GRATIS_TAG;
-import static com.erg.freecuisine.util.Constants.RECIPE_KEY;
+import static com.erg.freecuisine.util.Constants.RECOMMENDED_RECIPE_KEY;
 import static com.erg.freecuisine.util.Constants.SAVED_STATE_KEY;
 import static com.erg.freecuisine.util.Constants.TAG_KEY;
+import static com.erg.freecuisine.util.Constants.TIPS_RECIPE_KEY;
 import static com.erg.freecuisine.util.Constants.URL_KEY;
 
 public class HomeFragment extends Fragment implements OnRecipeListener,
@@ -66,11 +68,15 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     private static final String TAG = "HomeFragment";
 
     private View rootView;
-    private List<RecipeModel> recipes;
-    private RecommendedRecipesAdapter adapter;
+    private List<RecipeModel> recommendedRecipes;
+    private List<RecipeModel> tipsRecipes;
+    private RecommendedRecipesAdapter recommendedRecipesAdapter;
+    private TipsRecipesAdapter tipsRecipesAdapter;
     private RecyclerView recyclerviewRecommendRecipe;
+    private RecyclerView recyclerviewTipsRecipe;
     private LinearLayout userActivityContainer;
-    private LinearLayout linearEmptyContainer;
+    private LinearLayout linearRecommendedEmptyContainer;
+    private LinearLayout linearTipsEmptyContainer;
     private View lastReadingView, staticsGraphView;
     private SharedPreferencesHelper spHelper;
     private Context mContext;
@@ -86,7 +92,6 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: ");
-        recipes = new ArrayList<>();
         spHelper = new SharedPreferencesHelper(requireContext());
         handlerMessage = new Handler(Looper.myLooper());
         fireBaseHelper = new FireBaseHelper();
@@ -98,7 +103,6 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
                         getString(R.string.network_error),
                         rootView);
                 stopLoading();
-                refreshView();
             }
         };
 
@@ -118,16 +122,22 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
 
     private void setUpView() {
         recyclerviewRecommendRecipe = rootView.findViewById(R.id.recyclerviewRecommendRecipe);
+        recyclerviewTipsRecipe = rootView.findViewById(R.id.recyclerviewTipsRecipe);
         userActivityContainer = rootView.findViewById(R.id.ll_activity_history_container);
-        linearEmptyContainer = rootView.findViewById(R.id.linear_layout_empty_container);
-        linearEmptyContainer.setOnClickListener(this);
+        linearRecommendedEmptyContainer = rootView.findViewById(R.id.linear_layout_empty_container);
+        linearTipsEmptyContainer = rootView.findViewById(R.id.linear_layout_empty_container_tips);
+        linearRecommendedEmptyContainer.setOnClickListener(this);
+        linearTipsEmptyContainer.setOnClickListener(this);
 
         scaleUP = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
         scaleDown = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_down);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(
+        LinearLayoutManager layoutManagerRecommended = new LinearLayoutManager(
                 requireContext(), LinearLayoutManager.HORIZONTAL, false);
-        recyclerviewRecommendRecipe.setLayoutManager(layoutManager);
+        LinearLayoutManager layoutManagerTips = new LinearLayoutManager(
+                requireContext(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerviewRecommendRecipe.setLayoutManager(layoutManagerRecommended);
+        recyclerviewTipsRecipe.setLayoutManager(layoutManagerTips);
         addUserActivityViews();
     }
 
@@ -135,8 +145,11 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (savedState != null) {
-            String recipesJson = savedState.getString(RECIPE_KEY);
-            recipes = StringHelper.getRecipesFromStringJson(recipesJson);
+            String recommendedRecipesJson = savedState.getString(RECOMMENDED_RECIPE_KEY);
+            String tipsRecipesJson = savedState.getString(TIPS_RECIPE_KEY);
+
+            recommendedRecipes = StringHelper.getRecipesFromStringJson(recommendedRecipesJson);
+            tipsRecipes = StringHelper.getRecipesFromStringJson(tipsRecipesJson);
 
             restoreState();
         } else {
@@ -144,9 +157,9 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
                     getLoadingList(), requireContext(),
                     R.layout.loading_item_recommend_recipe_card);
             recyclerviewRecommendRecipe.setAdapter(loadingAdapter);
+            recyclerviewTipsRecipe.setAdapter(loadingAdapter);
 
             if (Util.isNetworkAvailable(requireActivity())) {
-
                 fireBaseHelper.init(this);
             } else {
                 MessageHelper.showInfoMessageWarning(
@@ -154,7 +167,8 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
                         getString(R.string.network_error),
                         rootView);
                 stopLoading();
-                refreshView();
+                refreshViewRecommendedView();
+                refreshViewTipsView();
             }
         }
         savedState = null;
@@ -195,7 +209,20 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
                     .into(holder.recipeMainImg);
             holder.recipeTitle.setText(recipe.getTitle());
             holder.recipeDescription.setText(recipe.getDescription());
-            holder.cockingTime.setText(recipe.getTime());
+
+            if (recipe.getTags() != null && !recipe.getTags().isEmpty()) {
+                List<TagModel> tags = recipe.getTags();
+                if (tags.get(0) != null) {
+                    TagModel firstTag = recipe.getTags().get(0);
+                    holder.firstFilter.setText(firstTag.getText());
+                }
+            }
+
+            if (!recipe.getTime().isEmpty())
+                holder.cockingTime.setText(recipe.getTime());
+            else
+                Util.hideView(null, holder.cockingTime);
+
 
             RelativeLayout typeContainer = lastReadingView
                     .findViewById(R.id.relative_recipes_type_container);
@@ -206,13 +233,21 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
                 Util.hideView(null, typeContainer);
             }
 
-            if (recipe.getTags() != null && !recipe.getTags().isEmpty()) {
-                List<TagModel> tags = recipe.getTags();
-                if (tags.get(0) != null) {
-                    TagModel firstTag = recipe.getTags().get(0);
-                    holder.firstFilter.setText(firstTag.getText());
-                }
+            if (!recipe.getDiners().isEmpty())
+                holder.peopleAmount.setText(recipe.getDiners());
+            else
+                Util.hideView(null, holder.peopleAmount);
+
+
+            LinearLayout linear_amounts_container = lastReadingView
+                    .findViewById(R.id.linear_amounts_container);
+            if (recipe.getDiners().isEmpty() && recipe.getType().isEmpty()
+                    && recipe.getTime().isEmpty()) {
+                Util.hideView(null, linear_amounts_container);
+            } else {
+                Util.showView(null, linear_amounts_container);
             }
+
         } else {
             Util.hideView(null, lastReadingView);
         }
@@ -268,11 +303,12 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         stopLoading();
         if (isAdded()) {
             for (LinkModel link : links) {
-                if (link.getTag().toLowerCase().equalsIgnoreCase(MAIN_RECETA_GRATIS_TAG.toLowerCase())) {
+                if (link.getTag().toLowerCase().contains(MAIN_RECETA_GRATIS_TAG)) {
                     recommendLoaderJob = new AsyncDataLoad()
                             .loadRecommendRecipesAsync(requireActivity(), this, link);
                 }
-                if (link.getTag().toLowerCase().equalsIgnoreCase(CONSEJOS_DE_COSINA_TAG.toLowerCase())) {
+
+                if (link.getTag().toLowerCase().contains(CONSEJOS_TAG)) {
                     tipsLoaderJob = new AsyncDataLoad()
                             .loadTipRecipesAsync(requireActivity(), this, link);
                 }
@@ -287,20 +323,35 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         Log.d(TAG, "onSaveInstanceState: outState = " + outState);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onRecipeClick(int position, View view) {
         Util.vibrate(requireContext());
-        if (view.getId() == R.id.last_reading_main_card_container) {
-            loadFragment(position, view);
-        } else if (recipes != null && !recipes.isEmpty()) {
-            loadFragment(position, view);
+        switch (view.getId()) {
+            case R.id.last_reading_main_card_container:
+                RecipeModel lastRecipeRead = spHelper.getLastRecipeRead();
+                loadFragment(lastRecipeRead, view);
+                break;
+            case R.id.recommended_main_card_container:
+                if (recommendedRecipes != null && !recommendedRecipes.isEmpty()) {
+                    RecipeModel recipe = recommendedRecipesAdapter.getRecipes().get(position);
+                    loadFragment(recipe, view);
+                }
+                break;
+            case R.id.tips_main_card_container:
+                if (tipsRecipes != null && !tipsRecipes.isEmpty()) {
+                    RecipeModel recipe = tipsRecipesAdapter.getRecipes().get(position);
+                    loadFragment(recipe, view);
+                }
+                break;
         }
     }
 
     @Override
     public void onClick(View v) {
         Util.vibrate(requireContext());
-        if (v.getId() == R.id.linear_layout_empty_container) {
+        if (v.getId() == R.id.linear_layout_empty_container
+                || v.getId() == R.id.linear_layout_empty_container_tips) {
             Util.refreshCurrentFragment(requireActivity());
         }
     }
@@ -314,25 +365,15 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         return aux;
     }
 
-    private void loadFragment(int position, View view) {
+    private void loadFragment(RecipeModel currentRecipe, View view) {
 
         NavController navController = Navigation
                 .findNavController(requireActivity(), R.id.nav_host_fragment);
 
-        Bundle args;
-        if (view.getId() == R.id.last_reading_main_card_container) {
-            args = new Bundle();
-            RecipeModel lastRecipeRead = spHelper.getLastRecipeRead();
-            args.putString(URL_KEY, lastRecipeRead.getUrl());
-            ArrayList<TagModel> tagModels = new ArrayList<>(lastRecipeRead.getTags());
-            args.putParcelableArrayList(TAG_KEY, tagModels);
-        } else {
-            args = new Bundle();
-            RecipeModel currentRecipe = adapter.getRecipes().get(position);
-            args.putString(URL_KEY, currentRecipe.getUrl());
-            ArrayList<TagModel> tagModels = new ArrayList<>(currentRecipe.getTags());
-            args.putParcelableArrayList(TAG_KEY, tagModels);
-        }
+        Bundle args = new Bundle();
+        args.putString(URL_KEY, currentRecipe.getUrl());
+        ArrayList<TagModel> tagModels = new ArrayList<>(currentRecipe.getTags());
+        args.putParcelableArrayList(TAG_KEY, tagModels);
 
         navController.navigate(R.id.action_navigation_home_to_singleRecipeFragment, args);
 
@@ -345,15 +386,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
 
     @Override
     public void onRecipesLoaded(ArrayList<RecipeModel> recipes) {
-        this.recipes = recipes;
-        if (mContext != null && isVisible()) {
-            if (!this.recipes.isEmpty()) {
-                adapter = new RecommendedRecipesAdapter(
-                        this.recipes, requireContext(), this);
-                recyclerviewRecommendRecipe.setAdapter(adapter);
-            }
-            refreshView();
-        }
+        //Empty
     }
 
     @Override
@@ -366,13 +399,39 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         }
     }
 
+    @Override
+    public void onRecommendedRecipesLoaded(ArrayList<RecipeModel> recipes) {
+        recommendedRecipes = recipes;
+        if (mContext != null && isVisible()) {
+            if (!recommendedRecipes.isEmpty()) {
+                recommendedRecipesAdapter = new RecommendedRecipesAdapter(
+                        recommendedRecipes, requireContext(), this);
+                recyclerviewRecommendRecipe.setAdapter(recommendedRecipesAdapter);
+            }
+            refreshViewRecommendedView();
+        }
+    }
+
+    @Override
+    public void onTipsRecipesLoaded(ArrayList<RecipeModel> recipes) {
+        tipsRecipes = recipes;
+        if (mContext != null && isVisible()) {
+            if (!tipsRecipes.isEmpty()) {
+                tipsRecipesAdapter = new TipsRecipesAdapter(
+                        tipsRecipes, requireContext(), this);
+                recyclerviewTipsRecipe.setAdapter(tipsRecipesAdapter);
+            }
+
+            refreshViewTipsView();
+        }
+    }
+
     private void showTimeOutMessage() {
         if (isVisible()) {
             requireActivity().runOnUiThread(() -> {
                 MessageHelper.showInfoMessageError(
                         requireActivity(), getString(R.string.network_error),
                         rootView);
-                refreshView();
             });
         } else {
             Toast.makeText(requireContext(),
@@ -386,7 +445,6 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
                 MessageHelper.showInfoMessageError(
                         requireActivity(), getString(R.string.some_error),
                         rootView);
-                refreshView();
             });
         } else {
             Toast.makeText(requireContext(),
@@ -394,13 +452,24 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         }
     }
 
-    private void refreshView() {
-        if (recipes != null && !recipes.isEmpty()) {
+    private void refreshViewRecommendedView() {
+
+        if (recommendedRecipes != null && !recommendedRecipes.isEmpty()) {
             Util.showView(null, recyclerviewRecommendRecipe);
-            Util.hideView(scaleDown, linearEmptyContainer);
+            Util.hideView(null, linearRecommendedEmptyContainer);
         } else {
             Util.hideView(null, recyclerviewRecommendRecipe);
-            Util.showView(scaleUP, linearEmptyContainer);
+            Util.showView(scaleUP, linearRecommendedEmptyContainer);
+        }
+
+    }
+    private void refreshViewTipsView() {
+        if (tipsRecipes != null && !tipsRecipes.isEmpty()) {
+            Util.showView(null, recyclerviewTipsRecipe);
+            Util.hideView(null, linearTipsEmptyContainer);
+        } else {
+            Util.hideView(null, recyclerviewTipsRecipe);
+            Util.showView(scaleUP, linearTipsEmptyContainer);
         }
     }
 
@@ -419,21 +488,32 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
 
     private Bundle saveState() {
         Bundle state = new Bundle();
-        if (recipes != null && !recipes.isEmpty()) {
-            String recipesJson = new Gson().toJson(recipes);
-            state.putString(RECIPE_KEY, recipesJson);
+        if (recommendedRecipes != null && !recommendedRecipes.isEmpty()) {
+            String recipesJson = new Gson().toJson(recommendedRecipes);
+            state.putString(RECOMMENDED_RECIPE_KEY, recipesJson);
+        }
+        if (tipsRecipes != null && !tipsRecipes.isEmpty()) {
+            String recipesJson = new Gson().toJson(tipsRecipes);
+            state.putString(TIPS_RECIPE_KEY, recipesJson);
         }
         return state;
     }
 
     private void restoreState() {
-        if (recipes != null && !recipes.isEmpty()) {
-            adapter = new RecommendedRecipesAdapter(
-                    recipes, requireContext(), this);
-            recyclerviewRecommendRecipe.swapAdapter(adapter, true);
+        if (recommendedRecipes != null && !recommendedRecipes.isEmpty()) {
+            recommendedRecipesAdapter = new RecommendedRecipesAdapter(
+                    recommendedRecipes, requireContext(), this);
+            recyclerviewRecommendRecipe.swapAdapter(recommendedRecipesAdapter, true);
+
         }
 
-        refreshView();
+        if (tipsRecipes != null && !tipsRecipes.isEmpty()) {
+            tipsRecipesAdapter = new TipsRecipesAdapter(
+                    tipsRecipes, requireContext(), this);
+            recyclerviewTipsRecipe.swapAdapter(tipsRecipesAdapter, true);
+        }
+        refreshViewTipsView();
+        refreshViewRecommendedView();
     }
 
     @Override

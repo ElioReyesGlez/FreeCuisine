@@ -1,13 +1,17 @@
 package com.erg.freecuisine.ui;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -19,6 +23,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.transition.Transition;
 import androidx.transition.TransitionInflater;
 
@@ -66,6 +72,8 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
     private View rootView;
     private RelativeLayout relative_container_recipe_main_info;
     private LinearLayout linear_layout_empty_container;
+    private LinearLayout linear_amounts_container;
+    private LinearLayout table_recipe_ingredients_container;
     private LottieAnimationView lottie_anim_loading;
     private ImageButton ibBookmark;
     private Animation scaleUp, scaleDown;
@@ -98,6 +106,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
                 android.R.transition.move);
         setSharedElementEnterTransition(transition);
         setSharedElementReturnTransition(transition);
+        tags = new ArrayList<>();
 
         if (savedInstanceState != null && savedState == null) {
             savedState = savedInstanceState.getBundle(SAVED_STATE_KEY);
@@ -142,8 +151,13 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
                 .findViewById(R.id.linear_layout_empty_container);
         relative_container_recipe_main_info = rootView
                 .findViewById(R.id.relative_container_recipe_main_info);
+        linear_amounts_container = rootView
+                .findViewById(R.id.linear_amounts_container);
+        table_recipe_ingredients_container = rootView
+                .findViewById(R.id.table_recipe_ingredients_container);
         lottie_anim_loading = rootView
                 .findViewById(R.id.lottie_anim_loading);
+
         Util.showView(scaleUp, lottie_anim_loading);
 
         linear_layout_empty_container.setOnClickListener(this);
@@ -185,48 +199,84 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
 
             ShapeableImageView recipeImg = rootView.findViewById(R.id.recipe_main_image);
             ibBookmark = rootView.findViewById(R.id.ib_bookmark);
-            AppCompatTextView type = rootView.findViewById(R.id.tv_type);
             TextView recipeTitle = rootView.findViewById(R.id.recipe_title);
             TextView recipeDescription = rootView.findViewById(R.id.recipe_description);
-            LinearLayout linearColumn1 = rootView.findViewById(R.id.linear_column_1);
-            LinearLayout linearColumn2 = rootView.findViewById(R.id.linear_column_2);
+            AppCompatTextView type = rootView.findViewById(R.id.tv_type);
+            AppCompatTextView cockingTime = rootView.findViewById(R.id.tv_cocking_time);
+            AppCompatTextView peopleAmount = rootView.findViewById(R.id.tv_people_amount);
+
             RelativeLayout typeContainer = rootView
                     .findViewById(R.id.relative_recipes_type_container);
+            RelativeLayout timeContainer = rootView
+                    .findViewById(R.id.recipes_cooking_time_container);
+            RelativeLayout peopleContainer = rootView
+                    .findViewById(R.id.recipes_amount_container);
+
+            LinearLayout linearColumn1 = rootView.findViewById(R.id.linear_column_1);
+            LinearLayout linearColumn2 = rootView.findViewById(R.id.linear_column_2);
             ibBookmark.setOnClickListener(this);
 
             checkBookmark(realmHelper.exists(recipe));
 
             if (tags != null && !tags.isEmpty())
                 recipe.setTags(tags); // From Bundle Args
+
             recipeTitle.setText(recipe.getTitle());
             recipeDescription.setText(recipe.getDescription());
+            recipeDescription.setOnClickListener(v -> showDescriptionDialog(recipe.getDescription()));
+
+            if (!recipe.getTime().isEmpty()) {
+                Util.showView(null, timeContainer);
+                cockingTime.setText(recipe.getTime());
+            } else
+                Util.hideView(null, timeContainer);
 
             if (!recipe.getType().isEmpty()) {
                 Util.showView(null, typeContainer);
                 type.setText(recipe.getType());
-            } else {
+            } else
                 Util.hideView(null, typeContainer);
+
+            if (!recipe.getDiners().isEmpty()) {
+                Util.showView(null, peopleContainer);
+                peopleAmount.setText(recipe.getDiners());
+            } else
+                Util.hideView(null, peopleContainer);
+
+            if (recipe.getDiners().isEmpty() && recipe.getType().isEmpty()
+                    && recipe.getTime().isEmpty()) {
+                Util.hideView(null, linear_amounts_container);
+            } else {
+                Util.showView(null, linear_amounts_container);
             }
 
-            String[] ingredients = Util.extractIngredients(recipe.getIngredients());
-            for (int i = 0; i < ingredients.length; i++) {
-                String ingredient = ingredients[i];
-                View view = getLayoutInflater().inflate(R.layout.item_ingredint, null);
-                CheckBox checkBox = view.findViewById(R.id.checkBox);
-                TextView textView = view.findViewById(R.id.textViewIngredient);
-                textView.setText(ingredient);
-                view.setId(i);
-                if (i <= (ingredients.length - 1) / 2) {
-                    linearColumn1.addView(view);
-                } else {
-                    linearColumn2.addView(view);
+            String ingredientsStr = recipe.getIngredients();
+
+            if (!ingredientsStr.isEmpty()) {
+                String[] ingredients = Util.extractIngredients(ingredientsStr);
+                for (int i = 0; i < ingredients.length; i++) {
+                    String ingredient = ingredients[i];
+                    View view = getLayoutInflater().inflate(R.layout.item_ingredint, null);
+                    CheckBox checkBox = view.findViewById(R.id.checkBox);
+                    TextView textView = view.findViewById(R.id.textViewIngredient);
+                    textView.setText(ingredient);
+                    view.setId(i);
+                    if (i <= (ingredients.length - 1) / 2) {
+                        linearColumn1.addView(view);
+                    } else {
+                        linearColumn2.addView(view);
+                    }
+                    checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                        if (isChecked)
+                            textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                        else
+                            textView.setPaintFlags(textView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                    });
                 }
-                checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    if (isChecked)
-                        textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                    else
-                        textView.setPaintFlags(textView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
-                });
+                Util.showView(null, table_recipe_ingredients_container);
+            } else {
+                Util.hideView(null, linear_amounts_container);
+                Util.hideView(null, table_recipe_ingredients_container);
             }
 
             Picasso.get()
@@ -236,35 +286,50 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
                     .into(recipeImg);
 
             LinearLayout linear_preparation_container = rootView.findViewById(R.id.linear_preparation_container);
-            for (StepModel step : recipe.getSteps()) {
-                View view = getLayoutInflater().inflate(R.layout.item_recipe_preparation_step_img, null);
+            if (!recipe.getSteps().isEmpty()) {
+                for (StepModel step : recipe.getSteps()) {
+                    View view = getLayoutInflater().inflate(R.layout.item_recipe_preparation_step_img, null);
 
-                if (step.getImage() != null && !step.getImage().getUrl().isEmpty()) {
-                    ShapeableImageView iv_step_preparation_image = view.findViewById(R.id.iv_step_preparation_image);
-                    Picasso.get().load(step.getImage().getUrl()).into(iv_step_preparation_image);
+                    if (step.getImage() != null && !step.getImage().getUrl().isEmpty()) {
+                        ShapeableImageView iv_step_preparation_image = view.findViewById(R.id.iv_step_preparation_image);
+                        Picasso.get().load(step.getImage().getUrl()).into(iv_step_preparation_image);
+                    }
+
+                    if (step.getVideo() != null && !step.getVideo().getId().isEmpty()) {
+                        view = getLayoutInflater().inflate(R.layout.item_recipe_preparation_step_video, null);
+                        videoView = view.findViewById(R.id.youtube_player_view);
+                        getViewLifecycleOwner().getLifecycle().addObserver(videoView);
+                        setUpYouPlayerView(videoView, step.getVideo());
+                    }
+
+                    TextView tv_preparation_number_order = view.findViewById(R.id.tv_preparation_number_order);
+                    TextView tv_preparation_description = view.findViewById(R.id.tv_preparation_description);
+
+                    tv_preparation_number_order.setText(step.getStepNumber());
+                    tv_preparation_description.setText(step.getPreparation());
+
+                    if (!step.getStepLink().isEmpty()) {
+                        view.setBackgroundResource(R.drawable.selector_white);
+                        view.setClickable(true);
+                        view.setFocusable(true);
+                        view.setOnClickListener(v -> {
+                            loadFragment(step.getStepLink(), tags);
+                        });
+                        Log.d(TAG, "setUpView: STEP = " + step.toString());
+                    }
+
+                    linear_preparation_container.addView(view);
                 }
-
-                if (step.getVideo() != null && !step.getVideo().getId().isEmpty()) {
-                    view = getLayoutInflater().inflate(R.layout.item_recipe_preparation_step_video, null);
-                    videoView = view.findViewById(R.id.youtube_player_view);
-                    getViewLifecycleOwner().getLifecycle().addObserver(videoView);
-                    setUpYouPlayerView(videoView, step.getVideo());
-                }
-
-                TextView tv_preparation_number_order = view.findViewById(R.id.tv_preparation_number_order);
-                TextView tv_preparation_description = view.findViewById(R.id.tv_preparation_description);
-//                TextView tv_tips = view.findViewById(R.id.tv_tips);
-
-                tv_preparation_number_order.setText(String.valueOf(step.getStepNumber()));
-                tv_preparation_description.setText(step.getPreparation());
-                linear_preparation_container.addView(view);
+                Util.showView(null, linear_preparation_container);
+            } else {
+                Util.hideView(null, linear_preparation_container);
             }
 
             Util.showView(null, relative_container_recipe_main_info);
             Util.hideView(null, linear_layout_empty_container);
         } else {
             Util.showView(scaleUp, linear_layout_empty_container);
-            Util.hideView(scaleDown, relative_container_recipe_main_info);
+            Util.hideView(null, relative_container_recipe_main_info);
         }
     }
 
@@ -360,34 +425,70 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
         }
     }
 
-
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         Util.vibrate(requireContext());
-        if (v.getId() == R.id.linear_layout_empty_container) {
-            Util.refreshCurrentFragmentWithArgs(requireActivity(), args);
-        } else if (v.getId() == R.id.ib_bookmark) {
+        switch (v.getId()) {
+            case R.id.linear_layout_empty_container:
+                Util.refreshCurrentFragmentWithArgs(requireActivity(), args);
+                break;
+            case R.id.ib_bookmark:
 
-            String strJsonRecipe = new Gson().toJson(recipe);
-            RealmRecipeModel realmRecipeModel = new RealmRecipeModel(recipe.getId(), strJsonRecipe);
-            if (!isBookmarkChecked) {
-                isBookmarkChecked = true;
-                checkBookmark(true);
-                realmHelper.insertOrUpdate(realmRecipeModel);
-                if (isVisible())
-                    MessageHelper.showInfoMessage(requireActivity(),
-                            getString(R.string.saved), rootView);
-            } else {
-                isBookmarkChecked = false;
-                checkBookmark(false);
-                realmHelper.deleteRecipe(realmRecipeModel);
-                if (isVisible())
-                    MessageHelper.showInfoMessage(requireActivity(),
-                            getString(R.string.removed), rootView);
-            }
+                String strJsonRecipe = new Gson().toJson(recipe);
+                RealmRecipeModel realmRecipeModel = new RealmRecipeModel(recipe.getId(), strJsonRecipe);
+                if (!isBookmarkChecked) {
+                    isBookmarkChecked = true;
+                    checkBookmark(true);
+                    realmHelper.insertOrUpdate(realmRecipeModel);
+                    if (isVisible())
+                        MessageHelper.showInfoMessage(requireActivity(),
+                                getString(R.string.saved), rootView);
+                } else {
+                    isBookmarkChecked = false;
+                    checkBookmark(false);
+                    realmHelper.deleteRecipe(realmRecipeModel);
+                    if (isVisible())
+                        MessageHelper.showInfoMessage(requireActivity(),
+                                getString(R.string.removed), rootView);
+                }
+                break;
         }
     }
 
+    private void loadFragment(String url, ArrayList<TagModel> tags) {
+        NavController navController = Navigation
+                .findNavController(requireActivity(), R.id.nav_host_fragment);
+        Bundle args = new Bundle();
+        args.putString(URL_KEY, url);
+        args.putParcelableArrayList(TAG_KEY, tags);
+        navController.navigate(R.id.action_singleRecipeFragment_self, args);
+    }
+
+    private void showDescriptionDialog(String text) {
+
+        final Dialog dialog = new Dialog(requireContext(), R.style.alert_dialog);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(true);
+        LayoutInflater inflater = getLayoutInflater();
+        @SuppressLint("InflateParams")
+        View dialogView = inflater.inflate(R.layout.dialog_description_text, null, false);
+        TextView msg = dialogView.findViewById(R.id.tv_description);
+
+        msg.setText(text);
+        dialog.setContentView(dialogView);
+
+        Button cancelBtn = dialog.findViewById(R.id.ok);
+        cancelBtn.setOnClickListener(v -> {
+            Util.vibrate(requireContext());
+            if (dialog.isShowing())
+                dialog.dismiss();
+        });
+
+        dialog.show();
+        dialogView.startAnimation(scaleUp);
+
+    }
 
     @Override
     public void onRecipeClick(int position, View view) {
@@ -410,6 +511,16 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
         } else {
             showErrorMessage();
         }
+    }
+
+    @Override
+    public void onRecommendedRecipesLoaded(ArrayList<RecipeModel> recipes) {
+        /*Empty*/
+    }
+
+    @Override
+    public void onTipsRecipesLoaded(ArrayList<RecipeModel> recipes) {
+        /*Empty*/
     }
 
     private void showNetworkErrorMessage() {

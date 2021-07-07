@@ -2,20 +2,21 @@ package com.erg.freecuisine.models;
 
 public class StepModel {
 
-    private int step;
-    private String preparation;
+    private String step = "";
+    private String preparation = "";
     private ImageModel image;
     private VideoModel video;
+    private String stepLink = "";
 
     public StepModel() { }
 
-    public StepModel(int step, String preparation, ImageModel image) {
+    public StepModel(String step, String preparation, ImageModel image) {
         this.step = step;
         this.preparation = preparation;
         this.image = image;
     }
 
-    public StepModel(int step, String preparation, VideoModel video) {
+    public StepModel(String step, String preparation, VideoModel video) {
         this.step = step;
         this.preparation = preparation;
         this.video = video;
@@ -29,11 +30,11 @@ public class StepModel {
         this.video = video;
     }
 
-    public int getStepNumber() {
+    public String getStepNumber() {
         return step;
     }
 
-    public void setStep(int step) {
+    public void setStep(String step) {
         this.step = step;
     }
 
@@ -51,5 +52,28 @@ public class StepModel {
 
     public void setImage(ImageModel image) {
         this.image = image;
+    }
+
+    public String getStep() {
+        return step;
+    }
+
+    public String getStepLink() {
+        return stepLink;
+    }
+
+    public void setStepLink(String stepLink) {
+        this.stepLink = stepLink;
+    }
+
+    @Override
+    public String toString() {
+        return "StepModel{" +
+                "step='" + step + '\'' +
+                ", preparation='" + preparation + '\'' +
+                ", image=" + image +
+                ", video=" + video +
+                ", stepLink='" + stepLink + '\'' +
+                '}';
     }
 }

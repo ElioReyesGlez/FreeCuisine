@@ -20,8 +20,6 @@
                android:layout_height="wrap_content"
                android:padding="@dimen/default_padding"
                android:layout_margin="@dimen/margin"
-               android:background="@drawable/background_white"
-               android:elevation="@dimen/default_elevation"
                android:layout_gravity="center">
                <ImageView
                    android:id="@+id/iv_app_ic_launcher"
@@ -31,7 +29,7 @@
                    android:layout_centerHorizontal="true"
                    android:layout_margin="@dimen/default_margin"
                    android:contentDescription="@string/icon"
-                   android:src="@drawable/ic_lunch_chef_mini" />
+                   android:src="@drawable/ic_lunch_chef" />
 
                <TextView
                    android:layout_width="wrap_content"

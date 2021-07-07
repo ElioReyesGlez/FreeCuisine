@@ -36,7 +36,7 @@
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/tv_verses_cont"
+                android:id="@+id/tv_bookmarks_cont"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/default_margin"
@@ -70,7 +70,7 @@
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/tv_user_score"
+                android:id="@+id/tv_user_usage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/default_margin"
@@ -101,7 +101,7 @@
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/tv_upload_date"
+                android:id="@+id/tv_last_usage_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/default_margin"

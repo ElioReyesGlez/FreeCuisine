@@ -14,7 +14,9 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
+import static com.erg.freecuisine.util.Constants.CURRENT_MEMO_RECIPE_READ_KEY;
 import static com.erg.freecuisine.util.Constants.DECIMAL_PLACE;
 import static com.erg.freecuisine.util.Constants.LAST_RECIPE_READ_KEY;
 import static com.erg.freecuisine.util.Constants.LAST_USAGE_KEY;
@@ -125,7 +127,7 @@ public class SharedPreferencesHelper {
         return sharedPref.getFloat(key, 0.0f);
     }
 
-    public void removeUsageValue(String key) {
+    public void removeValue(String key) {
         editor = sharedPref.edit();
         editor.remove(key);
         editor.apply();

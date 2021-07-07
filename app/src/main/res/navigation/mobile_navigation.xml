@@ -58,7 +58,13 @@
         android:id="@+id/singleRecipeFragment"
         android:name="com.erg.freecuisine.ui.SingleRecipeFragment"
         android:label="fragment_recipe"
-        tools:layout="@layout/fragment_single_recipe" />
+        tools:layout="@layout/fragment_single_recipe" >
+        <action
+            android:id="@+id/action_singleRecipeFragment_self"
+            app:destination="@id/singleRecipeFragment"
+            app:enterAnim="@anim/custom_enter_anim"
+            app:exitAnim="@anim/custom_exit_anim" />
+    </fragment>
 
     <fragment
         android:id="@+id/aboutFragment"

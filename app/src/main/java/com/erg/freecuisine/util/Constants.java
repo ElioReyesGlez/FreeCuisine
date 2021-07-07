@@ -23,12 +23,16 @@ public class Constants {
     /*KEYS*/
     public static final String SAVED_STATE_KEY = "saved_state_key";
     public static final String RECIPE_KEY = "recipe_key";
+    public static final String RECOMMENDED_RECIPE_KEY = "recomended_recipe_key";
+    public static final String TIPS_RECIPE_KEY = "tips_recipe_key";
     public static final String LINK_KEY = "link_key";
     public static final String URL_KEY = "url";
     public static final String TAG_KEY = "tag_key";
     public static final String QUERY_KEY = "query_key";
     public static final String SPACE_REGEX = "\\s+";
     public static final String SPACE = " ";
+    public static final String DEFAULT = "DEFAULT";
+    public static final int ZERO = 0;
 
     public static ArrayList<String> getBrands(Context context) {
         ArrayList<String> brands = new ArrayList<>();
@@ -59,6 +63,7 @@ public class Constants {
     public static final String PROPERTY_INGREDIENTS_TAG = "ingrediente";
     public static final String INGREDIENTS_LABEL_TAG = "label";
     public static final String STEPS_TAG = "apartado";
+    public static final String STEPS_TAG_TITLE = "titulo titulo--h2 titulo--apartado";
     public static final String STEPS_ORDER_TAG = "orden";
     public static final String STEPS_IMG_CLASS_TAG = "imagen_wrap";
     public static final String STEPS_IMG_TAG = "imagen lupa";
@@ -98,9 +103,10 @@ public class Constants {
     public static final String HOME_RECOMMENDED_MAIN_TAG = "bloquegroup clear padding-left-1";
     public static final String BLOQUE_LINK = "bloque link";
     public static final String RECETA_GRATIS_COLUMN = "recetasgratis";
-    public static final String MAIN_RECETA_GRATIS_TAG = "#mainurl";
-    public static final String CONSEJOS_DE_COSINA_COLUMN = "consejosdecocina";
-    public static final String CONSEJOS_DE_COSINA_TAG= "#consejosdecocina";
+    public static final String MAIN_RECETA_GRATIS_TAG = "mainurl";
+    public static final String CONSEJOS_COLUMN = "consejos";
+    public static final String CONSEJOS_TAG= "consejos";
+    public static final String BEBIDAS_TAG= "bebidas";
     public static final String TITLE_TITLE_BLOCK = "titulo titulo--bloque";
     public static final String CATEGORIA_CLASS = "categoria";
     public static final String ETIQUETA_CLASS = "etiqueta";
@@ -112,6 +118,7 @@ public class Constants {
     public static final String PREF_APP_FIRST_LAUNCH_KEY = "first_launch_key";
     public static final String OPEN_TIME_USAGE_KEY = "open_time_usage_key";
     public static final String LAST_RECIPE_READ_KEY = "last_recipe_key";
+    public static final String CURRENT_MEMO_RECIPE_READ_KEY = "memo_recipes_key";
     public static final String VIBRATION_STATUS_FLAG_KEY = "vibration_status_key";
     public static final String SHUFFLE_STATUS_FLAG_KEY = "shuffle_status_key";
     public static final String BOOKMARK_FLAG_KEY = "bookmark_flag_key";

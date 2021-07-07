@@ -97,7 +97,7 @@ public class RecipeModel implements Parcelable {
 
         for (int i = 0; i < steps.length; i++) {
             StepModel step = new StepModel();
-            step.setStep(Integer.parseInt(steps[i]));
+            step.setStep(steps[i]);
             i++;
             if (i < steps.length) {
                 step.setPreparation(steps[i]);

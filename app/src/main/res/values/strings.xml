@@ -151,6 +151,8 @@
     <string name="saved">¡Salva en marcadores con éxito!</string>
     <string name="removed">¡Retiro de marcadores con éxito!</string>
     <string name="empty_list">Nada que mostrar</string>
+    <string name="tips">#consejos</string>
+    <string name="ok">¡Vale!</string>
 
     <string-array name="day_codes">
         <item>mon_</item>

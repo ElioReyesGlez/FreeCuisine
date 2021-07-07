@@ -17,7 +17,7 @@
             android:id="@+id/linear_layout_empty_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_centerInParent="true"
             android:orientation="vertical"
             android:padding="@dimen/default_padding"
             android:visibility="gone">
@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:padding="@dimen/default_padding"
-                android:text="@string/empty"
+                android:text="@string/reload"
                 android:textAlignment="center"
                 android:textColor="@color/text_second_color"
                 android:textSize="@dimen/description_text_size"

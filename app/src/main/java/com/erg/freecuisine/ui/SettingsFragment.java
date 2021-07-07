@@ -4,9 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,16 +14,12 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.erg.freecuisine.R;
+import com.erg.freecuisine.controller.network.helpers.RealmHelper;
 import com.erg.freecuisine.controller.network.helpers.SharedPreferencesHelper;
-import com.erg.freecuisine.models.RecipeModel;
-import com.erg.freecuisine.models.TagModel;
+import com.erg.freecuisine.controller.network.helpers.StringHelper;
+import com.erg.freecuisine.controller.network.helpers.TimeHelper;
 import com.erg.freecuisine.util.Util;
 import com.google.android.material.switchmaterial.SwitchMaterial;
-
-import java.util.ArrayList;
-
-import static com.erg.freecuisine.util.Constants.TAG_KEY;
-import static com.erg.freecuisine.util.Constants.URL_KEY;
 
 public class SettingsFragment extends Fragment implements View.OnClickListener {
 
@@ -33,11 +28,13 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     private View rootView;
     private SharedPreferencesHelper spHelper;
     private SwitchMaterial vibrationSwitch, shuffleSwitch;
+    private RealmHelper realmHelper;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         spHelper = new SharedPreferencesHelper(requireContext());
+        realmHelper = new RealmHelper();
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -65,9 +62,38 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         });
 
 
+        setUserBoard();
         setSwitchesStateSaved();
 
         return rootView;
+    }
+
+    private void setUserBoard() {
+        TextView tv_bookmarks_cont = rootView.findViewById(R.id.tv_bookmarks_cont);
+        TextView tv_user_usage = rootView.findViewById(R.id.tv_user_usage);
+        TextView tv_last_usage_date = rootView.findViewById(R.id.tv_last_usage_date);
+
+        int bookmarks = 0;
+        if (realmHelper.getRecipes() != null) {
+            bookmarks = realmHelper.getRecipes().size();
+        }
+
+        long lastUsage = spHelper.getLastUsage();
+
+        tv_bookmarks_cont.setText(String.valueOf(bookmarks));
+        tv_user_usage.setText(getUsage());
+
+        if (lastUsage != 0)
+            tv_last_usage_date.setText(TimeHelper.dateFormatterShort(lastUsage));
+
+    }
+
+    private String getUsage() {
+        float usage = 0;
+        for (float value : spHelper.getUserActivity()) {
+            usage += value;
+        }
+        return String.valueOf(usage);
     }
 
     private void setSwitchesStateSaved() {

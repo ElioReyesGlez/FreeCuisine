@@ -284,6 +284,16 @@ public class RecipesFragment extends Fragment implements
         }
     }
 
+    @Override
+    public void onRecommendedRecipesLoaded(ArrayList<RecipeModel> recipes) {
+        /*Empty*/
+    }
+
+    @Override
+    public void onTipsRecipesLoaded(ArrayList<RecipeModel> recipes) {
+        /*Empty*/
+    }
+
     private void showTimeOutMessage() {
         if (isVisible()) {
             requireActivity().runOnUiThread(() -> {

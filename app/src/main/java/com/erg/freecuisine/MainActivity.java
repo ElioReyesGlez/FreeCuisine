@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.erg.freecuisine.controller.network.helpers.FireBaseHelper;
+import com.erg.freecuisine.controller.network.helpers.SharedPreferencesHelper;
 import com.erg.freecuisine.models.LinkModel;
 import com.erg.freecuisine.ui.RecipesFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -20,6 +21,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import java.util.ArrayList;
+import java.util.logging.SocketHandler;
 
 import io.realm.Realm;
 
@@ -28,12 +30,15 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String TAG = "MainActivity";
 
+
+    SharedPreferencesHelper spHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         Realm.init(this);
+        spHelper = new SharedPreferencesHelper(this);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemReselectedListener(this);
@@ -46,5 +51,16 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onNavigationItemReselected(@NonNull MenuItem item) {
         Log.d(TAG, "onNavigationItemReselected: " + item);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        spHelper.saveLastUsage(System.currentTimeMillis());
     }
 }

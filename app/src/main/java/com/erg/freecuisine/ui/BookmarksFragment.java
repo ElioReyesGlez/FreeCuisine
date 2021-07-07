@@ -2,16 +2,6 @@ package com.erg.freecuisine.ui;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.appcompat.widget.SearchView;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,37 +10,33 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 
+import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import com.erg.freecuisine.R;
-import com.erg.freecuisine.adapters.LoadingAdapter;
 import com.erg.freecuisine.adapters.RecipesAdapter;
-import com.erg.freecuisine.controller.network.helpers.MessageHelper;
 import com.erg.freecuisine.controller.network.helpers.RealmHelper;
 import com.erg.freecuisine.controller.network.helpers.StringHelper;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
-import com.erg.freecuisine.models.LinkModel;
-import com.erg.freecuisine.models.RealmRecipeModel;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
-import com.erg.freecuisine.util.Constants;
 import com.erg.freecuisine.util.Util;
 import com.google.gson.Gson;
-import com.yalantis.filter.widget.Filter;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.RealmList;
-
 import static com.erg.freecuisine.util.Constants.BOOKMARK_FLAG_KEY;
-import static com.erg.freecuisine.util.Constants.FILTER_ID;
 import static com.erg.freecuisine.util.Constants.JSON_RECIPE_KEY;
-import static com.erg.freecuisine.util.Constants.LINK_KEY;
 import static com.erg.freecuisine.util.Constants.QUERY_KEY;
 import static com.erg.freecuisine.util.Constants.RECIPE_KEY;
-import static com.erg.freecuisine.util.Constants.TAG_KEY;
-import static com.erg.freecuisine.util.Constants.URL_KEY;
 
 public class BookmarksFragment extends Fragment implements View.OnClickListener,
         SearchView.OnQueryTextListener, SearchView.OnCloseListener, OnRecipeListener {
@@ -154,6 +140,16 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void onLoaderFailed(ArrayList<RecipeModel> recipes, Exception e) {
+        /*Empty*/
+    }
+
+    @Override
+    public void onRecommendedRecipesLoaded(ArrayList<RecipeModel> recipes) {
+        /*Empty*/
+    }
+
+    @Override
+    public void onTipsRecipesLoaded(ArrayList<RecipeModel> recipes) {
         /*Empty*/
     }
 

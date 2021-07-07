@@ -57,10 +57,20 @@
         <item name="android:textSize">14sp</item>
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingRight">16dp</item>
-        <item name="android:textColor">@color/dark_gray_btn_bg_color</item>
+        <item name="android:textColor">@color/text_second_color</item>
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="alert_dialog" parent="android:Theme.Dialog">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowBackground">@color/float_transparent</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.4</item>
+    </style>
 
     <style name="tag_textView_title" parent="android:Widget.TextView">
         <item name="android:textStyle">bold</item>

@@ -28,7 +28,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tv_section_recommended"
+                    android:id="@+id/tag_section_recommended"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -40,6 +40,7 @@
                     android:id="@+id/recyclerviewRecommendRecipe"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
                     android:layout_gravity="start"
                     android:scrollbars="none"
                     tools:listitem="@layout/item_recommend_recipe_card" />
@@ -49,12 +50,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
+                    android:layout_margin="@dimen/default_margin"
                     android:background="@drawable/selector_gray_light"
                     android:clickable="true"
                     android:focusable="true"
                     android:orientation="vertical"
                     android:padding="@dimen/default_padding"
-                    android:layout_margin="@dimen/default_margin"
                     android:visibility="gone">
 
                     <com.airbnb.lottie.LottieAnimationView
@@ -76,8 +77,8 @@
                         android:layout_gravity="center_horizontal"
                         android:text="@string/empty"
                         android:textAlignment="center"
-                        android:textSize="@dimen/titles_text_size"
                         android:textColor="@color/text_second_color"
+                        android:textSize="@dimen/titles_text_size"
                         android:textStyle="bold|italic" />
 
                     <TextView
@@ -95,29 +96,97 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/ll_activity_history_container"
+
+            <TextView
+                android:id="@+id/tag_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/margin_top"
+                android:text="@string/tips"
+                android:theme="@style/tag_textView_title" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerviewTipsRecipe"
+                android:layout_margin="@dimen/default_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/default_margin"
-                android:elevation="@dimen/default_elevation"
-                android:gravity="center"
-                android:orientation="vertical">
+                android:layout_gravity="start"
+                android:scrollbars="none"
+                tools:listitem="@layout/item_tips_recipe_card" />
+
+
+            <LinearLayout
+                android:id="@+id/linear_layout_empty_container_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="@dimen/default_margin"
+                android:background="@drawable/selector_gray_light"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:padding="@dimen/default_padding"
+                android:visibility="gone">
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/lottie_anim_empty_tips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/empty"
+                    android:cropToPadding="false"
+                    android:scaleType="centerInside"
+                    app:lottie_autoPlay="true"
+                    app:lottie_fileName="empty_box.json"
+                    app:lottie_loop="true" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_margin="@dimen/default_margin"
-                    android:text="@string/activity"
-                    android:theme="@style/tag_textView_title" />
+                    android:text="@string/empty"
+                    android:textAlignment="center"
+                    android:textColor="@color/text_second_color"
+                    android:textSize="@dimen/titles_text_size"
+                    android:textStyle="bold|italic" />
 
-                <!-- Space to fill withs Views programmatically -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="@dimen/default_padding"
+                    android:text="@string/reload"
+                    android:textAlignment="center"
+                    android:textColor="@color/text_second_color"
+                    android:textSize="@dimen/description_text_size"
+                    android:textStyle="italic" />
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/tag_activity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/margin_top"
+                android:text="@string/activity"
+                android:theme="@style/tag_textView_title" />
+
+                <LinearLayout
+                    android:id="@+id/ll_activity_history_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <!-- Space to fill withs Views programmatically -->
+
+                </LinearLayout>
 
         </LinearLayout>
+
     </ScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

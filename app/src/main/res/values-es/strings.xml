@@ -76,7 +76,7 @@
     <string name="network_error">¡Error de red! Por favor revise su conexion a internet</string>
     <string name="zero">0</string>
     <string name="recipe_cont">Recipes</string>
-    <string name="last_sync">Última Sync</string>
+    <string name="last_sync">Última abierta</string>
     <string name="blank">---</string>
     <string name="usage">Uso</string>
     <string name="bookmarks">Marcadores</string>
@@ -90,6 +90,8 @@
     <string name="saved">¡Salva en marcadores con éxito!</string>
     <string name="removed">¡Retiro de marcadores con éxito!</string>
     <string name="empty_list">Nada que mostrar</string>
+    <string name="tips">#consejos</string>
+    <string name="ok">¡Vale!</string>
 
 
     <string-array name="day_codes">
