@@ -1,12 +1,16 @@
 package com.erg.freecuisine.models;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+
 public class StepModel {
 
     private String step = "";
     private String preparation = "";
     private ImageModel image;
     private VideoModel video;
-    private String stepLink = "";
+    private ArrayList<LinkModel> stepLinks;
 
     public StepModel() { }
 
@@ -20,6 +24,11 @@ public class StepModel {
         this.step = step;
         this.preparation = preparation;
         this.video = video;
+    }
+
+    public StepModel(String step, String preparation) {
+        this.step = step;
+        this.preparation = preparation;
     }
 
     public VideoModel getVideo() {
@@ -58,14 +67,15 @@ public class StepModel {
         return step;
     }
 
-    public String getStepLink() {
-        return stepLink;
+    public ArrayList<LinkModel> getStepLinks() {
+        return stepLinks;
     }
 
-    public void setStepLink(String stepLink) {
-        this.stepLink = stepLink;
+    public void setStepLinks(ArrayList<LinkModel> stepLinks) {
+        this.stepLinks = stepLinks;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "StepModel{" +
@@ -73,7 +83,7 @@ public class StepModel {
                 ", preparation='" + preparation + '\'' +
                 ", image=" + image +
                 ", video=" + video +
-                ", stepLink='" + stepLink + '\'' +
+                ", stepLinks=" + stepLinks +
                 '}';
     }
 }

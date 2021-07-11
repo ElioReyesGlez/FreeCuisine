@@ -1,5 +1,6 @@
 package com.erg.freecuisine.ui;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +15,9 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.erg.freecuisine.R;
-import com.erg.freecuisine.controller.network.helpers.RealmHelper;
-import com.erg.freecuisine.controller.network.helpers.SharedPreferencesHelper;
-import com.erg.freecuisine.controller.network.helpers.StringHelper;
-import com.erg.freecuisine.controller.network.helpers.TimeHelper;
+import com.erg.freecuisine.helpers.RealmHelper;
+import com.erg.freecuisine.helpers.SharedPreferencesHelper;
+import com.erg.freecuisine.helpers.TimeHelper;
 import com.erg.freecuisine.util.Util;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -27,7 +27,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     private View rootView;
     private SharedPreferencesHelper spHelper;
-    private SwitchMaterial vibrationSwitch, shuffleSwitch;
+    private SwitchMaterial vibrationSwitch, shuffleSwitch, scrollUpSwitch;
     private RealmHelper realmHelper;
 
     @Override
@@ -59,6 +59,12 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         shuffleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             buttonView.setChecked(isChecked);
             spHelper.setShuffleStatus(isChecked);
+        });
+
+        scrollUpSwitch = rootView.findViewById(R.id.switch_scroll_up);
+        scrollUpSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            buttonView.setChecked(isChecked);
+            spHelper.setScrollUpStatus(isChecked);
         });
 
 
@@ -99,8 +105,10 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     private void setSwitchesStateSaved() {
         vibrationSwitch.setChecked(spHelper.getVibrationStatus());
         shuffleSwitch.setChecked(spHelper.getShuffleStatus());
+        scrollUpSwitch.setChecked(spHelper.getScrollUpStatus());
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         Util.vibrate(requireContext());

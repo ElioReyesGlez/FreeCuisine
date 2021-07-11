@@ -13,7 +13,7 @@ public interface OnRecipeListener {
     void onRecipeClick(int position, View view);
     void onSingleRecipeLoaded(RecipeModel recipe);
     void onRecipesLoaded(ArrayList<RecipeModel> recipes);
-    void onLoaderFailed(ArrayList<RecipeModel> recipes, Exception e);
+    void onLoaderFailed(String url, Exception e);
     void onRecommendedRecipesLoaded(ArrayList<RecipeModel> recipes);
     void onTipsRecipesLoaded(ArrayList<RecipeModel> recipes);
 }

@@ -31,6 +31,11 @@
             app:exitAnim="@anim/custom_exit_anim"
             app:popEnterAnim="@anim/custom_enter_anim"
             app:popExitAnim="@anim/custom_exit_anim" />
+        <action
+            android:id="@+id/action_navigation_recipes_to_adMobFragment"
+            app:destination="@id/adMobFragment"
+            app:enterAnim="@anim/custom_enter_anim"
+            app:popEnterAnim="@anim/custom_enter_anim" />
     </fragment>
 
     <fragment
@@ -84,6 +89,25 @@
             app:exitAnim="@anim/custom_exit_anim"
             app:popEnterAnim="@anim/custom_enter_anim"
             app:popExitAnim="@anim/custom_exit_anim" />
+        <action
+            android:id="@+id/action_bookmarksFragment_to_adMobFragment"
+            app:destination="@id/adMobFragment"
+            app:enterAnim="@anim/slide_in_from_rigth"
+            app:exitAnim="@anim/custom_exit_anim"
+            app:popEnterAnim="@anim/custom_enter_anim"
+            app:popExitAnim="@anim/custom_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/adMobFragment"
+        android:name="com.erg.freecuisine.ui.AdMobFragment"
+        android:label="fragment_ad_mob"
+        tools:layout="@layout/fragment_ad_mob" >
+        <action
+            android:id="@+id/action_adMobFragment_to_singleRecipeFragment"
+            app:destination="@id/singleRecipeFragment"
+            app:enterAnim="@anim/custom_enter_anim"
+            app:exitAnim="@anim/custom_exit_anim" />
     </fragment>
 
 </navigation>

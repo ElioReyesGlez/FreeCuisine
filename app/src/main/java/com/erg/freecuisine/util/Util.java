@@ -1,14 +1,17 @@
 package com.erg.freecuisine.util;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
@@ -16,27 +19,26 @@ import android.view.View;
 import android.view.animation.Animation;
 
 import androidx.navigation.NavController;
-import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 
 import com.erg.freecuisine.R;
-import com.erg.freecuisine.controller.network.helpers.SharedPreferencesHelper;
+import com.erg.freecuisine.helpers.SharedPreferencesHelper;
+import com.erg.freecuisine.helpers.TimeHelper;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
 
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
 import static com.erg.freecuisine.util.Constants.DIVISION_SING;
 import static com.erg.freecuisine.util.Constants.MIN_VIBRATE_TIME;
-import static com.erg.freecuisine.util.Constants.NEWLINE;
 import static com.erg.freecuisine.util.Constants.SPECIAL_MIN_VIBRATE_TIME;
 import static com.erg.freecuisine.util.Constants.SPECIAL_VIBRATE_TIME;
+import static com.erg.freecuisine.util.Constants.TAG_KEY;
+import static com.erg.freecuisine.util.Constants.URL_KEY;
 import static com.erg.freecuisine.util.Constants.VIBRATE_TIME;
 
 public class Util {
@@ -71,9 +73,24 @@ public class Util {
         if (view != null)
             if (view.getVisibility() == View.VISIBLE) {
                 if (anim != null)
-                    view.setAnimation(anim);
+                    view.startAnimation(anim);
                 view.setVisibility(View.GONE);
             }
+    }
+
+    public static void hideViewInvisibleWay(Animation anim, View view) {
+        if (view != null)
+            if (view.getVisibility() == View.VISIBLE) {
+                if (anim != null)
+                    view.startAnimation(anim);
+                view.setVisibility(View.INVISIBLE);
+            }
+    }
+
+    public static void hideViewWithDelay(Animation anim, View view) {
+         new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            hideView(anim, view);
+        }, TimeHelper.DELAY);
     }
 
     public static void vibrate(Context context) {
@@ -202,6 +219,104 @@ public class Util {
                 .findNavController(activity, R.id.nav_host_fragment);
         int id = Objects.requireNonNull(navController.getCurrentDestination()).getId();
         navController.popBackStack(id, true);
-        navController.navigate(id,args);
+        navController.navigate(id, args);
+    }
+
+
+    public static void saveUsageByWeekDay(Context context) {
+        SharedPreferencesHelper spHelper = new SharedPreferencesHelper(context);
+        String dayCodeKey;
+        String[] dayCodes = context.getResources().getStringArray(R.array.day_codes);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setFirstDayOfWeek(Calendar.MONDAY);
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
+
+        long currentTime = System.currentTimeMillis();
+        long openTimeUsage = spHelper.getUsageOpenTime();
+        long diff = TimeHelper.getDifferenceInMinutes(currentTime, openTimeUsage);
+        float usageScore = Util.calculateUsageScore(diff);
+
+        Log.d(TAG, "saveUsageScoreByWeekDay: Memorizing difference: " + diff);
+        Log.d(TAG, "saveUsageScoreByWeekDay: UsageScore: " + usageScore);
+
+        switch (day) {
+            case Calendar.MONDAY:
+                dayCodeKey = dayCodes[0] + 1;
+                spHelper.increasesUsageValue(dayCodeKey, usageScore);
+                break;
+            case Calendar.TUESDAY:
+                dayCodeKey = dayCodes[1] + 2;
+                spHelper.increasesUsageValue(dayCodeKey, usageScore);
+                break;
+            case Calendar.WEDNESDAY:
+                dayCodeKey = dayCodes[2] + 3;
+                spHelper.increasesUsageValue(dayCodeKey, usageScore);
+                break;
+            case Calendar.THURSDAY:
+                dayCodeKey = dayCodes[3] + 4;
+                spHelper.increasesUsageValue(dayCodeKey, usageScore);
+                break;
+            case Calendar.FRIDAY:
+                dayCodeKey = dayCodes[4] + 5;
+                spHelper.increasesUsageValue(dayCodeKey, usageScore);
+                break;
+            case Calendar.SATURDAY:
+                dayCodeKey = dayCodes[5] + 6;
+                spHelper.increasesUsageValue(dayCodeKey, usageScore);
+                break;
+            case Calendar.SUNDAY:
+                dayCodeKey = dayCodes[6] + 7;
+                spHelper.increasesUsageValue(dayCodeKey, usageScore);
+                break;
+        }
+    }
+
+    public static void loadSingleRecipeFragmentSelf(Activity activity, String url,
+                                                    ArrayList<TagModel> tags) {
+        NavController navController = Navigation
+                .findNavController(activity, R.id.nav_host_fragment);
+        Bundle args = new Bundle();
+        args.putString(URL_KEY, url);
+        args.putParcelableArrayList(TAG_KEY, tags);
+        navController.navigate(R.id.action_singleRecipeFragment_self, args);
+    }
+
+    public static void loadFragment(Activity activity, int action, RecipeModel recipe) {
+        if (recipe != null) {
+            Bundle args = new Bundle();
+            args.putString(URL_KEY, recipe.getUrl());
+            ArrayList<TagModel> tagModels = new ArrayList<>(recipe.getTags());
+            args.putParcelableArrayList(TAG_KEY, tagModels);
+
+            NavController navController = Navigation
+                    .findNavController(activity, R.id.nav_host_fragment);
+            navController.navigate(action, args);
+        } else {
+            Log.d(TAG, "loadFragment: NULL POINT recipe = null" );
+        }
+    }
+
+    public static void goBack(Activity activity) {
+        NavController navController = Navigation
+                .findNavController(activity, R.id.nav_host_fragment);
+        navController.popBackStack();
+    }
+
+    public static void goToBrowser(Activity activity, String stepUrl) {
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(stepUrl));
+        activity.startActivity(i);
+    }
+
+    public static void share(Activity activity, String textTosShare) {
+        Log.d(TAG, "share: URL = " + textTosShare);
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, textTosShare);
+        sendIntent.setType("text/plain");
+
+        Intent shareIntent = Intent.createChooser(sendIntent,
+                activity.getString(R.string.share_recipe));
+        activity.startActivity(shareIntent);
     }
 }

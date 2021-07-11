@@ -22,7 +22,7 @@ import androidx.core.content.ContextCompat;
 
 
 import com.erg.freecuisine.R;
-import com.erg.freecuisine.controller.network.helpers.TimeHelper;
+import com.erg.freecuisine.helpers.TimeHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;

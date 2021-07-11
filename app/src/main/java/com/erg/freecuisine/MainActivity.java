@@ -4,24 +4,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 
-import com.erg.freecuisine.controller.network.helpers.FireBaseHelper;
-import com.erg.freecuisine.controller.network.helpers.SharedPreferencesHelper;
-import com.erg.freecuisine.models.LinkModel;
-import com.erg.freecuisine.ui.RecipesFragment;
+import com.erg.freecuisine.helpers.SharedPreferencesHelper;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
-import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
-import java.util.ArrayList;
-import java.util.logging.SocketHandler;
 
 import io.realm.Realm;
 
@@ -46,6 +37,14 @@ public class MainActivity extends AppCompatActivity implements
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+        initMobileAds();
+    }
+
+    private void initMobileAds() {
+        MobileAds.initialize(this, initializationStatus ->
+                Log.d(TAG, "onInitializationComplete: STATUS: "
+                        + initializationStatus.toString()));
     }
 
     @Override
@@ -56,11 +55,17 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
+        if (spHelper.isFirstLunch()) {
+            spHelper.setVibrationStatus(true); //Setting vibration on by default
+            spHelper.setScrollUpStatus(true); //Setting scrolling up on by default
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         spHelper.saveLastUsage(System.currentTimeMillis());
+        if (spHelper.isFirstLunch())
+            spHelper.setFistLunchStatus(false);
     }
 }

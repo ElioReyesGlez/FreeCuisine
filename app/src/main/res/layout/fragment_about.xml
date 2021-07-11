@@ -9,7 +9,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -52,13 +53,14 @@
                 android:padding="@dimen/regular_window_padding">
 
                 <TextView
+                    android:id="@+id/tv_app_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_margin="@dimen/default_margin"
                     android:padding="@dimen/regular_window_padding"
-                    android:text="@string/description_about_page"
                     android:textAlignment="center"
+                    android:text="@string/description_about_page"
                     android:textColor="@color/text_second_color"
                     android:textSize="@dimen/description_text_size" />
             </RelativeLayout>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorOnPrimary"
+    tools:context=".ui.AdMobFragment">
+
+
+    <LinearLayout
+        android:id="@+id/ll_countdown_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/background_white"
+        android:layout_margin="@dimen/default_margin"
+        android:orientation="horizontal"
+        android:padding="@dimen/default_padding"
+        android:weightSum="2">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_anim_empty"
+            android:layout_width="49dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="2dp"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/empty"
+            android:cropToPadding="true"
+            android:scaleType="centerInside"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="sand_clock.json"
+            app:lottie_loop="true" />
+
+        <TextView
+            android:id="@+id/tv_countdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="2dp"
+            android:layout_weight="1"
+            android:text="@string/seven"
+            android:textColor="@color/text_second_color"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/ll_get_premium_container"
+        android:layout_below="@+id/ll_countdown_container"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/default_margin"
+        android:background="@drawable/background_white"
+        android:elevation="@dimen/default_elevation"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/regular_window_padding">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/default_margin"
+            android:elevation="@dimen/default_elevation"
+            android:text="@string/ad_explication"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/text_second_color"
+            android:textSize="21sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/tv_mission_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/default_margin"
+            android:background="@drawable/selector_blue"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="@dimen/margin_top"
+            android:text="@string/mission"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/text_second_color"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll_get_premium_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/default_margin"
+        android:background="@drawable/background_white"
+        android:elevation="@dimen/default_elevation"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="2dp"
+            android:padding="@dimen/regular_window_padding"
+            android:text="@string/get_premium_ad_free"
+            android:textAlignment="center"
+            android:textColor="@color/text_second_color"
+            android:textSize="13sp"
+            android:textStyle="normal" />
+
+        <Button
+            android:id="@+id/btn_get_premium"
+            style="@style/ok_button"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="17dp"
+            android:background="@drawable/selector_blue"
+            android:elevation="0dp"
+            android:text="@string/get_premium"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -12,6 +12,9 @@
     <color name="colorOnSecondary">#e0e0e0</color>
     <!-- Status bar color. -->
 
+
+    <color name="colorBlueLight">#BBCEE4</color>
+
     <!--Custom colors platte-->
     <color name="my_colorPrimary">#dda59f</color>
     <color name="my_colorPrimaryVariant">#dda59f</color>
@@ -20,6 +23,7 @@
     <color name="my_colorToolBarIcons">#f2f1f1</color>
 
     <color name="text_second_color">#616161</color>
+    <color name="dark_background_color">#616161</color>
 
     <array name="colors">
         <item name="all" type="color">#827f93</item>

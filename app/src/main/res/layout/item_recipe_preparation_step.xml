@@ -16,18 +16,29 @@
         android:padding="0.5dp"
         android:background="@drawable/border">
 
+        <ImageButton
+            android:id="@+id/ib_link_container"
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            android:background="@drawable/selector_light_green"
+            android:src="@drawable/ic_exit_link"
+            android:layout_margin="@dimen/default_margin"
+            android:padding="@dimen/default_padding"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/exit_links_container"
+            android:visibility="gone"/>
+
         <TextView
             android:id="@+id/tv_preparation_number_order"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/background_gray_light"
             android:textStyle="bold"
             android:textSize="@dimen/titles_text_size_full_view"
             android:text="1"
             android:textColor="@color/md_grey_700"
             android:textAlignment="center"
             android:layout_centerHorizontal="true"
-            android:layout_alignParentTop="true"/>
+            android:layout_below="@+id/ib_link_container"/>
 
         <TextView
             android:id="@+id/tv_preparation_description"
@@ -40,33 +51,6 @@
             android:layout_centerHorizontal="true"
             android:textColor="@color/md_grey_500"
             android:textSize="@dimen/description_text_size_full_view" />
-
-    <!--    <TextView
-            android:id="@+id/tv_tips"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="3dp"
-            android:layout_below="@+id/tv_preparation_description"
-            android:padding="@dimen/default_padding"
-            android:textStyle="italic"
-            android:text="@string/lorem_ipsum"
-            android:layout_centerHorizontal="true"
-            android:textColor="@color/md_grey_500"
-            android:textSize="@dimen/description_text_size" />-->
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/iv_step_preparation_image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="@dimen/default_margin"
-            android:elevation="@dimen/default_elevation"
-            android:layout_marginBottom="@dimen/margin"
-            android:cropToPadding="false"
-            android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/roundCornerView"
-            android:adjustViewBounds="true"
-            android:layout_below="@+id/tv_preparation_description"/>
 
     </RelativeLayout>
 

@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.erg.freecuisine.R;
-import com.erg.freecuisine.controller.network.helpers.RealmHelper;
+import com.erg.freecuisine.helpers.RealmHelper;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;

@@ -20,8 +20,8 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.erg.freecuisine.R;
 import com.erg.freecuisine.adapters.RecipesAdapter;
-import com.erg.freecuisine.controller.network.helpers.RealmHelper;
-import com.erg.freecuisine.controller.network.helpers.StringHelper;
+import com.erg.freecuisine.helpers.RealmHelper;
+import com.erg.freecuisine.helpers.StringHelper;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
@@ -139,7 +139,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     }
 
     @Override
-    public void onLoaderFailed(ArrayList<RecipeModel> recipes, Exception e) {
+    public void onLoaderFailed(String url, Exception e) {
         /*Empty*/
     }
 

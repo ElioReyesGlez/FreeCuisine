@@ -7,6 +7,42 @@
     android:background="@color/colorOnPrimary"
     tools:context=".ui.SingleRecipeFragment">
 
+    <RelativeLayout
+        android:id="@+id/relative_top_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|top"
+        android:layout_margin="@dimen/default_margin"
+        android:elevation="@dimen/default_elevation">
+
+        <ImageButton
+            android:id="@+id/ib_bookmark"
+            android:layout_width="40dp"
+            android:layout_height="37dp"
+            android:layout_centerVertical="true"
+            android:layout_margin="1dp"
+            android:layout_toStartOf="@+id/ib_sharing"
+            android:background="@drawable/selector_translucent"
+            android:contentDescription="@string/bookmarks"
+            android:padding="@dimen/default_padding"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_bookmark_outline" />
+
+        <ImageButton
+            android:id="@+id/ib_sharing"
+            android:layout_width="38dp"
+            android:layout_height="37dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="1dp"
+            android:background="@drawable/selector_translucent"
+            android:contentDescription="@string/bookmarks"
+            android:padding="@dimen/default_padding"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_sharing" />
+
+    </RelativeLayout>
+
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_anim_loading"
         android:layout_width="wrap_content"
@@ -70,6 +106,7 @@
     </LinearLayout>
 
     <ScrollView
+        android:id="@+id/main_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fillViewport="true">
@@ -78,7 +115,8 @@
             android:id="@+id/relative_container_recipe_main_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone">
 
             <RelativeLayout
                 android:id="@+id/rl_image_section"
@@ -100,22 +138,7 @@
                     android:scaleType="centerCrop"
                     app:shapeAppearanceOverlay="@style/roundCornerView" />
 
-                <ImageButton
-                    android:id="@+id/ib_bookmark"
-                    android:layout_width="50dp"
-                    android:layout_height="40dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_margin="1dp"
-                    android:background="@drawable/selector_white"
-                    android:contentDescription="@string/bookmarks"
-                    android:elevation="@dimen/default_elevation"
-                    android:padding="@dimen/default_padding"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_bookmark_outline" />
-
             </RelativeLayout>
-
 
             <LinearLayout
                 android:id="@+id/linear_amounts_container"
@@ -304,7 +327,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/margin"
+                        android:layout_margin="@dimen/default_margin"
                         android:baselineAligned="false"
                         android:gravity="center"
                         android:orientation="horizontal"
@@ -314,7 +337,7 @@
                             android:id="@+id/linear_column_1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
+                            android:layout_gravity="top"
                             android:layout_weight="1"
                             android:orientation="vertical" />
 
@@ -322,7 +345,7 @@
                             android:id="@+id/linear_column_2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
+                            android:layout_gravity="top"
                             android:layout_weight="1"
                             android:orientation="vertical" />
 
@@ -359,5 +382,18 @@
             </LinearLayout>
         </RelativeLayout>
     </ScrollView>
+
+    <ImageButton
+        android:id="@+id/btn_up"
+        android:layout_width="40dp"
+        android:layout_height="37dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="14dp"
+        android:background="@drawable/selector_translucent_second"
+        android:contentDescription="@string/app_button"
+        android:elevation="@dimen/default_elevation"
+        android:padding="@dimen/default_padding"
+        android:src="@drawable/ic_up_arrow"
+        android:visibility="invisible" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

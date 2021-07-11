@@ -33,6 +33,7 @@ public class Constants {
     public static final String SPACE = " ";
     public static final String DEFAULT = "DEFAULT";
     public static final int ZERO = 0;
+    public static final String interstitial_ad_unit_id_testing = "ca-app-pub-3940256099942544/1033173712" ;
 
     public static ArrayList<String> getBrands(Context context) {
         ArrayList<String> brands = new ArrayList<>();
@@ -104,6 +105,7 @@ public class Constants {
     public static final String BLOQUE_LINK = "bloque link";
     public static final String RECETA_GRATIS_COLUMN = "recetasgratis";
     public static final String MAIN_RECETA_GRATIS_TAG = "mainurl";
+    public static final String MAIN_RECIPE_SERVER = "https://www.recetasgratis.net";
     public static final String CONSEJOS_COLUMN = "consejos";
     public static final String CONSEJOS_TAG= "consejos";
     public static final String BEBIDAS_TAG= "bebidas";
@@ -120,9 +122,13 @@ public class Constants {
     public static final String LAST_RECIPE_READ_KEY = "last_recipe_key";
     public static final String CURRENT_MEMO_RECIPE_READ_KEY = "memo_recipes_key";
     public static final String VIBRATION_STATUS_FLAG_KEY = "vibration_status_key";
+    public static final String SCROLL_UP_STATUS_FLAG_KEY = "scroll_up_status_key";
     public static final String SHUFFLE_STATUS_FLAG_KEY = "shuffle_status_key";
+    public static final String FIRST_LUNCH_STATUS_FLAG_KEY = "first_lunch_status_key";
     public static final String BOOKMARK_FLAG_KEY = "bookmark_flag_key";
     public static final String JSON_RECIPE_KEY = "json_recipe_key";
+    public static final String PREMIUM_STATUS_KEY = "premium_status_key";
+    public static final String AD_KEY = "ad_key";
 
     /*VIEWS IDS*/
     public static final int FILTER_ID = 1000431;
@@ -131,4 +137,10 @@ public class Constants {
     public static final String LINKEDIN_PACKAGE = "com.linkedin.android";
     public static final String MARKET_APP_DETAILS_URL = "market://details?id=";
     public static final String GOOGLE_APP_DETAILS_URL = "http://play.google.com/store/apps/details?id=";
+
+
+    /*ADS KEYS*/
+    public static final int ITEM_TYPE_BANNER_AD = 1;
+    public static final int ITEM_TYPE_RECIPE = 0;
+    public static final int ITEMS_PER_AD = 9;
 }

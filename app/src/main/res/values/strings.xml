@@ -99,6 +99,8 @@
     <string name="activity">#actividad</string>
     <string name="ic_graphic">Icono grafico</string>
     <string name="statistics">Grafica de uso</string>
+    <string name="statistics_info">Sección actividad: Muestra el uso en porcentaje graficamente</string>
+
 
     <string name="minutes_ago">\ minutos atrás</string>
     <string name="one_second_ago">un segundo atrás</string>
@@ -109,6 +111,7 @@
     <string name="yesterday">ayer</string>
     <string name="days_ago">\ días atrás</string>
     <string name="last_reading">Última lectura</string>
+    <string name="last_reading_info">Sección actividad: Muestra última receta abierta por el usuario</string>
     <string name="ic_last_recipe">Icono ultima receta</string>
     <string name="test_email">elioworkemail@gmail.com</string>
     <string name="login">registrar</string>
@@ -127,7 +130,7 @@
     <string name="icon">Icono</string>
     <string name="about">Acerca de</string>
 
-    <string name="description_about_page">
+    <string name="lorem_description_about_page">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam dapibus, risus in pretium
         tristique, ante metus consectetur felis, eu ultricies nisi lectus ac sem. Mauris lacinia
         nulla sed libero dignissim, quis pellentesque diam semper. Donec id finibus eros, et luctus
@@ -153,6 +156,54 @@
     <string name="empty_list">Nada que mostrar</string>
     <string name="tips">#consejos</string>
     <string name="ok">¡Vale!</string>
+    <string name="links_ops">Vínculos</string>
+    <string name="exit_links_container">Vículos</string>
+    <string name="cancel">Cancelar</string>
+    <string name="some_error_go_to_bowser">No sea ha podido cargar esta vista.</string>
+    <string name="aks_go_to_bowser">¿Desea acceder vía navegador?</string>
+    <string name="share_recipe">Compartir usando:</string>
+    <string name="app_button">Botón arriba</string>
+    <string name="up_scrolling">Desplazamiento</string>
+    <string name="up_scrollling_description">Botón que realiza el desplazamiento de la lista o vista
+        al estado inicial.</string>-
+
+    <string name="description_about_page">
+        <b>Free Cuisine</b> es el resultado de la idea de desarrollar una forma fácil e intuitiva de
+        cocinar sin complicaciones y sobre todo de manera <b>\"Gratis\"</b>. Este proyecto está principalmente
+        inspirado en el excelente sitio web <a href="https://www.recetasgratis.net">Recetas gratis</a>
+        y por el momento las recetas aquí encontradas provienen de este. Por tanto todo derecho de autor en lo que
+        respecta origen de las recetas pertenece a \n<a href="https://www.recetasgratis.net">Recetas gratis</a>.\n
+          <b>Free Cuisine</b> es parte de un proyecto en desarrollo que
+        tiene como objetivo mejorar la experiencia de usuarios a la hora de navegar por sitios webs
+        o apps que en demasiadas ocasiones no es la mejor, así como continuar esparciendo el amor
+        por la cocina.
+    </string>
+
+    <string name="description_about_page2">Cocina Gratis es parte de un proyecto en desarrollo que
+        tiene como objetivo mejorar la experiencia de usuarios a la hora de navegar por sitios webs
+        o apps que en demasiadas ocasiones no es la mejor, así como continuar esparciendo el amor
+        por la cocina.</string>
+
+
+    <string name="premium_dialog_ok">¡Si, seguro!</string>
+    <string name="premium_dialog_no">No, gracias</string>
+    <string name="get_premium">¡Hacerse Premium!</string>
+    <string name="premium_congrats">¡Felicidades, es usuario PREMIUM ahora!</string>
+    <string name="already_premium">Ya es miembro premium</string>
+    <string name="you_are_premium_now">¡Ya es Premium!</string>
+    <!-- Urls -->
+    <string name="faild_billing_connection">Error en la conexión de facturación.</string>
+    <string name="cant_not_query_product">Error no se pudo consultar el producto</string>
+    <string name="seven">7</string>
+    <string name="get_premium_ad_free">Hágase PREMIUM para obtener una DeMeMo SIN ANUNCIOS</string>
+    <string name="ad_explication">El siguiente anuncio nos ayuda a desarrollar:</string>
+    <string name="mission">Misión de DeMeMo</string>
+    <string name="mission_description">DeMeMo es parte de un proyecto en desarrollo que tiene
+        como objetivo posicionar
+        la palabra de Dios en un mundo más actual donde las nuevas tecnologías y las
+        bienaventuranzas de Dios van juntas de manera transparente.</string>
+    <string name="function_temporarily_disabled">Función temporalmente deshabilitada</string>
+    <string name="ad_not_load">El anuncio no se cargó</string>
 
     <string-array name="day_codes">
         <item>mon_</item>

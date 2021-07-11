@@ -42,7 +42,7 @@
                 android:layout_alignParentEnd="true"
                 android:scaleType="centerInside"
                 android:layout_margin="1dp"
-                android:background="@drawable/ic_bookmark"
+                android:background="@drawable/ic_bookmark_dark"
                 android:contentDescription="@string/bookmarks"
                 android:visibility="invisible"/>
 

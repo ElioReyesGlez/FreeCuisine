@@ -1,4 +1,4 @@
-package com.erg.freecuisine.controller.network.helpers;
+package com.erg.freecuisine.helpers;
 
 import android.util.Log;
 
@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
 import java.lang.reflect.Type;
@@ -45,16 +46,6 @@ import static com.erg.freecuisine.util.Constants.VIDEO_ID_ATTR_TAG;
 public class StringHelper {
 
     private static final String TAG = "StringHelper";
-
-    public static String extractTextFromParagraph(Element rootClass, String tag) {
-        StringBuilder stringBuilder = new StringBuilder();
-        Elements elements = rootClass.select(tag);
-        for (Element p : elements) {
-            if (p != null)
-                stringBuilder.append(p.text()).append(NEWLINE);
-        }
-        return stringBuilder.toString();
-    }
 
     public static String getRecipeDescription(Element classIntro) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -102,33 +93,32 @@ public class StringHelper {
     public static List<StepModel> extractPreparationSteps(Element article) {
         List<StepModel> list = new ArrayList<>();
         Elements apartados = article.getElementsByClass(STEPS_TAG);
-        boolean haslink = false;
         for (Element apartado : apartados) {
             Element orderClass = apartado.getElementsByClass(STEPS_ORDER_TAG).first();
             if (orderClass != null && !orderClass.text().isEmpty()) {
                 String order = orderClass.text();
                 String stepDescription = apartado.text();
-                String stepLink = getStepLink(apartado);
-//                String stepDescription = extractTextFromParagraph(apartado, PARAGRAPH_TAG);
+//                String stepDescription = extractTextFromElement(apartado);
+                ArrayList<LinkModel> stepLinks = getStepLinks(apartado);
                 Element imgClass = apartado.getElementsByClass(STEPS_IMG_TAG).first();
+                Element videoClass = apartado.getElementsByClass(STEPS_VIDEO_TAG).first();
+                StepModel step;
                 if (imgClass != null) {
                     String url = imgClass.select(IMG_TAG).first().absUrl(SRC_TAG);
                     ImageModel image = new ImageModel(url, url);
-                    StepModel step = new StepModel(order, stepDescription, image);
-                    if (!stepLink.isEmpty()) {
-                        step.setStepLink(stepLink);
-                    }
+                    step = new StepModel(order, stepDescription, image);
+                    step.setStepLinks(stepLinks);
                     list.add(step);
-                }
-                Element videoClass = apartado.getElementsByClass(STEPS_VIDEO_TAG).first();
-                if (videoClass != null) {
+                } else if (videoClass != null) {
                     String id = videoClass.child(0).select(DIV_TAG).first().attr(VIDEO_ID_ATTR_TAG);
                     String url = videoClass.child(0).select(DIV_TAG).first().absUrl(SRC_TAG);
                     VideoModel video = new VideoModel(id, url);
-                    StepModel step = new StepModel(order, stepDescription, video);
-                    if (!stepLink.isEmpty()) {
-                        step.setStepLink(stepLink);
-                    }
+                    step = new StepModel(order, stepDescription, video);
+                    step.setStepLinks(stepLinks);
+                    list.add(step);
+                } else {
+                    step = new StepModel(order, stepDescription);
+                    step.setStepLinks(stepLinks);
                     list.add(step);
                 }
             }
@@ -136,16 +126,23 @@ public class StringHelper {
         return list;
     }
 
-    private static String getStepLink(Element apartado) {
-        String link = "";
-        for (Element p : apartado.select(PARAGRAPH_TAG)) {
-            if (p.select(A_TAG).first() != null) {
-                link = p.select(A_TAG).first().attr(ATTRIBUTE_HREF);
-                if (link != null)
-                    return link;
+    private static ArrayList<LinkModel> getStepLinks(Element apartado) {
+        ArrayList<LinkModel> links = new ArrayList<>();
+        Elements pList = apartado.select(PARAGRAPH_TAG);
+        if (pList != null && !pList.isEmpty()) {
+            for (Element p : pList) {
+                Elements aList = p.select(A_TAG);
+                if (aList != null && !aList.isEmpty()) {
+                    for (Element a : aList) {
+                        String tag = a.text();
+                        String url = a.attr(ATTRIBUTE_HREF);
+                        LinkModel link = new LinkModel(tag, url);
+                        links.add(link);
+                    }
+                }
             }
         }
-        return link;
+        return links;
     }
 
     public static List<StepModel> extractStepsWhitSubTitles(Element article) {
@@ -156,32 +153,54 @@ public class StringHelper {
             Element apartado = apartados.get(i);
             Element apartadoTitle = apartadoTitles.get(i);
             String stepDescription = apartado.text();
-            String stepLink = getStepLink(apartado);
-//            String stepDescription = extractTextFromParagraph(apartado, PARAGRAPH_TAG);
+//            String stepDescription = extractTextFromElement(apartado);
+            ArrayList<LinkModel> stepLinks = getStepLinks(apartado);
             String stepTitle = apartadoTitle.text();
             Element imgClass = apartado.getElementsByClass(STEPS_IMG_TAG).first();
+            Element videoClass = apartado.getElementsByClass(STEPS_VIDEO_TAG).first();
+            StepModel step;
             if (imgClass != null) {
                 String url = imgClass.select(IMG_TAG).first().absUrl(SRC_TAG);
                 ImageModel image = new ImageModel(url, url);
-                StepModel step = new StepModel(stepTitle, stepDescription, image);
-                if (!stepLink.isEmpty()) {
-                    step.setStepLink(stepLink);
-                }
+                step = new StepModel(stepTitle, stepDescription, image);
+                step.setStepLinks(stepLinks);
                 list.add(step);
-            }
-            Element videoClass = apartado.getElementsByClass(STEPS_VIDEO_TAG).first();
-            if (videoClass != null) {
+            } else if (videoClass != null) {
                 String id = videoClass.child(0).select(DIV_TAG).first().attr(VIDEO_ID_ATTR_TAG);
                 String url = videoClass.child(0).select(DIV_TAG).first().absUrl(SRC_TAG);
                 VideoModel video = new VideoModel(id, url);
-                StepModel step = new StepModel(stepTitle, stepDescription, video);
-                if (!stepLink.isEmpty()) {
-                    step.setStepLink(stepLink);
-                }
+                step = new StepModel(stepTitle, stepDescription, video);
+                step.setStepLinks(stepLinks);
+                list.add(step);
+            } else {
+                step = new StepModel(stepTitle, stepDescription);
+                step.setStepLinks(stepLinks);
                 list.add(step);
             }
         }
         return list;
+    }
+
+
+    public static String extractTextFromElement(Element rootClass) {
+        StringBuilder stringBuilder = new StringBuilder();
+        Elements elements = rootClass.getAllElements();
+        if (elements != null || !elements.isEmpty()) {
+            for (Element element : elements) {
+                String text = element.text();
+                if (text != null || !text.isEmpty())
+                    stringBuilder.append(text).append(NEWLINE);
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+    public static String extractTextFromElement2(Element rootClass) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (TextNode node : rootClass.textNodes()) {
+            stringBuilder.append(node).append(NEWLINE);
+        }
+        return stringBuilder.toString();
     }
 
     public static String extractDiners(String strDiners) {

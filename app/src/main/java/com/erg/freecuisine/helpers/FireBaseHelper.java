@@ -1,4 +1,4 @@
-    package com.erg.freecuisine.controller.network.helpers;
+    package com.erg.freecuisine.helpers;
 
     import android.util.Log;
 

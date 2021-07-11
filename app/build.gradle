@@ -85,4 +85,8 @@ dependencies {
     implementation 'im.dacer:AndroidCharts:1.0.4'
     //-----------------------------Joda Time------------------------------------
     implementation 'joda-time:joda-time:2.10.6'
+    //AdMob Ads SDK
+    implementation 'com.google.android.gms:play-services-ads:20.2.0'
+    //-----------------------------Google Billing----------------------------------
+    implementation 'com.android.billingclient:billing:4.0.0'
 }

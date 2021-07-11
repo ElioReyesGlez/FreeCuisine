@@ -1,4 +1,4 @@
-package com.erg.freecuisine.controller.network.helpers;
+package com.erg.freecuisine.helpers;
 
 import com.erg.freecuisine.models.RealmRecipeModel;
 import com.erg.freecuisine.models.RecipeModel;

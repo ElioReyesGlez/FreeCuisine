@@ -25,6 +25,7 @@ public class RecipeModel implements Parcelable {
     private String extra = "";
     //    private List<ImageModel> images;
     private ImageModel image;
+    private VideoModel video;
     private List<TagModel> tags;
     private String url;
 
@@ -65,6 +66,27 @@ public class RecipeModel implements Parcelable {
         this.steps = steps;
         this.extra = extra;
         this.image = image;
+        this.tags = tags;
+        this.url = url;
+    }
+
+
+    public RecipeModel(String id, String title, String description, int ratings, String time,
+                       String diners, String type, List<CommentModel> comments, String ingredients,
+                       List<StepModel> steps, String extra, VideoModel video, List<TagModel> tags,
+                       String url) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.ratings = ratings;
+        this.time = time;
+        this.diners = diners;
+        this.type = type;
+        this.comments = comments;
+        this.ingredients = ingredients;
+        this.steps = steps;
+        this.extra = extra;
+        this.video = video;
         this.tags = tags;
         this.url = url;
     }
@@ -333,5 +355,26 @@ public class RecipeModel implements Parcelable {
 
     public void setUrl(String link) {
         this.url = link;
+    }
+
+    @Override
+    public String toString() {
+        return "RecipeModel{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", ratings=" + ratings +
+                ", time='" + time + '\'' +
+                ", diners='" + diners + '\'' +
+                ", type='" + type + '\'' +
+                ", comments=" + comments +
+                ", ingredients='" + ingredients + '\'' +
+                ", steps=" + steps +
+                ", extra='" + extra + '\'' +
+                ", image=" + image +
+                ", video=" + video +
+                ", tags=" + tags +
+                ", url='" + url + '\'' +
+                '}';
     }
 }

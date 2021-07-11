@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/selector_gray">
+
+    <TextView
+        android:id="@+id/tag_link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_top"
+        android:layout_toStartOf="@id/iv_arrow_about"
+        android:text="@string/app_name"
+        android:textColor="@color/text_second_color"
+        android:textSize="@dimen/description_text_size"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/url_link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginTop="@dimen/default_margin_1dp"
+        android:layout_below="@+id/tag_link"
+        android:layout_toStartOf="@id/iv_arrow_about"
+        android:textStyle="italic"
+        android:text="@string/app_name"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@color/text_second_color"
+        android:textSize="@dimen/description_text_size" />
+
+    <ImageView
+        android:id="@+id/iv_arrow_about"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/arrow"
+        android:src="@drawable/ic_arrow_right" />
+
+</RelativeLayout>

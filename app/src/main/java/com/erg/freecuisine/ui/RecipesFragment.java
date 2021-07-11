@@ -1,6 +1,7 @@
 
 package com.erg.freecuisine.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -22,6 +24,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -30,11 +33,11 @@ import com.erg.freecuisine.adapters.LoadingAdapter;
 import com.erg.freecuisine.adapters.RecipesAdapter;
 import com.erg.freecuisine.adapters.RecipesFilterAdapter;
 import com.erg.freecuisine.controller.network.AsyncDataLoad;
-import com.erg.freecuisine.controller.network.helpers.FireBaseHelper;
-import com.erg.freecuisine.controller.network.helpers.MessageHelper;
-import com.erg.freecuisine.controller.network.helpers.SharedPreferencesHelper;
-import com.erg.freecuisine.controller.network.helpers.StringHelper;
-import com.erg.freecuisine.controller.network.helpers.TimeHelper;
+import com.erg.freecuisine.helpers.FireBaseHelper;
+import com.erg.freecuisine.helpers.MessageHelper;
+import com.erg.freecuisine.helpers.SharedPreferencesHelper;
+import com.erg.freecuisine.helpers.StringHelper;
+import com.erg.freecuisine.helpers.TimeHelper;
 import com.erg.freecuisine.interfaces.OnFireBaseListenerDataStatus;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.LinkModel;
@@ -48,7 +51,6 @@ import com.yalantis.filter.widget.Filter;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,7 +78,8 @@ public class RecipesFragment extends Fragment implements
     private SearchView searcher;
     private CoordinatorLayout filter_container;
     private Filter<TagModel> filter;
-    private Animation scaleUP, scaleDown;
+    private ImageButton btn_up;
+    private Animation scaleUP, scaleDown, enter, exit;
 
     private List<RecipeModel> recipes;
     private List<TagModel> tags;
@@ -94,7 +97,10 @@ public class RecipesFragment extends Fragment implements
     private String currentSearchQuery = "";
     private FireBaseHelper fireBaseHelper;
     private Handler handlerMessage;
-    private Runnable runnableDelayMassage;
+    private Handler handlerDelay;
+    private Runnable runnableDelayMassage, runnableHideUpBtn;
+    private RecyclerView.SmoothScroller smoothScroller;
+    private StaggeredGridLayoutManager gridLayoutManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -110,6 +116,7 @@ public class RecipesFragment extends Fragment implements
         colors = getResources().getIntArray(R.array.colors);
 
         handlerMessage = new Handler(Looper.myLooper());
+        handlerDelay = new Handler(Looper.getMainLooper());
 
         runnableDelayMassage = () -> {
             if (isAdded() && isVisible()) {
@@ -119,6 +126,12 @@ public class RecipesFragment extends Fragment implements
                         rootView);
                 stopLoading();
                 refreshView();
+            }
+        };
+
+        runnableHideUpBtn = () -> {
+            if (isAdded() && isVisible()) {
+                Util.hideView(exit, btn_up);
             }
         };
 
@@ -157,16 +170,20 @@ public class RecipesFragment extends Fragment implements
             filter = new Filter<>(rootView.getContext());
             filter.setId(Constants.FILTER_ID);
         }
+        btn_up = rootView.findViewById(R.id.btn_up);
         searcher = rootView.findViewById(R.id.searcher);
         recyclerViewRecipes = rootView.findViewById(R.id.recycler_view_recipes);
         linearEmptyContainer = rootView.findViewById(R.id.linear_layout_empty_container);
         scaleUP = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
         scaleDown = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_down);
+        enter = AnimationUtils.loadAnimation(requireContext(), R.anim.custom_enter_anim);
+        exit = AnimationUtils.loadAnimation(requireContext(), R.anim.custom_exit_anim);
 
         searcher.setSubmitButtonEnabled(true);
         searcher.setOnQueryTextListener(this);
         searcher.setOnCloseListener(this);
         linearEmptyContainer.setOnClickListener(this);
+        btn_up.setOnClickListener(this);
 //        searcher.setOnSearchClickListener(this);
 
         setUpRecyclerView();
@@ -275,7 +292,7 @@ public class RecipesFragment extends Fragment implements
     }
 
     @Override
-    public void onLoaderFailed(ArrayList<RecipeModel> recipes, Exception e) {
+    public void onLoaderFailed(String url, Exception e) {
         Log.d(TAG, "onRecipesLoadedFailed: ERROR = " + e.toString());
         if (e instanceof SocketTimeoutException) {
             showTimeOutMessage();
@@ -326,12 +343,52 @@ public class RecipesFragment extends Fragment implements
     private void setUpRecyclerView() {
 
         int numberOfColumns = 2;
-        StaggeredGridLayoutManager gridLayoutManager =
-                new StaggeredGridLayoutManager(numberOfColumns, StaggeredGridLayoutManager.VERTICAL);
+        gridLayoutManager = new StaggeredGridLayoutManager(numberOfColumns, StaggeredGridLayoutManager.VERTICAL);
         recyclerViewRecipes.setLayoutManager(gridLayoutManager);
         recyclerViewRecipes.setHasFixedSize(true);
         GridItemDecoration gridItemDecoration = new GridItemDecoration(3, 3);
         recyclerViewRecipes.addItemDecoration(gridItemDecoration);
+
+        if (spHelper.getScrollUpStatus()) {
+            setUpScrollFlow();
+        } else {
+            Util.hideView(null, btn_up);
+        }
+//        loadBannerAds();
+    }
+
+    private void setUpScrollFlow() {
+
+        smoothScroller = new LinearSmoothScroller(requireContext()) {
+            @Override
+            protected int getVerticalSnapPreference() {
+                return LinearSmoothScroller.SNAP_TO_START;
+            }
+        };
+
+        recyclerViewRecipes.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                Log.d(TAG, "onScrollStateChanged: STATE = " + newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE
+                        && recyclerView.canScrollVertically(Integer.MAX_VALUE)) {
+                    Util.showView(enter, btn_up);
+                    handlerDelay.removeCallbacks(runnableHideUpBtn);
+                    handlerDelay.postDelayed(runnableHideUpBtn, TimeHelper.DELAY / 2);
+                } else {
+                    Util.hideView(exit, btn_up);
+                }
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (!recyclerView.canScrollVertically(Integer.MAX_VALUE)) {
+                    Util.hideView(exit, btn_up);
+                }
+            }
+        });
 
     }
 
@@ -449,28 +506,35 @@ public class RecipesFragment extends Fragment implements
 
     @Override
     public void onRecipeClick(int position, View view) {
-        loadFragment(position, view);
-    }
-
-    @Override
-    public void onClick(View v) {
         Util.vibrate(requireContext());
-        if (v.getId() == R.id.linear_layout_empty_container) {
-            Util.refreshCurrentFragment(requireActivity());
+        RecipeModel currentRecipe = recipesAdapter.getRecipes().get(position);
+        if (spHelper.showAdFirst()) {
+            Util.loadFragment(requireActivity(),
+                    R.id.action_navigation_recipes_to_adMobFragment,
+                    currentRecipe);
+        } else {
+            Util.loadFragment(requireActivity(),
+                    R.id.action_navigation_recipes_to_recipeFragment,
+                    currentRecipe);
         }
     }
 
-    private void loadFragment(int position, View view) {
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public void onClick(View v) {
         Util.vibrate(requireContext());
-        RecipeModel currentRecipe = recipesAdapter.getRecipes().get(position);
-        Bundle args = new Bundle();
-        args.putString(URL_KEY, currentRecipe.getUrl());
-        ArrayList<TagModel> tagModels = new ArrayList<>(currentRecipe.getTags());
-        args.putParcelableArrayList(TAG_KEY, tagModels);
-
-        NavController navController = Navigation
-                .findNavController(requireActivity(), R.id.nav_host_fragment);
-        navController.navigate(R.id.action_navigation_recipes_to_recipeFragment, args);
+        switch (v.getId()) {
+            case R.id.linear_layout_empty_container:
+                Util.refreshCurrentFragment(requireActivity());
+                break;
+            case R.id.btn_up:
+                if (recyclerViewRecipes != null && smoothScroller != null
+                        && gridLayoutManager != null) {
+                    smoothScroller.setTargetPosition(0);
+                    gridLayoutManager.startSmoothScroll(smoothScroller);
+                }
+                break;
+        }
     }
 
     @Override

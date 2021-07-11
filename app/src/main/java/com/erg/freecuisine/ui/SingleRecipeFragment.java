@@ -4,10 +4,13 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -15,7 +18,9 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,20 +28,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.transition.Transition;
 import androidx.transition.TransitionInflater;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.erg.freecuisine.R;
+import com.erg.freecuisine.adapters.LinksAdapter;
 import com.erg.freecuisine.controller.network.AsyncDataLoad;
-import com.erg.freecuisine.controller.network.helpers.MessageHelper;
-import com.erg.freecuisine.controller.network.helpers.RealmHelper;
-import com.erg.freecuisine.controller.network.helpers.SharedPreferencesHelper;
-import com.erg.freecuisine.controller.network.helpers.StringHelper;
-import com.erg.freecuisine.controller.network.helpers.TimeHelper;
+import com.erg.freecuisine.helpers.MessageHelper;
+import com.erg.freecuisine.helpers.RealmHelper;
+import com.erg.freecuisine.helpers.SharedPreferencesHelper;
+import com.erg.freecuisine.helpers.StringHelper;
+import com.erg.freecuisine.helpers.TimeHelper;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
+import com.erg.freecuisine.models.LinkModel;
 import com.erg.freecuisine.models.RealmRecipeModel;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.StepModel;
@@ -44,6 +49,7 @@ import com.erg.freecuisine.models.TagModel;
 import com.erg.freecuisine.models.VideoModel;
 import com.erg.freecuisine.util.Util;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
@@ -53,30 +59,34 @@ import com.squareup.picasso.Picasso;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.concurrent.CancellationException;
 
 import kotlinx.coroutines.Job;
 
 import static com.erg.freecuisine.util.Constants.BOOKMARK_FLAG_KEY;
 import static com.erg.freecuisine.util.Constants.JSON_RECIPE_KEY;
+import static com.erg.freecuisine.util.Constants.MAIN_RECIPE_SERVER;
 import static com.erg.freecuisine.util.Constants.SAVED_STATE_KEY;
 import static com.erg.freecuisine.util.Constants.TAG_KEY;
 import static com.erg.freecuisine.util.Constants.URL_KEY;
 
 
-public class SingleRecipeFragment extends Fragment implements OnRecipeListener, View.OnClickListener {
+public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
+        View.OnClickListener, ViewTreeObserver.OnScrollChangedListener {
 
     public static final String TAG = "SingleRecipeFragment";
     private String url;
     private View rootView;
     private RelativeLayout relative_container_recipe_main_info;
+    private RelativeLayout relative_top_menu;
+    private ScrollView main_scroll_view;
     private LinearLayout linear_layout_empty_container;
     private LinearLayout linear_amounts_container;
     private LinearLayout table_recipe_ingredients_container;
     private LottieAnimationView lottie_anim_loading;
-    private ImageButton ibBookmark;
-    private Animation scaleUp, scaleDown;
+    private ImageButton ibBookmark, shareButton;
+    private ImageButton btn_up;
+    private Animation scaleUp, scaleDown, enter, exit;
     private ArrayList<TagModel> tags;
     private AsyncDataLoad asyncDataLoad;
     private YouTubePlayerView videoView;
@@ -89,6 +99,8 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
     private Bundle args;
     private boolean isBookmarkChecked;
     private boolean isBookmarkRecipe;
+    private Handler handlerDelay;
+    private Runnable runnableHideUpBtn;
 
     public SingleRecipeFragment() {
         // Required empty public constructor
@@ -108,6 +120,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
         setSharedElementReturnTransition(transition);
         tags = new ArrayList<>();
 
+
         if (savedInstanceState != null && savedState == null) {
             savedState = savedInstanceState.getBundle(SAVED_STATE_KEY);
             Log.d(TAG, "onCreate: SAVED INSTANCE = " + savedState);
@@ -124,8 +137,10 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
             isBookmarkRecipe = args.getBoolean(BOOKMARK_FLAG_KEY, false);
             if (isBookmarkRecipe) {
                 String jsonRecipe = args.getString(JSON_RECIPE_KEY, "");
-                if (!jsonRecipe.isEmpty())
+                if (!jsonRecipe.isEmpty()) {
                     recipe = StringHelper.getSingleRecipeFromJson(jsonRecipe);
+                    url = recipe.getUrl();
+                }
             } else {
                 url = args.getString(URL_KEY);
                 if (args.getParcelableArrayList(TAG_KEY) != null) {
@@ -139,6 +154,14 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
         asyncDataLoad = new AsyncDataLoad();
         scaleUp = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
         scaleDown = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_down);
+        enter = AnimationUtils.loadAnimation(requireContext(), R.anim.custom_enter_anim);
+        exit = AnimationUtils.loadAnimation(requireContext(), R.anim.custom_exit_anim);
+        handlerDelay = new Handler(Looper.getMainLooper());
+        runnableHideUpBtn = () -> {
+            if (isAdded() && isVisible()) {
+                Util.hideViewInvisibleWay(exit, btn_up);
+            }
+        };
     }
 
     @Override
@@ -149,6 +172,8 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
 
         linear_layout_empty_container = rootView
                 .findViewById(R.id.linear_layout_empty_container);
+        main_scroll_view = rootView
+                .findViewById(R.id.main_scroll_view);
         relative_container_recipe_main_info = rootView
                 .findViewById(R.id.relative_container_recipe_main_info);
         linear_amounts_container = rootView
@@ -157,6 +182,8 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
                 .findViewById(R.id.table_recipe_ingredients_container);
         lottie_anim_loading = rootView
                 .findViewById(R.id.lottie_anim_loading);
+        relative_top_menu = rootView
+                .findViewById(R.id.relative_top_menu);
 
         Util.showView(scaleUp, lottie_anim_loading);
 
@@ -195,6 +222,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
 
         Util.hideView(null, lottie_anim_loading);
         if (recipe != null && !recipe.getTitle().isEmpty()) {
+            Log.d(TAG, "setUpView: RECIPE = " + recipe.toString());
             this.recipe = recipe;
 
             ShapeableImageView recipeImg = rootView.findViewById(R.id.recipe_main_image);
@@ -204,6 +232,8 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
             AppCompatTextView type = rootView.findViewById(R.id.tv_type);
             AppCompatTextView cockingTime = rootView.findViewById(R.id.tv_cocking_time);
             AppCompatTextView peopleAmount = rootView.findViewById(R.id.tv_people_amount);
+            shareButton = rootView.findViewById(R.id.ib_sharing);
+            btn_up = rootView.findViewById(R.id.btn_up);
 
             RelativeLayout typeContainer = rootView
                     .findViewById(R.id.relative_recipes_type_container);
@@ -217,13 +247,16 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
             ibBookmark.setOnClickListener(this);
 
             checkBookmark(realmHelper.exists(recipe));
+            shareButton.setOnClickListener(this);
+            btn_up.setOnClickListener(this);
+            main_scroll_view.getViewTreeObserver().addOnScrollChangedListener(this);
 
             if (tags != null && !tags.isEmpty())
                 recipe.setTags(tags); // From Bundle Args
 
             recipeTitle.setText(recipe.getTitle());
             recipeDescription.setText(recipe.getDescription());
-            recipeDescription.setOnClickListener(v -> showDescriptionDialog(recipe.getDescription()));
+            recipeDescription.setOnClickListener(this);
 
             if (!recipe.getTime().isEmpty()) {
                 Util.showView(null, timeContainer);
@@ -288,9 +321,10 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
             LinearLayout linear_preparation_container = rootView.findViewById(R.id.linear_preparation_container);
             if (!recipe.getSteps().isEmpty()) {
                 for (StepModel step : recipe.getSteps()) {
-                    View view = getLayoutInflater().inflate(R.layout.item_recipe_preparation_step_img, null);
+                    View view = getLayoutInflater().inflate(R.layout.item_recipe_preparation_step, null);
 
                     if (step.getImage() != null && !step.getImage().getUrl().isEmpty()) {
+                        view = getLayoutInflater().inflate(R.layout.item_recipe_preparation_step_img, null);
                         ShapeableImageView iv_step_preparation_image = view.findViewById(R.id.iv_step_preparation_image);
                         Picasso.get().load(step.getImage().getUrl()).into(iv_step_preparation_image);
                     }
@@ -308,14 +342,23 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
                     tv_preparation_number_order.setText(step.getStepNumber());
                     tv_preparation_description.setText(step.getPreparation());
 
-                    if (!step.getStepLink().isEmpty()) {
+                    ImageButton iButtonLinks = view.findViewById(R.id.ib_link_container);
+                    if (step.getStepLinks() != null && !step.getStepLinks().isEmpty()) {
+                        Util.showView(null, iButtonLinks);
                         view.setBackgroundResource(R.drawable.selector_white);
                         view.setClickable(true);
                         view.setFocusable(true);
                         view.setOnClickListener(v -> {
-                            loadFragment(step.getStepLink(), tags);
+                            Util.vibrate(requireContext());
+                            showLinksDialog(step.getStepLinks());
+                        });
+                        iButtonLinks.setOnClickListener(v -> {
+                            Util.vibrate(requireContext());
+                            showLinksDialog(step.getStepLinks());
                         });
                         Log.d(TAG, "setUpView: STEP = " + step.toString());
+                    } else {
+                        Util.hideView(null, iButtonLinks);
                     }
 
                     linear_preparation_container.addView(view);
@@ -324,12 +367,122 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
             } else {
                 Util.hideView(null, linear_preparation_container);
             }
-
+            if (!spHelper.getScrollUpStatus()) {
+                Util.hideView(null, btn_up);
+            }
             Util.showView(null, relative_container_recipe_main_info);
             Util.hideView(null, linear_layout_empty_container);
         } else {
             Util.showView(scaleUp, linear_layout_empty_container);
             Util.hideView(null, relative_container_recipe_main_info);
+        }
+    }
+
+    @Override
+    public void onScrollChanged() {
+        if (main_scroll_view != null) {
+            Log.d(TAG, "onScrollChanged: ScrollY = " + main_scroll_view.getScrollY());
+
+            if (main_scroll_view.getScrollY() <= 0) {
+                Util.showView(enter, relative_top_menu);
+            } else {
+                Util.hideViewInvisibleWay(exit, relative_top_menu);
+            }
+
+            if (spHelper.getScrollUpStatus()) {
+                if (main_scroll_view.getScrollY() > 0) {
+                    Util.showView(enter, btn_up);
+                    handlerDelay.removeCallbacks(runnableHideUpBtn);
+                    handlerDelay.postDelayed(runnableHideUpBtn, TimeHelper.DELAY / 2);
+                } else {
+                    Util.hideViewInvisibleWay(exit, btn_up);
+                }
+            }
+        }
+    }
+
+    private void showLinksDialog(ArrayList<LinkModel> links) {
+        Dialog dialog = new Dialog(requireContext(), R.style.alert_dialog);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        LayoutInflater inflater = getLayoutInflater();
+        @SuppressLint("InflateParams")
+        View dialogView = inflater.inflate(R.layout.dialog_view_links_choice, null, false);
+        ListView listView = dialogView.findViewById(R.id.list_view_links);
+
+        LinksAdapter linksAdapter = new LinksAdapter(requireContext(), R.layout.item_step_link, links);
+        listView.setAdapter(linksAdapter);
+        dialog.setContentView(dialogView);
+
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            Util.vibrate(requireContext());
+            handleLink(links.get(position));
+            if (dialog.isShowing())
+                dialog.dismiss();
+        });
+        dialog.show();
+        dialogView.startAnimation(scaleUp);
+    }
+
+    private void showGoToBrowserDialog(String url) {
+
+        Handler handlerMessage = new Handler(Looper.getMainLooper());
+
+        Runnable runnableDelayMassage = () -> {
+
+           /* if (isAdded() && isVisible()) {
+                Dialog dialog = new Dialog(requireContext(), R.style.alert_dialog);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                LayoutInflater inflater = getLayoutInflater();
+                @SuppressLint("InflateParams")
+                View dialogView = inflater.inflate(R.layout.dialog_view_error_loading, null,
+                        false);
+
+                TextView tv_url = dialogView.findViewById(R.id.url_link);
+                Button ok = dialogView.findViewById(R.id.ok);
+                Button cancel = dialogView.findViewById(R.id.cancel);
+
+                tv_url.setText(url);
+
+                ok.setOnClickListener(v -> {
+                    Util.vibrate(requireContext());
+                    goToBrowser(url);
+                    if (dialog.isShowing())
+                        dialog.dismiss();
+                });
+
+                cancel.setOnClickListener(v -> {
+                    Util.vibrate(requireContext());
+                    if (dialog.isShowing())
+                        dialog.dismiss();
+                });
+
+                dialog.show();
+                dialogView.startAnimation(scaleUp);
+            }*/
+
+            if (isAdded() && isVisible()) {
+                String msg = getString(R.string.aks_go_to_bowser);
+                Snackbar snackBar = Snackbar.make(rootView, msg, Snackbar.LENGTH_SHORT);
+                snackBar.setBackgroundTint(getResources().getColor(R.color.md_green_50));
+                snackBar.setTextColor(getResources().getColor(R.color.dark_gray_btn_bg_color));
+                snackBar.setDuration(Snackbar.LENGTH_INDEFINITE);
+
+                snackBar.setAction(getString(R.string.ok), v -> Util.goToBrowser(requireActivity(), url));
+
+                if (!snackBar.isShown())
+                    snackBar.show();
+            }
+
+        };
+
+        handlerMessage.postDelayed(runnableDelayMassage, TimeHelper.DIALOG_DELAY);
+    }
+
+    private void handleLink(LinkModel link) {
+        if (link.getUrl().contains(MAIN_RECIPE_SERVER))
+            Util.loadSingleRecipeFragmentSelf(requireActivity(), link.getUrl(), tags);
+        else {
+            Util.goToBrowser(requireActivity(), link.getUrl());
         }
     }
 
@@ -356,16 +509,18 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
 
     @Override
     public void onStart() {
-        Log.d(TAG, "onStart: Usage = " + spHelper.getUsageOpenTime());
         super.onStart();
+        Log.d(TAG, "onStart: Usage = " + spHelper.getUsageOpenTime());
         spHelper.saveUsageOpenTime(System.currentTimeMillis());
+        spHelper.increasesAdCounter();
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
         if (recipe != null) {
-            saveUsageByWeekDay();
+            Util.saveUsageByWeekDay(requireContext());
             spHelper.saveLastRecipeRead(recipe);
         }
     }
@@ -375,54 +530,6 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
         super.onDestroy();
         if (videoView != null)
             videoView.release();
-    }
-
-    private void saveUsageByWeekDay() {
-
-        String dayCodeKey;
-        String[] dayCodes = getResources().getStringArray(R.array.day_codes);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setFirstDayOfWeek(Calendar.MONDAY);
-        int day = calendar.get(Calendar.DAY_OF_WEEK);
-
-        long currentTime = System.currentTimeMillis();
-        long openTimeUsage = spHelper.getUsageOpenTime();
-        long diff = TimeHelper.getDifferenceInMinutes(currentTime, openTimeUsage);
-        float usageScore = Util.calculateUsageScore(diff);
-
-        Log.d(TAG, "saveUsageScoreByWeekDay: Memorizing difference: " + diff);
-        Log.d(TAG, "saveUsageScoreByWeekDay: UsageScore: " + usageScore);
-
-        switch (day) {
-            case Calendar.MONDAY:
-                dayCodeKey = dayCodes[0] + 1;
-                spHelper.increasesUsageValue(dayCodeKey, usageScore);
-                break;
-            case Calendar.TUESDAY:
-                dayCodeKey = dayCodes[1] + 2;
-                spHelper.increasesUsageValue(dayCodeKey, usageScore);
-                break;
-            case Calendar.WEDNESDAY:
-                dayCodeKey = dayCodes[2] + 3;
-                spHelper.increasesUsageValue(dayCodeKey, usageScore);
-                break;
-            case Calendar.THURSDAY:
-                dayCodeKey = dayCodes[3] + 4;
-                spHelper.increasesUsageValue(dayCodeKey, usageScore);
-                break;
-            case Calendar.FRIDAY:
-                dayCodeKey = dayCodes[4] + 5;
-                spHelper.increasesUsageValue(dayCodeKey, usageScore);
-                break;
-            case Calendar.SATURDAY:
-                dayCodeKey = dayCodes[5] + 6;
-                spHelper.increasesUsageValue(dayCodeKey, usageScore);
-                break;
-            case Calendar.SUNDAY:
-                dayCodeKey = dayCodes[6] + 7;
-                spHelper.increasesUsageValue(dayCodeKey, usageScore);
-                break;
-        }
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -442,27 +549,30 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
                     checkBookmark(true);
                     realmHelper.insertOrUpdate(realmRecipeModel);
                     if (isVisible())
-                        MessageHelper.showInfoMessage(requireActivity(),
+                        MessageHelper.showSuccessMessage(requireActivity(),
                                 getString(R.string.saved), rootView);
                 } else {
                     isBookmarkChecked = false;
                     checkBookmark(false);
                     realmHelper.deleteRecipe(realmRecipeModel);
                     if (isVisible())
-                        MessageHelper.showInfoMessage(requireActivity(),
+                        MessageHelper.showSuccessMessage(requireActivity(),
                                 getString(R.string.removed), rootView);
                 }
                 break;
+            case R.id.recipe_description:
+                showDescriptionDialog(recipe.getDescription());
+                break;
+            case R.id.ib_sharing:
+                if (url != null && !url.isEmpty())
+                    Util.share(requireActivity(), url);
+                break;
+            case R.id.btn_up:
+                if (main_scroll_view != null) {
+                    main_scroll_view.smoothScrollTo(0, 0);
+                }
+                break;
         }
-    }
-
-    private void loadFragment(String url, ArrayList<TagModel> tags) {
-        NavController navController = Navigation
-                .findNavController(requireActivity(), R.id.nav_host_fragment);
-        Bundle args = new Bundle();
-        args.putString(URL_KEY, url);
-        args.putParcelableArrayList(TAG_KEY, tags);
-        navController.navigate(R.id.action_singleRecipeFragment_self, args);
     }
 
     private void showDescriptionDialog(String text) {
@@ -501,7 +611,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
     }
 
     @Override
-    public void onLoaderFailed(ArrayList<RecipeModel> recipes, Exception e) {
+    public void onLoaderFailed(String url, Exception e) {
         Log.d(TAG, "onRecipesLoadedFailed: ERROR = " + e.toString());
         if (e instanceof SocketTimeoutException) {
             showNetworkErrorMessage();
@@ -509,7 +619,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
         if (e instanceof SocketException) {
             showNetworkErrorMessage();
         } else {
-            showErrorMessage();
+            showErrorMessage(url);
         }
     }
 
@@ -532,22 +642,35 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
                 refreshView();
             });
         } else {
-            Toast.makeText(requireContext(),
-                    getString(R.string.network_error), Toast.LENGTH_LONG).show();
+            requireActivity().runOnUiThread(() -> {
+                Toast.makeText(requireContext(),
+                        getString(R.string.network_error), Toast.LENGTH_LONG)
+                        .show();
+                if (isVisible())
+                    refreshView();
+            });
         }
     }
 
-    private void showErrorMessage() {
+    private void showErrorMessage(String url) {
         if (isVisible()) {
             requireActivity().runOnUiThread(() -> {
                 MessageHelper.showInfoMessageError(
                         requireActivity(), getString(R.string.some_error),
                         rootView);
-                refreshView();
+                showGoToBrowserDialog(url);
+                if (isVisible())
+                    refreshView();
             });
         } else {
-            Toast.makeText(requireContext(),
-                    getString(R.string.some_error), Toast.LENGTH_LONG).show();
+            requireActivity().runOnUiThread(() -> {
+                Toast.makeText(requireContext(),
+                        getString(R.string.some_error), Toast.LENGTH_LONG)
+                        .show();
+                showGoToBrowserDialog(url);
+                if (isVisible())
+                    refreshView();
+            });
         }
     }
 
@@ -568,7 +691,6 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
         Log.d(TAG, "onSaveInstanceState: outState = " + outState);
     }
 
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -584,4 +706,5 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener, 
         }
         return state;
     }
+
 }

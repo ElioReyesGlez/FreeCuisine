@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,10 @@ import com.erg.freecuisine.util.Util;
 
 import static com.erg.freecuisine.util.Constants.GOOGLE_APP_DETAILS_URL;
 import static com.erg.freecuisine.util.Constants.LINKEDIN_PACKAGE;
+import static com.erg.freecuisine.util.Constants.MAIN_RECIPE_SERVER;
 import static com.erg.freecuisine.util.Constants.MARKET_APP_DETAILS_URL;
+import static com.erg.freecuisine.util.Constants.NEWLINE;
+import static com.erg.freecuisine.util.Constants.RECETA_GRATIS_COLUMN;
 import static com.erg.freecuisine.util.Constants.SPACE;
 import static com.erg.freecuisine.util.Constants.URL_DEVELOPER;
 
@@ -58,14 +62,27 @@ public class AboutFragment extends Fragment implements View.OnClickListener {
 
     private void setUpView() {
         RelativeLayout rate_on_play_store_layout = rootView.findViewById(R.id.rate_on_play_store);
+        TextView tv_app_description = rootView.findViewById(R.id.tv_app_description);
         RelativeLayout contact_us_layout = rootView.findViewById(R.id.contact_us);
         RelativeLayout developer1_layout = rootView.findViewById(R.id.developer1);
+
+        /*String description = getString(R.string.description_about_page)
+                + NEWLINE + getString(R.string.description_about_page2);
+        tv_app_description.setText(description);*/
+        setupHyperlink(tv_app_description);
 
         setVersion();
 
         rate_on_play_store_layout.setOnClickListener(this);
         contact_us_layout.setOnClickListener(this);
         developer1_layout.setOnClickListener(this);
+    }
+
+    private void setupHyperlink(TextView tv_app_description) {
+        tv_app_description.setMovementMethod(LinkMovementMethod.getInstance());
+        tv_app_description.setLinksClickable(true);
+//        tv_app_description.setLinkTextColor(getResources().getColor(R.color.blue));
+        tv_app_description.setOnClickListener(this);
     }
 
     private void setVersion() {
@@ -88,6 +105,9 @@ public class AboutFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.developer1:
                 lookInLinkedInProfile(URL_DEVELOPER);
+                break;
+            case R.id.tv_app_description:
+                Util.goToBrowser(requireActivity(), MAIN_RECIPE_SERVER);
                 break;
         }
     }

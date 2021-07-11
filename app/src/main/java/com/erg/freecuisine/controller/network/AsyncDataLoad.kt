@@ -52,7 +52,7 @@ class AsyncDataLoad {
                                   onRecipeListener: OnRecipeListener, link: LinkModel): Job {
         return scopeLoader3.launch {
             val recipes: ArrayList<RecipeModel> = JsoupController
-                    .getRecommendedRecipe(link, onRecipeListener)
+                    .getRecommendedRecipes(link, onRecipeListener)
             if (recipes.isNotEmpty()) {
                 contextActivity.runOnUiThread {
                     onRecipeListener.onRecommendedRecipesLoaded(recipes)
@@ -80,11 +80,11 @@ class AsyncDataLoad {
         }
     }
 
-    fun loadTipRecipesAsync(contextActivity: FragmentActivity,
-                            onRecipeListener: OnRecipeListener, link: LinkModel): Job {
+    fun loadTipsRecipesAsync(contextActivity: FragmentActivity,
+                             onRecipeListener: OnRecipeListener, link: LinkModel): Job {
         return scopeLoader4.launch {
             val recipes: ArrayList<RecipeModel> = ArrayList()
-            val aux = JsoupController.getTipRecipes(link, onRecipeListener)
+            val aux = JsoupController.getTipsRecipes(link, onRecipeListener)
             aux.shuffle()
             for (i in 0..7) {
                 val recipe = aux[i]

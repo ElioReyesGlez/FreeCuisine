@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -29,11 +30,11 @@ import com.erg.freecuisine.adapters.RecipesAdapter;
 import com.erg.freecuisine.adapters.RecommendedRecipesAdapter;
 import com.erg.freecuisine.adapters.TipsRecipesAdapter;
 import com.erg.freecuisine.controller.network.AsyncDataLoad;
-import com.erg.freecuisine.controller.network.helpers.FireBaseHelper;
-import com.erg.freecuisine.controller.network.helpers.MessageHelper;
-import com.erg.freecuisine.controller.network.helpers.SharedPreferencesHelper;
-import com.erg.freecuisine.controller.network.helpers.StringHelper;
-import com.erg.freecuisine.controller.network.helpers.TimeHelper;
+import com.erg.freecuisine.helpers.FireBaseHelper;
+import com.erg.freecuisine.helpers.MessageHelper;
+import com.erg.freecuisine.helpers.SharedPreferencesHelper;
+import com.erg.freecuisine.helpers.StringHelper;
+import com.erg.freecuisine.helpers.TimeHelper;
 import com.erg.freecuisine.interfaces.OnFireBaseListenerDataStatus;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.LinkModel;
@@ -84,7 +85,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     private Job recommendLoaderJob;
     private Job tipsLoaderJob;
     private FireBaseHelper fireBaseHelper;
-    private Animation scaleUP, scaleDown;
+    private Animation scaleUP, scaleDown, scaleUpLong;
     private Handler handlerMessage;
     private Runnable runnableDelayMassage;
 
@@ -103,6 +104,8 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
                         getString(R.string.network_error),
                         rootView);
                 stopLoading();
+                refreshViewRecommendedView();
+                refreshViewTipsView();
             }
         };
 
@@ -130,6 +133,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         linearTipsEmptyContainer.setOnClickListener(this);
 
         scaleUP = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
+        scaleUpLong = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up_long);
         scaleDown = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_down);
 
         LinearLayoutManager layoutManagerRecommended = new LinearLayoutManager(
@@ -215,7 +219,11 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
                 if (tags.get(0) != null) {
                     TagModel firstTag = recipe.getTags().get(0);
                     holder.firstFilter.setText(firstTag.getText());
+                } else {
+                    Util.hideView(null, holder.firstFilter);
                 }
+            } else {
+                Util.hideView(null, holder.firstFilter);
             }
 
             if (!recipe.getTime().isEmpty())
@@ -238,6 +246,14 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
             else
                 Util.hideView(null, holder.peopleAmount);
 
+            ImageButton info = lastReadingView.findViewById(R.id.ib_info__last_reading);
+            info.setOnClickListener(this);
+
+            new Handler(Looper.getMainLooper()).postDelayed((Runnable) () -> {
+                if (isVisible() && info.getVisibility() == View.VISIBLE) {
+                    info.startAnimation(scaleUpLong);
+                }
+            }, TimeHelper.DELAY);
 
             LinearLayout linear_amounts_container = lastReadingView
                     .findViewById(R.id.linear_amounts_container);
@@ -254,6 +270,15 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     }
 
     private void setStatics() {
+
+        ImageButton info = staticsGraphView.findViewById(R.id.ib_info__statics);
+        info.setOnClickListener(this);
+//        if (spHelper.isFirstLunch())
+        new Handler(Looper.getMainLooper()).postDelayed((Runnable) () -> {
+            if (isVisible() && info.getVisibility() == View.VISIBLE) {
+                info.startAnimation(scaleUpLong);
+            }
+        }, TimeHelper.DELAY);
 
         ArrayList<Float> userActivity = spHelper.getUserActivity();
         ArrayList<String> weekDays = TimeHelper.getCurrentWeekDays();
@@ -310,7 +335,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
 
                 if (link.getTag().toLowerCase().contains(CONSEJOS_TAG)) {
                     tipsLoaderJob = new AsyncDataLoad()
-                            .loadTipRecipesAsync(requireActivity(), this, link);
+                            .loadTipsRecipesAsync(requireActivity(), this, link);
                 }
             }
         }
@@ -347,12 +372,25 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         }
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         Util.vibrate(requireContext());
-        if (v.getId() == R.id.linear_layout_empty_container
-                || v.getId() == R.id.linear_layout_empty_container_tips) {
-            Util.refreshCurrentFragment(requireActivity());
+        switch (v.getId()) {
+            case R.id.linear_layout_empty_container:
+            case R.id.linear_layout_empty_container_tips:
+                Util.refreshCurrentFragment(requireActivity());
+                break;
+            case R.id.ib_info__statics:
+                if (isVisible())
+                    MessageHelper.showInfoMessage(requireActivity(),
+                            getString(R.string.statistics_info), rootView);
+                break;
+            case R.id.ib_info__last_reading:
+                if (isVisible())
+                    MessageHelper.showInfoMessage(requireActivity(),
+                            getString(R.string.last_reading_info), rootView);
+                break;
         }
     }
 
@@ -390,7 +428,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     }
 
     @Override
-    public void onLoaderFailed(ArrayList<RecipeModel> recipes, Exception e) {
+    public void onLoaderFailed(String url, Exception e) {
         Log.d(TAG, "onRecipesLoadedFailed: ERROR = " + e.toString());
         if (e instanceof SocketTimeoutException) {
             showTimeOutMessage();
@@ -463,6 +501,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         }
 
     }
+
     private void refreshViewTipsView() {
         if (tipsRecipes != null && !tipsRecipes.isEmpty()) {
             Util.showView(null, recyclerviewTipsRecipe);

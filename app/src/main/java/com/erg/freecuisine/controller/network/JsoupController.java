@@ -3,8 +3,8 @@ package com.erg.freecuisine.controller.network;
 import android.util.Log;
 
 import com.erg.freecuisine.R;
-import com.erg.freecuisine.controller.network.helpers.StringHelper;
-import com.erg.freecuisine.controller.network.helpers.TimeHelper;
+import com.erg.freecuisine.helpers.StringHelper;
+import com.erg.freecuisine.helpers.TimeHelper;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.ImageModel;
 import com.erg.freecuisine.models.LinkModel;
@@ -36,7 +36,6 @@ import static com.erg.freecuisine.util.Constants.MAIN_CONTENT;
 import static com.erg.freecuisine.util.Constants.MAIN_TAG;
 import static com.erg.freecuisine.util.Constants.POSITION_IMAGE;
 import static com.erg.freecuisine.util.Constants.PROPERTY_DINERS_TAG;
-import static com.erg.freecuisine.util.Constants.PROPERTY_EXTRA_TAG;
 import static com.erg.freecuisine.util.Constants.PROPERTY_TAG_CLASS;
 import static com.erg.freecuisine.util.Constants.PROPERTY_TIME_TAG;
 import static com.erg.freecuisine.util.Constants.PROPERTY_TYPE_TAG;
@@ -52,11 +51,11 @@ public class JsoupController {
     private static final String TAG = "JsoupController";
 
     public static ArrayList<RecipeModel> getRecipesByLink(
-            LinkModel linkModel, OnRecipeListener onRecipeListener, boolean limitFlag) {
+            LinkModel link, OnRecipeListener onRecipeListener, boolean limitFlag) {
         ArrayList<RecipeModel> recipes = new ArrayList<>();
         try {
 
-            Document document = Jsoup.connect(linkModel.getUrl()).get();
+            Document document = Jsoup.connect(link.getUrl()).get();
             Element mainContent = document.getElementsByClass(MAIN_CONTENT).first();
             Elements elementsRecipes = mainContent.getElementsByClass(RESULT_LINK);
 
@@ -104,7 +103,7 @@ public class JsoupController {
                 if (!description.isEmpty())
                     recipe.setDescription(description);
                 if (!recipeLink.isEmpty()) {
-                    TagModel tagModel = new TagModel(linkModel.getTag(), R.color.colorPrimary);
+                    TagModel tagModel = new TagModel(link.getTag(), R.color.colorPrimary);
                     List<TagModel> tags = new ArrayList<>();
                     tags.add(tagModel);
                     recipe.setTags(tags);
@@ -118,7 +117,7 @@ public class JsoupController {
             return recipes;
 
         } catch (Exception e) {
-            onRecipeListener.onLoaderFailed(recipes, e);
+            onRecipeListener.onLoaderFailed(link.getUrl(), e);
             return recipes;
         }
     }
@@ -129,6 +128,7 @@ public class JsoupController {
         try {
 
             Document document = Jsoup.connect(url).get();
+            document.outputSettings(new Document.OutputSettings().prettyPrint(true));
 
             Element article = document.getElementsByClass(MAIN_TAG).first();
             Element classIntro = article.getElementsByClass(CLASS_INTRO_TAG).first();
@@ -137,43 +137,47 @@ public class JsoupController {
 
             String id = url;
             String recipeTitle = article.getElementsByClass(TITLE_TAG).first().text();
-            String recipeDescription = StringHelper.getRecipeDescription(classIntro);
+//            String recipeDescription = StringHelper.extractTextFromElement(classIntro);
+            String recipeDescription = classIntro.text();
 
             if (recipeInfo != null) {
+                Log.d(TAG, "getRecipe: RECIPE INFO = " + recipeInfo);
                 int ratings = 5;
                 String strDiners = StringHelper.extractPropertyByClassTag(recipeInfo, PROPERTY_DINERS_TAG);
                 String diners = StringHelper.extractDiners(strDiners);
                 String time = StringHelper.extractPropertyByClassTag(recipeInfo, PROPERTY_TIME_TAG);
                 String type = StringHelper.extractPropertyByClassTag(recipeInfo, PROPERTY_TYPE_TAG);
-                String extra = StringHelper.extractTextByClassTag(
-                        recipeInfo.getElementsByClass(PROPERTY_EXTRA_TAG).first(), "");
+//                String extra = StringHelper.extractTextByClassTag(
+//                        recipeInfo.getElementsByClass(PROPERTY_EXTRA_TAG).first(), "");
                 String ingredients = StringHelper.extractIngredients(recipeInfo);
                 ImageModel mainImage = new ImageModel(id, mainImg.absUrl(SRC_TAG));
                 List<StepModel> steps = StringHelper.extractPreparationSteps(article);
 
                 recipe = new RecipeModel(id, recipeTitle,
                         recipeDescription, ratings, time, diners, type, new ArrayList<>(),
-                        ingredients, steps, extra, mainImage, tags, url);
+                        ingredients, steps, "", mainImage, tags, url);
 
-            } else {
+            } else if (mainImg != null) {
                 ImageModel mainImage = new ImageModel(id, mainImg.absUrl(SRC_TAG));
                 List<StepModel> steps = StringHelper.extractStepsWhitSubTitles(article);
                 recipe = new RecipeModel(id, recipeTitle,
                         recipeDescription, -1, "", "", "", new ArrayList<>(),
                         "", steps, "", mainImage, tags, url);
 
+            } else {
+                throw new IOException("Error : Tags do not found");
             }
             return recipe;
 
         } catch (IOException e) {
             Log.e(TAG, "getRecipe: ERROR: " + e.getMessage());
-            onRecipeListener.onLoaderFailed(null, e);
+            onRecipeListener.onLoaderFailed(url, e);
             return null;
         }
     }
 
-    public static ArrayList<RecipeModel> getRecommendedRecipe(LinkModel link,
-                                                              OnRecipeListener onRecipeListener) {
+    public static ArrayList<RecipeModel> getRecommendedRecipes(LinkModel link,
+                                                               OnRecipeListener onRecipeListener) {
         ArrayList<RecipeModel> recipes = new ArrayList<>();
         try {
 
@@ -184,9 +188,7 @@ public class JsoupController {
                     .first();
             Elements elementsRecipes = elementRecipesRoot.getElementsByClass(BLOQUE_LINK);
 
-
             for (int i = 0; i < elementsRecipes.size(); i++) {
-
                 RecipeModel recipe = new RecipeModel();
                 Element elementRecipe = elementsRecipes.get(i);
                 String recipeUrl = elementRecipe.select(A_TAG).first().attr(ATTRIBUTE_HREF);
@@ -240,13 +242,13 @@ public class JsoupController {
             }
             return recipes;
         } catch (Exception e) {
-            onRecipeListener.onLoaderFailed(recipes, e);
+            onRecipeListener.onLoaderFailed(link.getUrl(), e);
             return recipes;
         }
     }
 
-    public static ArrayList<RecipeModel> getTipRecipes(LinkModel link,
-                                                       OnRecipeListener onRecipeListener) {
+    public static ArrayList<RecipeModel> getTipsRecipes(LinkModel link,
+                                                        OnRecipeListener onRecipeListener) {
         ArrayList<RecipeModel> recipes = new ArrayList<>();
         try {
 
@@ -254,11 +256,8 @@ public class JsoupController {
             Element mainContent = document.getElementsByClass(MAIN_CONTENT).first();
             Elements elementsRecipes = mainContent.getElementsByClass(RESULT_LINK);
 
-
             int limit = elementsRecipes.size();
-
             for (int i = 0; i < limit; i++) {
-
                 RecipeModel recipe = new RecipeModel();
                 Element elementRecipe = elementsRecipes.get(i);
                 String recipeLink = elementRecipe.select(A_TAG).first().attr(ATTRIBUTE_HREF);
@@ -308,7 +307,7 @@ public class JsoupController {
             return recipes;
 
         } catch (Exception e) {
-            onRecipeListener.onLoaderFailed(recipes, e);
+            onRecipeListener.onLoaderFailed(link.getUrl(), e);
             return recipes;
         }
     }

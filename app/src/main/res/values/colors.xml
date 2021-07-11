@@ -3,6 +3,13 @@
     <!--Transparent-->
     <color name="float_transparent">#00000000</color>
 
+    <color name="translucent15">#26000000</color>
+    <color name="translucent17">#2B000000</color>
+    <color name="translucent20">#33000000</color>
+    <color name="translucent25">#40000000</color>
+    <color name="translucent35">#59000000</color>
+    <color name="translucent50">#80000000</color>
+
     <color name="colorPrimary">@color/my_colorPrimary</color>
     <color name="colorPrimaryVariant">@color/my_colorPrimaryVariant</color>
     <color name="colorOnPrimary">@color/my_colorOnPrimary</color>
@@ -21,6 +28,7 @@
 
 
     <color name="text_second_color">#616161</color>
+    <color name="dark_background_color">#616161</color>
 
     <array name="colors">
         <item name="all" type="color">#827f93</item>
@@ -43,6 +51,8 @@
 
 
     <color name="md_yellow_50">#fffde7</color>
+    <color name="blue">#5394b5</color>
+    <color name="colorBlueLight">#BBCEE4</color>
 
     <color name="custom_white_text_color">#f2f1f1</color>
     <color name="gray_btn_bg_color">#D0D0D0</color>

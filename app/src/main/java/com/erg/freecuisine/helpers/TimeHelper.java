@@ -1,4 +1,4 @@
-package com.erg.freecuisine.controller.network.helpers;
+package com.erg.freecuisine.helpers;
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,6 +22,8 @@ import java.util.TimeZone;
 public class TimeHelper {
 
     public static final int TIME_OUT =  30000;
+    public static final int DIALOG_DELAY =  2000;
+    public static final int DELAY =  7000;
 
     public static long getDifferenceInMinutes(long date1, long date2) {
         Date past = new Date();
