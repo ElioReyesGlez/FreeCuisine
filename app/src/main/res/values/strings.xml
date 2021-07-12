@@ -179,7 +179,7 @@
         por la cocina.
     </string>
 
-    <string name="description_about_page2">Cocina Gratis es parte de un proyecto en desarrollo que
+    <string name="description_about_page2"><b>Free Cuisine</b> es parte de un proyecto en desarrollo que
         tiene como objetivo mejorar la experiencia de usuarios a la hora de navegar por sitios webs
         o apps que en demasiadas ocasiones no es la mejor, así como continuar esparciendo el amor
         por la cocina.</string>
@@ -195,13 +195,13 @@
     <string name="faild_billing_connection">Error en la conexión de facturación.</string>
     <string name="cant_not_query_product">Error no se pudo consultar el producto</string>
     <string name="seven">7</string>
-    <string name="get_premium_ad_free">Hágase PREMIUM para obtener una DeMeMo SIN ANUNCIOS</string>
+    <string name="get_premium_ad_free">Hágase PREMIUM para obtener <b>Free Cuisine</b> SIN ANUNCIOS</string>
     <string name="ad_explication">El siguiente anuncio nos ayuda a desarrollar:</string>
-    <string name="mission">Misión de DeMeMo</string>
-    <string name="mission_description">DeMeMo es parte de un proyecto en desarrollo que tiene
-        como objetivo posicionar
-        la palabra de Dios en un mundo más actual donde las nuevas tecnologías y las
-        bienaventuranzas de Dios van juntas de manera transparente.</string>
+    <string name="mission">Misión de <b>Free Cuisine</b></string>
+    <string name="mission_description"><b>Free Cuisine</b> es parte de un proyecto en desarrollo que
+        tiene como objetivo mejorar la experiencia de usuarios a la hora de navegar por sitios webs
+        o apps que en demasiadas ocasiones no es la mejor, así como continuar esparciendo el amor
+        por la cocina.</string>
     <string name="function_temporarily_disabled">Función temporalmente deshabilitada</string>
     <string name="ad_not_load">El anuncio no se cargó</string>
 

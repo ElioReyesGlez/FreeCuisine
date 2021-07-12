@@ -120,7 +120,6 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
         setSharedElementReturnTransition(transition);
         tags = new ArrayList<>();
 
-
         if (savedInstanceState != null && savedState == null) {
             savedState = savedInstanceState.getBundle(SAVED_STATE_KEY);
             Log.d(TAG, "onCreate: SAVED INSTANCE = " + savedState);
@@ -370,11 +369,13 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
             if (!spHelper.getScrollUpStatus()) {
                 Util.hideView(null, btn_up);
             }
+            Util.showView(null, relative_top_menu);
             Util.showView(null, relative_container_recipe_main_info);
             Util.hideView(null, linear_layout_empty_container);
         } else {
             Util.showView(scaleUp, linear_layout_empty_container);
             Util.hideView(null, relative_container_recipe_main_info);
+            Util.hideView(null, relative_top_menu);
         }
     }
 
@@ -513,7 +514,6 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
         Log.d(TAG, "onStart: Usage = " + spHelper.getUsageOpenTime());
         spHelper.saveUsageOpenTime(System.currentTimeMillis());
         spHelper.increasesAdCounter();
-
     }
 
     @Override
@@ -655,7 +655,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
     private void showErrorMessage(String url) {
         if (isVisible()) {
             requireActivity().runOnUiThread(() -> {
-                MessageHelper.showInfoMessageError(
+                MessageHelper.showInfoMessageWarning(
                         requireActivity(), getString(R.string.some_error),
                         rootView);
                 showGoToBrowserDialog(url);

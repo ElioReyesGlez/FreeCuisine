@@ -63,7 +63,7 @@ class AsyncDataLoad {
     }
 
     fun loadRecommendRecipesAsync2(contextActivity: FragmentActivity,
-                                  onRecipeListener: OnRecipeListener, links: List<LinkModel>): Job {
+                                   onRecipeListener: OnRecipeListener, links: List<LinkModel>): Job {
         return scopeLoader5.launch {
             val recipes: ArrayList<RecipeModel> = ArrayList()
             for (link in links) {

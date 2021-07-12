@@ -34,6 +34,8 @@ public class Constants {
     public static final String DEFAULT = "DEFAULT";
     public static final int ZERO = 0;
     public static final String interstitial_ad_unit_id_testing = "ca-app-pub-3940256099942544/1033173712" ;
+    public static final String interstitial_ad_unit_id= "ca-app-pub-4525078240939294/9187543270" ;
+    public static final CharSequence HALLOWEEN_TAG = "halloween";
 
     public static ArrayList<String> getBrands(Context context) {
         ArrayList<String> brands = new ArrayList<>();

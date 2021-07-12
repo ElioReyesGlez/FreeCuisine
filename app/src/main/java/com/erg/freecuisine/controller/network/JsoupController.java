@@ -29,6 +29,7 @@ import static com.erg.freecuisine.util.Constants.CATEGORIA_CLASS;
 import static com.erg.freecuisine.util.Constants.CLASS_INTRO_TAG;
 import static com.erg.freecuisine.util.Constants.CONSEJOS_TAG;
 import static com.erg.freecuisine.util.Constants.ETIQUETA_CLASS;
+import static com.erg.freecuisine.util.Constants.HALLOWEEN_TAG;
 import static com.erg.freecuisine.util.Constants.HOME_RECOMMENDED_MAIN_TAG;
 import static com.erg.freecuisine.util.Constants.IMAGE_DATA_TAG;
 import static com.erg.freecuisine.util.Constants.IMG_TAG;
@@ -131,44 +132,46 @@ public class JsoupController {
             document.outputSettings(new Document.OutputSettings().prettyPrint(true));
 
             Element article = document.getElementsByClass(MAIN_TAG).first();
-            Element classIntro = article.getElementsByClass(CLASS_INTRO_TAG).first();
-            Element mainImg = classIntro.select(IMG_TAG).first();
-            Element recipeInfo = article.getElementsByClass(RECIPE_INFO_TAG).first();
+            if (article != null) {
+                Element classIntro = article.getElementsByClass(CLASS_INTRO_TAG).first();
+                Element mainImg = classIntro.select(IMG_TAG).first();
+                Element recipeInfo = article.getElementsByClass(RECIPE_INFO_TAG).first();
 
-            String id = url;
-            String recipeTitle = article.getElementsByClass(TITLE_TAG).first().text();
+                String id = url;
+                String recipeTitle = article.getElementsByClass(TITLE_TAG).first().text();
 //            String recipeDescription = StringHelper.extractTextFromElement(classIntro);
-            String recipeDescription = classIntro.text();
+                String recipeDescription = classIntro.text();
 
-            if (recipeInfo != null) {
-                Log.d(TAG, "getRecipe: RECIPE INFO = " + recipeInfo);
-                int ratings = 5;
-                String strDiners = StringHelper.extractPropertyByClassTag(recipeInfo, PROPERTY_DINERS_TAG);
-                String diners = StringHelper.extractDiners(strDiners);
-                String time = StringHelper.extractPropertyByClassTag(recipeInfo, PROPERTY_TIME_TAG);
-                String type = StringHelper.extractPropertyByClassTag(recipeInfo, PROPERTY_TYPE_TAG);
+                if (recipeInfo != null) {
+                    Log.d(TAG, "getRecipe: RECIPE INFO = " + recipeInfo);
+                    int ratings = 5;
+                    String strDiners = StringHelper.extractPropertyByClassTag(recipeInfo, PROPERTY_DINERS_TAG);
+                    String diners = StringHelper.extractDiners(strDiners);
+                    String time = StringHelper.extractPropertyByClassTag(recipeInfo, PROPERTY_TIME_TAG);
+                    String type = StringHelper.extractPropertyByClassTag(recipeInfo, PROPERTY_TYPE_TAG);
 //                String extra = StringHelper.extractTextByClassTag(
 //                        recipeInfo.getElementsByClass(PROPERTY_EXTRA_TAG).first(), "");
-                String ingredients = StringHelper.extractIngredients(recipeInfo);
-                ImageModel mainImage = new ImageModel(id, mainImg.absUrl(SRC_TAG));
-                List<StepModel> steps = StringHelper.extractPreparationSteps(article);
+                    String ingredients = StringHelper.extractIngredients(recipeInfo);
+                    ImageModel mainImage = new ImageModel(id, mainImg.absUrl(SRC_TAG));
+                    List<StepModel> steps = StringHelper.extractPreparationSteps(article);
 
-                recipe = new RecipeModel(id, recipeTitle,
-                        recipeDescription, ratings, time, diners, type, new ArrayList<>(),
-                        ingredients, steps, "", mainImage, tags, url);
+                    recipe = new RecipeModel(id, recipeTitle,
+                            recipeDescription, ratings, time, diners, type, new ArrayList<>(),
+                            ingredients, steps, "", mainImage, tags, url);
 
-            } else if (mainImg != null) {
-                ImageModel mainImage = new ImageModel(id, mainImg.absUrl(SRC_TAG));
-                List<StepModel> steps = StringHelper.extractStepsWhitSubTitles(article);
-                recipe = new RecipeModel(id, recipeTitle,
-                        recipeDescription, -1, "", "", "", new ArrayList<>(),
-                        "", steps, "", mainImage, tags, url);
-
+                } else if (mainImg != null) {
+                    ImageModel mainImage = new ImageModel(id, mainImg.absUrl(SRC_TAG));
+                    List<StepModel> steps = StringHelper.extractStepsWhitSubTitles(article);
+                    recipe = new RecipeModel(id, recipeTitle,
+                            recipeDescription, -1, "", "", "", new ArrayList<>(),
+                            "", steps, "", mainImage, tags, url);
+                } else {
+                    throw new IOException("Error : Tags do not found");
+                }
             } else {
                 throw new IOException("Error : Tags do not found");
             }
             return recipe;
-
         } catch (IOException e) {
             Log.e(TAG, "getRecipe: ERROR: " + e.getMessage());
             onRecipeListener.onLoaderFailed(url, e);
@@ -236,7 +239,11 @@ public class JsoupController {
                         }
                     }
 
-                    if (!isTipsRecipe && !isDrinkRecipe)
+                    boolean isHalloweenRecipe = false;
+                    if (recipe.getTitle().toLowerCase().contains(HALLOWEEN_TAG))
+                        isHalloweenRecipe = true;
+
+                    if (!isTipsRecipe && !isDrinkRecipe && !isHalloweenRecipe)
                         recipes.add(recipe);
                 }
             }

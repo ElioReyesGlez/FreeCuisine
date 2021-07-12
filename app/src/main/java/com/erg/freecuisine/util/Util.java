@@ -88,7 +88,7 @@ public class Util {
     }
 
     public static void hideViewWithDelay(Animation anim, View view) {
-         new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
             hideView(anim, view);
         }, TimeHelper.DELAY);
     }
@@ -292,7 +292,39 @@ public class Util {
                     .findNavController(activity, R.id.nav_host_fragment);
             navController.navigate(action, args);
         } else {
-            Log.d(TAG, "loadFragment: NULL POINT recipe = null" );
+            Log.d(TAG, "loadFragment: NULL POINT recipe = null");
+        }
+    }
+
+    public static void loadFragmentByUrl(Activity activity, int action,
+                                         String url, ArrayList<TagModel> tagModels) {
+        if (!url.isEmpty()) {
+            Bundle args = new Bundle();
+            args.putString(URL_KEY, url);
+            args.putParcelableArrayList(TAG_KEY, tagModels);
+
+            NavController navController = Navigation
+                    .findNavController(activity, R.id.nav_host_fragment);
+            navController.navigate(action, args);
+        } else {
+            Log.d(TAG, "loadFragment: NULL POINT recipe = null");
+        }
+    }
+
+    public static void loadFragmentWhitDelay(Activity activity, int action, RecipeModel recipe) {
+        if (recipe != null) {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                Bundle args = new Bundle();
+                args.putString(URL_KEY, recipe.getUrl());
+                ArrayList<TagModel> tagModels = new ArrayList<>(recipe.getTags());
+                args.putParcelableArrayList(TAG_KEY, tagModels);
+
+                NavController navController = Navigation
+                        .findNavController(activity, R.id.nav_host_fragment);
+                navController.navigate(action, args);
+            }, TimeHelper.DIALOG_DELAY);
+        } else {
+            Log.d(TAG, "loadFragment: NULL POINT recipe = null");
         }
     }
 

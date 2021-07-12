@@ -16,7 +16,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -60,7 +59,6 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
     private long timerMilliseconds = 7000;
     private SharedPreferencesHelper spHelper;
     private Bundle args;
-    private boolean isBookmarkRecipe;
     private String url;
     private ArrayList<TagModel> tags;
     private Bundle savedState = null;
@@ -76,15 +74,6 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         spHelper = new SharedPreferencesHelper(requireContext());
         tags = new ArrayList<>();
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView: starts");
-        rootView = inflater.inflate(R.layout.fragment_ad_mob, container, false);
 
         if (savedInstanceState != null && savedState == null) {
             savedState = savedInstanceState.getBundle(SAVED_STATE_KEY);
@@ -98,12 +87,13 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
         }
 
         if (args != null && !args.isEmpty()) {
-            isBookmarkRecipe = args.getBoolean(BOOKMARK_FLAG_KEY, false);
+            boolean isBookmarkRecipe = args.getBoolean(BOOKMARK_FLAG_KEY, false);
             if (isBookmarkRecipe) {
                 String jsonRecipe = args.getString(JSON_RECIPE_KEY, "");
                 if (!jsonRecipe.isEmpty()) {
                     recipe = StringHelper.getSingleRecipeFromJson(jsonRecipe);
                     url = recipe.getUrl();
+                    tags = new ArrayList<>(recipe.getTags());
                 }
             } else {
                 url = args.getString(URL_KEY);
@@ -112,7 +102,15 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
                 }
             }
         }
+    }
 
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView: starts");
+        rootView = inflater.inflate(R.layout.fragment_ad_mob, container, false);
         setUpView();
         return rootView;
     }
@@ -137,7 +135,6 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
         Log.d(TAG, "setUpView: Done!");
     }
 
-
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
@@ -147,12 +144,12 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
                 billingHelper.loadAllSkusAndStartBillingFlow();
                 break;
             case R.id.tv_mission_description:
-                linkToDeMeMoMission();
+                linkToMissionView();
                 break;
         }
     }
 
-    private void linkToDeMeMoMission() {
+    private void linkToMissionView() {
         if (isVisible()) {
             cancelTimer();
             showMissionDialog();
@@ -216,7 +213,7 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
     private void initInterstitialAd(final Context context) {
         AdRequest adRequest = new AdRequest.Builder().build();
         InterstitialAd.load(
-                context, Constants.interstitial_ad_unit_id_testing, adRequest,
+                context, Constants.interstitial_ad_unit_id, adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
@@ -245,15 +242,18 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
             public void onAdDismissedFullScreenContent() {
                 // Called when fullscreen content is dismissed.
                 Log.d(TAG, "The ad was dismissed.");
-                Util.loadFragment(requireActivity(),
+                Util.loadFragmentByUrl(requireActivity(),
                         R.id.action_adMobFragment_to_singleRecipeFragment,
-                        recipe);
+                        url, tags);
             }
 
             @Override
             public void onAdFailedToShowFullScreenContent(AdError adError) {
                 // Called when fullscreen content failed to show.
                 Log.d(TAG, "The ad failed to show.");
+                Util.loadFragmentByUrl(requireActivity(),
+                        R.id.action_adMobFragment_to_singleRecipeFragment,
+                        url, tags);
             }
 
             @Override
@@ -276,7 +276,7 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
         } else {
 //            Toast.makeText(activity, R.string.ad_not_load, Toast.LENGTH_SHORT).show();
             MessageHelper.showWarningMessageOnMain(activity, getString(R.string.ad_not_load));
-            Util.goBack(requireActivity());
+//            Util.goBack(requireActivity());
             Log.d(TAG, "showInterstitial: Ad dit not load, is not ready");
         }
     }
@@ -294,9 +294,9 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
             if (!finishedFlag)
                 startCountdown(requireActivity(), timerMilliseconds);
         } else {
-            Util.loadFragment(requireActivity(),
+            Util.loadFragmentByUrl(requireActivity(),
                     R.id.action_adMobFragment_to_singleRecipeFragment,
-                    recipe);
+                    url, tags);
         }
     }
 

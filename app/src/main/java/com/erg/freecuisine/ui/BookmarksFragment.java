@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.erg.freecuisine.R;
 import com.erg.freecuisine.adapters.RecipesAdapter;
 import com.erg.freecuisine.helpers.RealmHelper;
+import com.erg.freecuisine.helpers.SharedPreferencesHelper;
 import com.erg.freecuisine.helpers.StringHelper;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.RecipeModel;
@@ -125,7 +126,16 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void onRecipeClick(int position, View view) {
-        loadFragment(position, view);
+        Util.vibrate(requireContext());
+        RecipeModel currentRecipe = recipesAdapter.getRecipes().get(position);
+        SharedPreferencesHelper spHelper = new SharedPreferencesHelper(requireContext());
+        if (spHelper.showAdFirst()) {
+            loadFragment(currentRecipe,
+                    R.id.action_bookmarksFragment_to_adMobFragment, view);
+        } else {
+            loadFragment(currentRecipe,
+                    R.id.action_bookmarksFragment_to_singleRecipeFragment, view);
+        }
     }
 
     @Override
@@ -161,16 +171,14 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    private void loadFragment(int position, View view) {
-        Util.vibrate(requireContext());
-        RecipeModel currentRecipe = recipesAdapter.getRecipes().get(position);
+    private void loadFragment(RecipeModel currentRecipe, int idAction, View view) {
         Bundle args = new Bundle();
         args.putBoolean(BOOKMARK_FLAG_KEY, true);
         String jsonRecipe = new Gson().toJson(currentRecipe);
         args.putString(JSON_RECIPE_KEY, jsonRecipe);
         NavController navController = Navigation
                 .findNavController(requireActivity(), R.id.nav_host_fragment);
-        navController.navigate(R.id.action_bookmarksFragment_to_singleRecipeFragment, args);
+        navController.navigate(idAction, args);
     }
 
     @Override
