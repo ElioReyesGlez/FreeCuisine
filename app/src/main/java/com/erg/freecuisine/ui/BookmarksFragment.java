@@ -312,8 +312,4 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         super.onAttach(requireContext());
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
 }

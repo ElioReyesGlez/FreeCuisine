@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorOnPrimary"
-    tools:context=".ui.BookmarksFragment">
+    tools:context=".ui.BookmarksFragment"
+    tools:ignore="Overdraw">
 
     <RelativeLayout
         android:layout_width="match_parent"

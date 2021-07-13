@@ -42,7 +42,7 @@ public class CustomLineView extends View {
     private final int bottomLineLength = MyUtils.sp2px(getContext(), 22);
     private final int DOT_INNER_CIR_RADIUS = MyUtils.dip2px(getContext(), 2);
     private final int DOT_OUTER_CIR_RADIUS = MyUtils.dip2px(getContext(), 5);
-    private final int MIN_TOP_LINE_LENGTH = MyUtils.dip2px(getContext(), 12);
+//    private final int MIN_TOP_LINE_LENGTH = MyUtils.dip2px(getContext(), 12);
     private final int BACKGROUND_LINE_COLOR = Color.parseColor("#e0e0e0");
     private final Point tmpPoint = new Point();
 
@@ -61,14 +61,9 @@ public class CustomLineView extends View {
     private boolean showFloatNumInPopup;
     private Dot pointToSelect;
     private Dot selectedDot;
-    private Dot currentPointDot;
     private final int popupBottomPadding = MyUtils.dip2px(getContext(), 2);
-    /*
-          |  | ←topLineLength
-        --+--+--+--+--+--+--
-        --+--+--+--+--+--+--
-         ↑sideLineLength
-     */
+
+
     private int topLineLength = MyUtils.dip2px(getContext(), 12);
     private int sideLineLength = MyUtils.dip2px(getContext(), 45) / 3 * 2;
 
@@ -174,18 +169,6 @@ public class CustomLineView extends View {
         setFloatDataList(dataLists, true);
     }
 
-    public void setDataList(ArrayList<ArrayList<Integer>> dataLists) {
-        ArrayList<ArrayList<Float>> newList = new ArrayList<>();
-        for (ArrayList<Integer> list : dataLists) {
-            ArrayList<Float> tempList = new ArrayList<>();
-            for (int i : list) {
-                tempList.add((float) i);
-            }
-            newList.add(tempList);
-        }
-        setFloatDataList(newList, false);
-    }
-
     public void setFloatDataList(ArrayList<ArrayList<Float>> dataLists,
                                  boolean showFloatNumInPopup) {
         selectedDot = null;
@@ -199,7 +182,7 @@ public class CustomLineView extends View {
         }
         float biggestData = 0;
         for (ArrayList<Float> list : dataLists) {
-            boolean autoSetDataOfGird = true;
+//            boolean autoSetDataOfGird = true;
             for (Float i : list) {
                 if (biggestData < i) {
                     biggestData = i;
@@ -541,24 +524,6 @@ public class CustomLineView extends View {
             }
         }
 
-        return null;
-    }
-
-    private Dot getCurrentPointDot(int day) {
-        if (drawDotLists.isEmpty()) {
-            return null;
-        }
-
-        for (ArrayList<Dot> data : drawDotLists) {
-            for (Dot dot : data) {
-                final int pointX = dot.x;
-                final int pointY = (int) dot.y;
-
-                if (pointX == day) {
-                    return dot;
-                }
-            }
-        }
         return null;
     }
 
