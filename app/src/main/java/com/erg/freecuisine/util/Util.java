@@ -88,9 +88,7 @@ public class Util {
     }
 
     public static void hideViewWithDelay(Animation anim, View view) {
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            hideView(anim, view);
-        }, TimeHelper.DELAY);
+        new Handler(Looper.getMainLooper()).postDelayed(() -> hideView(anim, view), TimeHelper.DELAY);
     }
 
     public static void vibrate(Context context) {
@@ -199,7 +197,9 @@ public class Util {
                     capabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH));
             Log.d(TAG, "isNetworkAvailable: CAPABILITIES, CONNECTED = " + isConnected);
         } else {
+            // noinspection deprecation
             NetworkInfo nwInfo = connectivityManager.getActiveNetworkInfo();
+            //noinspection deprecation
             isConnected = nwInfo != null && nwInfo.isConnected();
             Log.d(TAG, "isNetworkAvailable: NETWORK INFO, CONNECTED = " + isConnected);
         }

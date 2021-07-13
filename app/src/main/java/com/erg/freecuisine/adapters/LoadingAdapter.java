@@ -1,23 +1,15 @@
 package com.erg.freecuisine.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.erg.freecuisine.R;
-import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.RecipeModel;
-import com.erg.freecuisine.models.TagModel;
-import com.google.android.material.imageview.ShapeableImageView;
-import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,9 +20,9 @@ public class LoadingAdapter extends RecyclerView.Adapter<LoadingAdapter.ViewHold
     private static final String TAG = "RecipesAdapter";
 
     private List<RecipeModel> recipes;
-    private Context context;
-    private LayoutInflater inflater;
-    private int layout;
+    private final Context context;
+    private final LayoutInflater inflater;
+    private final int layout;
 
     public LoadingAdapter(List<RecipeModel> recipes, Context context, int layout) {
         this.recipes = recipes;

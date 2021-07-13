@@ -85,7 +85,8 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     private Job recommendLoaderJob;
     private Job tipsLoaderJob;
     private FireBaseHelper fireBaseHelper;
-    private Animation scaleUP, scaleDown, scaleUpLong;
+    private Animation scaleUP;
+    private Animation scaleUpLong;
     private Handler handlerMessage;
     private Runnable runnableDelayMassage;
 
@@ -134,7 +135,6 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
 
         scaleUP = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
         scaleUpLong = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up_long);
-        scaleDown = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_down);
 
         LinearLayoutManager layoutManagerRecommended = new LinearLayoutManager(
                 requireContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -187,6 +187,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         }
     }
 
+    @SuppressLint("InflateParams")
     private void addUserActivityViews() {
         lastReadingView = getLayoutInflater()
                 .inflate(R.layout.user_activity_last_reading_view, null, false);
@@ -249,7 +250,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
             ImageButton info = lastReadingView.findViewById(R.id.ib_info__last_reading);
             info.setOnClickListener(this);
 
-            new Handler(Looper.getMainLooper()).postDelayed((Runnable) () -> {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 if (isVisible() && info.getVisibility() == View.VISIBLE) {
                     info.startAnimation(scaleUpLong);
                 }
@@ -274,7 +275,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         ImageButton info = staticsGraphView.findViewById(R.id.ib_info__statics);
         info.setOnClickListener(this);
 //        if (spHelper.isFirstLunch())
-        new Handler(Looper.getMainLooper()).postDelayed((Runnable) () -> {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
             if (isVisible() && info.getVisibility() == View.VISIBLE) {
                 info.startAnimation(scaleUpLong);
             }
@@ -355,7 +356,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         switch (view.getId()) {
             case R.id.last_reading_main_card_container:
                 RecipeModel lastRecipeRead = spHelper.getLastRecipeRead();
-                loadFragment(lastRecipeRead, view);
+                loadFragment(lastRecipeRead);
                 break;
             case R.id.recommended_main_card_container:
                 if (recommendedRecipes != null && !recommendedRecipes.isEmpty()) {
@@ -365,7 +366,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
                                 R.id.action_navigation_home_to_adMobFragment,
                                 recipe);
                     } else {
-                        loadFragment(recipe, view);
+                        loadFragment(recipe);
                     }
                 }
                 break;
@@ -377,7 +378,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
                                 R.id.action_navigation_home_to_adMobFragment,
                                 recipe);
                     } else {
-                        loadFragment(recipe, view);
+                        loadFragment(recipe);
                     }
                 }
                 break;
@@ -415,7 +416,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         return aux;
     }
 
-    private void loadFragment(RecipeModel currentRecipe, View view) {
+    private void loadFragment(RecipeModel currentRecipe) {
 
         NavController navController = Navigation
                 .findNavController(requireActivity(), R.id.nav_host_fragment);
@@ -478,11 +479,9 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
 
     private void showTimeOutMessage() {
         if (isVisible()) {
-            requireActivity().runOnUiThread(() -> {
-                MessageHelper.showInfoMessageError(
-                        requireActivity(), getString(R.string.network_error),
-                        rootView);
-            });
+            requireActivity().runOnUiThread(() -> MessageHelper.showInfoMessageError(
+                    requireActivity(), getString(R.string.network_error),
+                    rootView));
         } else {
             Toast.makeText(requireContext(),
                     getString(R.string.some_error), Toast.LENGTH_LONG).show();
@@ -491,11 +490,9 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
 
     private void showErrorMessage() {
         if (isVisible()) {
-            requireActivity().runOnUiThread(() -> {
-                MessageHelper.showInfoMessageError(
-                        requireActivity(), getString(R.string.some_error),
-                        rootView);
-            });
+            requireActivity().runOnUiThread(() -> MessageHelper.showInfoMessageError(
+                    requireActivity(), getString(R.string.some_error),
+                    rootView));
         } else {
             Toast.makeText(requireContext(),
                     getString(R.string.some_error), Toast.LENGTH_LONG).show();

@@ -181,28 +181,6 @@ public class StringHelper {
         return list;
     }
 
-
-    public static String extractTextFromElement(Element rootClass) {
-        StringBuilder stringBuilder = new StringBuilder();
-        Elements elements = rootClass.getAllElements();
-        if (elements != null || !elements.isEmpty()) {
-            for (Element element : elements) {
-                String text = element.text();
-                if (text != null || !text.isEmpty())
-                    stringBuilder.append(text).append(NEWLINE);
-            }
-        }
-        return stringBuilder.toString();
-    }
-
-    public static String extractTextFromElement2(Element rootClass) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (TextNode node : rootClass.textNodes()) {
-            stringBuilder.append(node).append(NEWLINE);
-        }
-        return stringBuilder.toString();
-    }
-
     public static String extractDiners(String strDiners) {
         return strDiners.split(SPACE_REGEX)[0];
     }

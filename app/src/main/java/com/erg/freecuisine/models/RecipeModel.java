@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import androidx.annotation.Nullable;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -340,11 +342,6 @@ public class RecipeModel implements Parcelable {
     }
 
     @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
     public int describeContents() {
         return 0;
     }
@@ -357,6 +354,7 @@ public class RecipeModel implements Parcelable {
         this.url = link;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "RecipeModel{" +

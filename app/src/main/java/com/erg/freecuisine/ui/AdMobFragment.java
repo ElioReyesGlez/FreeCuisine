@@ -37,6 +37,8 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 
 import static com.erg.freecuisine.util.Constants.BOOKMARK_FLAG_KEY;
@@ -54,7 +56,6 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
     private InterstitialAd mInterstitialAd;
     private TextView tvCountdown;
     private LinearLayout llCountdownContainer;
-    private RecipeModel recipe;
     private BillingHelper billingHelper;
     private long timerMilliseconds = 7000;
     private SharedPreferencesHelper spHelper;
@@ -62,8 +63,7 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
     private String url;
     private ArrayList<TagModel> tags;
     private Bundle savedState = null;
-    private boolean finishedFlag;
-
+    private boolean finishedFlag = false;
 
     public AdMobFragment() {
         // Required empty public constructor
@@ -91,7 +91,7 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
             if (isBookmarkRecipe) {
                 String jsonRecipe = args.getString(JSON_RECIPE_KEY, "");
                 if (!jsonRecipe.isEmpty()) {
-                    recipe = StringHelper.getSingleRecipeFromJson(jsonRecipe);
+                    RecipeModel recipe = StringHelper.getSingleRecipeFromJson(jsonRecipe);
                     url = recipe.getUrl();
                     tags = new ArrayList<>(recipe.getTags());
                 }
@@ -227,10 +227,6 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                         super.onAdFailedToLoad(loadAdError);
                         mInterstitialAd = null;
-                        Util.loadFragment(requireActivity(),
-                                R.id.action_adMobFragment_to_singleRecipeFragment,
-                                recipe);
-                        cancelTimer();
                         Log.i(TAG, "onAdFailedToLoad: ErrorCode : " + loadAdError.getMessage());
                     }
                 });
@@ -248,12 +244,9 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
             }
 
             @Override
-            public void onAdFailedToShowFullScreenContent(AdError adError) {
+            public void onAdFailedToShowFullScreenContent(@NotNull AdError adError) {
                 // Called when fullscreen content failed to show.
                 Log.d(TAG, "The ad failed to show.");
-                Util.loadFragmentByUrl(requireActivity(),
-                        R.id.action_adMobFragment_to_singleRecipeFragment,
-                        url, tags);
             }
 
             @Override
@@ -276,6 +269,9 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
         } else {
 //            Toast.makeText(activity, R.string.ad_not_load, Toast.LENGTH_SHORT).show();
             MessageHelper.showWarningMessageOnMain(activity, getString(R.string.ad_not_load));
+            Util.loadFragmentByUrl(requireActivity(),
+                    R.id.action_adMobFragment_to_singleRecipeFragment,
+                    url, tags);
 //            Util.goBack(requireActivity());
             Log.d(TAG, "showInterstitial: Ad dit not load, is not ready");
         }
@@ -297,13 +293,6 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
             Util.loadFragmentByUrl(requireActivity(),
                     R.id.action_adMobFragment_to_singleRecipeFragment,
                     url, tags);
-        }
-    }
-
-    public void onBackPressed() {
-        if (isVisible()) {
-            MessageHelper.showSuccessMessageOnMain(
-                    requireActivity(), getString(R.string.function_temporarily_disabled));
         }
     }
 

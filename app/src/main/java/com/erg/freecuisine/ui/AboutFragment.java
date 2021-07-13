@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +25,6 @@ import static com.erg.freecuisine.util.Constants.GOOGLE_APP_DETAILS_URL;
 import static com.erg.freecuisine.util.Constants.LINKEDIN_PACKAGE;
 import static com.erg.freecuisine.util.Constants.MAIN_RECIPE_SERVER;
 import static com.erg.freecuisine.util.Constants.MARKET_APP_DETAILS_URL;
-import static com.erg.freecuisine.util.Constants.NEWLINE;
-import static com.erg.freecuisine.util.Constants.RECETA_GRATIS_COLUMN;
 import static com.erg.freecuisine.util.Constants.SPACE;
 import static com.erg.freecuisine.util.Constants.URL_DEVELOPER;
 
@@ -33,7 +32,6 @@ import static com.erg.freecuisine.util.Constants.URL_DEVELOPER;
 public class AboutFragment extends Fragment implements View.OnClickListener {
 
     public static final String TAG = "AboutFragment";
-    private Animation animSlideInFromRight;
     private View rootView;
 
     public AboutFragment() {
@@ -47,9 +45,7 @@ public class AboutFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        animSlideInFromRight = AnimationUtils.loadAnimation(requireContext(),
-                R.anim.slide_in_from_rigth);
+        Log.d(TAG, "onCreate: ");
     }
 
     @Override
@@ -81,7 +77,7 @@ public class AboutFragment extends Fragment implements View.OnClickListener {
     private void setupHyperlink(TextView tv_app_description) {
         tv_app_description.setMovementMethod(LinkMovementMethod.getInstance());
         tv_app_description.setLinksClickable(true);
-//        tv_app_description.setLinkTextColor(getResources().getColor(R.color.blue));
+        tv_app_description.setLinkTextColor(getResources().getColor(R.color.blue));
         tv_app_description.setOnClickListener(this);
     }
 
@@ -104,7 +100,7 @@ public class AboutFragment extends Fragment implements View.OnClickListener {
                 contactUs(getString(R.string.email_about_page));
                 break;
             case R.id.developer1:
-                lookInLinkedInProfile(URL_DEVELOPER);
+                lookInLinkedInProfile();
                 break;
             case R.id.tv_app_description:
                 Util.goToBrowser(requireActivity(), MAIN_RECIPE_SERVER);
@@ -126,14 +122,14 @@ public class AboutFragment extends Fragment implements View.OnClickListener {
     }
 
     //Set intent to go to LinkedIn with the exact profile of the developer*
-    private void lookInLinkedInProfile(String developer) {
+    private void lookInLinkedInProfile() {
         try {
-            Uri uri = Uri.parse(developer);
+            Uri uri = Uri.parse(URL_DEVELOPER);
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             intent.setPackage(LINKEDIN_PACKAGE);
             startActivity(intent);
         } catch (ActivityNotFoundException e) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(developer)));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(URL_DEVELOPER)));
         }
     }
 
@@ -143,11 +139,5 @@ public class AboutFragment extends Fragment implements View.OnClickListener {
         intent.setData(Uri.parse("mailto:"));
         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
         startActivity(intent);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        rootView.startAnimation(animSlideInFromRight);
     }
 }

@@ -15,20 +15,16 @@
         android:scrollbars="none">
 
         <LinearLayout
-            android:id="@+id/linear_main_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorOnPrimary"
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/linear_recommended_recipes_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tag_section_recommended"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -59,7 +55,6 @@
                     android:visibility="gone">
 
                     <com.airbnb.lottie.LottieAnimationView
-                        android:id="@+id/lottie_anim_empty"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
@@ -98,7 +93,6 @@
 
 
             <TextView
-                android:id="@+id/tag_tips"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -130,7 +124,6 @@
                 android:visibility="gone">
 
                 <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/lottie_anim_empty_tips"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -166,7 +159,6 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/tag_activity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"

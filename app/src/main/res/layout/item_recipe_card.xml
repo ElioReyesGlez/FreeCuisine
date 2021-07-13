@@ -30,7 +30,7 @@
                 android:layout_alignParentStart="true"
                 android:maxLines="1"
                 android:padding="@dimen/regular_window_padding"
-                android:text="#test1"
+                android:text="@string/test_tag"
                 android:textColor="@color/gray_btn_bg_darker_color"
                 android:textStyle="bold" />
 
@@ -112,7 +112,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:layout_margin="1dp"
-                android:src="@drawable/ic_clock" />
+                android:src="@drawable/ic_clock"
+                android:contentDescription="@string/icon" />
 
             <TextView
                 android:id="@+id/tv_cocking_time"
@@ -121,7 +122,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="2dp"
                 android:layout_toEndOf="@+id/iv_clock"
-                android:text="45m"
+                android:text="@string/_45m"
                 android:textAlignment="center"
                 android:textColor="@color/md_grey_700"
                 android:textSize="13sp"
@@ -156,7 +157,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="2dp"
                 android:layout_toEndOf="@+id/iv_people_amount"
-                android:text="4"
+                android:text="@string/_4"
                 android:textAlignment="center"
                 android:textColor="@color/md_grey_700"
                 android:textSize="14sp"

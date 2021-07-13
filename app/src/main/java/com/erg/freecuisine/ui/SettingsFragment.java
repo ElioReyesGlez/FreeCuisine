@@ -2,6 +2,7 @@ package com.erg.freecuisine.ui;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
         spHelper = new SharedPreferencesHelper(requireContext());
         realmHelper = new RealmHelper();
@@ -39,6 +41,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView: ");
         rootView = inflater.inflate(R.layout.fragment_settings, container, false);
         return setUpView(rootView);
     }

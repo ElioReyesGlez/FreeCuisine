@@ -16,7 +16,6 @@ class AsyncDataLoad {
     private val scopeLoader2 = CoroutineScope(Dispatchers.IO + CoroutineName("scopeLoader2"))
     private val scopeLoader3 = CoroutineScope(Dispatchers.IO + CoroutineName("scopeLoader3"))
     private val scopeLoader4 = CoroutineScope(Dispatchers.IO + CoroutineName("scopeLoader4"))
-    private val scopeLoader5 = CoroutineScope(Dispatchers.IO + CoroutineName("scopeLoader5"))
 
     fun loadRecipesAsync(contextActivity: FragmentActivity,
                          onRecipeListener: OnRecipeListener,
@@ -56,24 +55,6 @@ class AsyncDataLoad {
             if (recipes.isNotEmpty()) {
                 contextActivity.runOnUiThread {
                     onRecipeListener.onRecommendedRecipesLoaded(recipes)
-                    if (isActive) cancel()
-                }
-            }
-        }
-    }
-
-    fun loadRecommendRecipesAsync2(contextActivity: FragmentActivity,
-                                   onRecipeListener: OnRecipeListener, links: List<LinkModel>): Job {
-        return scopeLoader5.launch {
-            val recipes: ArrayList<RecipeModel> = ArrayList()
-            for (link in links) {
-                val aux = JsoupController.getRecipesByLink(link, onRecipeListener, false)
-                val randomPos = (0 until aux.size).random()
-                recipes.add(aux[randomPos])
-            }
-            if (recipes.isNotEmpty()) {
-                contextActivity.runOnUiThread {
-                    onRecipeListener.onRecipesLoaded(recipes)
                     if (isActive) cancel()
                 }
             }

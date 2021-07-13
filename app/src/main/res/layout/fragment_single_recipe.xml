@@ -71,7 +71,6 @@
         android:visibility="gone">
 
         <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottie_anim_empty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -213,7 +212,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginStart="2dp"
                         android:layout_toEndOf="@+id/iv_clock"
-                        android:text="45m"
+                        android:text="@string/_45m"
                         android:textAlignment="center"
                         android:textColor="@color/md_grey_700"
                         android:textSize="13sp"
@@ -245,7 +244,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginStart="2dp"
                         android:layout_toEndOf="@+id/iv_people_amount"
-                        android:text="4"
+                        android:text="@string/_4"
                         android:textAlignment="center"
                         android:textColor="@color/md_grey_700"
                         android:textSize="14sp"
@@ -256,7 +255,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/recipe_sub_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/linear_amounts_container"
@@ -315,7 +313,6 @@
                     android:padding="@dimen/default_padding">
 
                     <TextView
-                        android:id="@+id/mainLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/default_margin"
@@ -365,7 +362,6 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tv_steps"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/default_margin"

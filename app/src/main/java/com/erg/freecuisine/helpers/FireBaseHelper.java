@@ -21,7 +21,7 @@
 public class FireBaseHelper {
     private static final String TAG = "FireBaseHelper";
 
-    private FirebaseDatabase firebaseDatabase;
+    private final FirebaseDatabase firebaseDatabase;
     private DatabaseReference linksReference;
 
 
@@ -80,7 +80,8 @@ public class FireBaseHelper {
         connectedRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                boolean connected = snapshot.getValue(Boolean.class);
+                Boolean connected = snapshot.getValue(Boolean.class);
+                assert connected != null;
                 onFireBaseListenerDataStatus.onConnectionListener(connected);
             }
 

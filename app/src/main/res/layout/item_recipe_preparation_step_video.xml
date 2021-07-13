@@ -3,13 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/step_main_container"
     card_view:cardBackgroundColor="@color/custom_white_text_color"
     card_view:cardCornerRadius="6dp"
     card_view:cardUseCompatPadding="true">
 
     <RelativeLayout
-        android:id="@+id/relative_layout_item_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="0.5dp"
@@ -33,7 +31,7 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:textSize="@dimen/titles_text_size_full_view"
-            android:text="1"
+            android:text="@string/_1"
             android:textColor="@color/md_grey_700"
             android:textAlignment="center"
             android:layout_centerHorizontal="true"

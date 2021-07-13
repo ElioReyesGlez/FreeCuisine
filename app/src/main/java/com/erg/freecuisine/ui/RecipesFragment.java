@@ -21,8 +21,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
@@ -65,7 +63,6 @@ import static com.erg.freecuisine.util.Constants.QUERY_KEY;
 import static com.erg.freecuisine.util.Constants.RECIPE_KEY;
 import static com.erg.freecuisine.util.Constants.SAVED_STATE_KEY;
 import static com.erg.freecuisine.util.Constants.TAG_KEY;
-import static com.erg.freecuisine.util.Constants.URL_KEY;
 
 public class RecipesFragment extends Fragment implements
         FilterListener<TagModel>, OnRecipeListener, OnFireBaseListenerDataStatus,
@@ -393,24 +390,26 @@ public class RecipesFragment extends Fragment implements
     }
 
     private void setUpFilterView(List<LinkModel> links) {
-        tags = getTags(links);
-        RecipesFilterAdapter filterAdapter = new RecipesFilterAdapter(tags,
-                colors, requireActivity());
+        if (links != null && !links.isEmpty()) {
+            tags = getTags(links);
+            RecipesFilterAdapter filterAdapter = new RecipesFilterAdapter(tags,
+                    colors, requireActivity());
 
-        CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(
-                CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT);
-        filter.setLayoutParams(params);
-        filter.setCollapsedBackground(getResources().getColor(R.color.custom_white_text_color));
-        filter.setExpandedBackground(getResources().getColor(R.color.custom_white_text_color));
-        filter.setAdapter(filterAdapter);
-        filter.setListener(this);
+            CoordinatorLayout.LayoutParams params = new CoordinatorLayout.LayoutParams(
+                    CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT);
+            filter.setLayoutParams(params);
+            filter.setCollapsedBackground(getResources().getColor(R.color.custom_white_text_color));
+            filter.setExpandedBackground(getResources().getColor(R.color.custom_white_text_color));
+            filter.setAdapter(filterAdapter);
+            filter.setListener(this);
 
-        //the text to show when there's no selected items
-        filter.setNoSelectedItemText(getString(R.string.str_all_selected));
-        filter.build();
-        filter_container.removeAllViews();
-        filter_container.addView(filter);
-        Util.showView(scaleUP, filter_container);
+            //the text to show when there's no selected items
+            filter.setNoSelectedItemText(getString(R.string.str_all_selected));
+            filter.build();
+            filter_container.removeAllViews();
+            filter_container.addView(filter);
+            Util.showView(scaleUP, filter_container);
+        }
     }
 
     public void refreshView() {
@@ -670,14 +669,14 @@ public class RecipesFragment extends Fragment implements
         }
     }
 
-    private void resetSearchView() {
+/*    private void resetSearchView() {
         if (searcher != null && searcher.getVisibility() == View.VISIBLE) {
             searcher.setQuery("", false);
             searcher.onActionViewCollapsed();
             searcher.clearFocus();
             searcher.setIconified(true);
         }
-    }
+    }*/
 
     @Override
     public void onAttach(@NotNull Context context) {

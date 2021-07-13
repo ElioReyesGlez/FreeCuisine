@@ -26,9 +26,9 @@ public class RecommendedRecipesAdapter extends RecyclerView.Adapter<RecommendedR
     private static final String TAG = "RecipesAdapter";
 
     private List<RecipeModel> recipes;
-    private Context context;
-    private LayoutInflater inflater;
-    private OnRecipeListener onRecipeListener;
+    private final Context context;
+    private final LayoutInflater inflater;
+    private final OnRecipeListener onRecipeListener;
 
     public RecommendedRecipesAdapter(List<RecipeModel> recipes, Context context,
                                      OnRecipeListener onRecipeListener) {
@@ -81,11 +81,11 @@ public class RecommendedRecipesAdapter extends RecyclerView.Adapter<RecommendedR
 
     static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        ShapeableImageView recipeMainImg;
-        TextView recipeTitle;
-        TextView tagView;
+        final ShapeableImageView recipeMainImg;
+        final TextView recipeTitle;
+        final TextView tagView;
 
-        OnRecipeListener onRecipeListener;
+        final OnRecipeListener onRecipeListener;
 
         public ViewHolder(View itemView, OnRecipeListener onRecipeListener) {
             super(itemView);

@@ -1,6 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.FreeCuisine" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@color/colorOnPrimary</item>
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
@@ -33,19 +34,9 @@
         <item name="colorOnSurface">@color/colorOnPrimary</item>
     </style>
 
-    <style name="checkbox_check_color" parent="Theme.AppCompat">
-        <item name="colorAccent">@color/colorPrimary</item>
-    </style>
-
     <style name="roundCornerView" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">3%</item>
-        <item name="borderWidth">1dp</item>
-    </style>
-
-    <style name="circleImageView" parent="">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">50%</item>
         <item name="borderWidth">1dp</item>
     </style>
 

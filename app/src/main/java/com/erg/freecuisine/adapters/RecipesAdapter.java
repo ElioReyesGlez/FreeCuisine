@@ -103,16 +103,16 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public ShapeableImageView recipeMainImg;
-        public ImageView ivBookmark;
-        public TextView recipeTitle;
-        public TextView recipeDescription;
-        public TextView cockingTime;
-        public TextView peopleAmount;
-        public TextView type;
-        public TextView firstFilter;
+        public final ShapeableImageView recipeMainImg;
+        public final ImageView ivBookmark;
+        public final TextView recipeTitle;
+        public final TextView recipeDescription;
+        public final TextView cockingTime;
+        public final TextView peopleAmount;
+        public final TextView type;
+        public final TextView firstFilter;
 
-        OnRecipeListener onRecipeListener;
+        final OnRecipeListener onRecipeListener;
 
         public ViewHolder(View itemView, OnRecipeListener onRecipeListener) {
             super(itemView);

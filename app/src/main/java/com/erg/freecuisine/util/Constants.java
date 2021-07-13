@@ -16,7 +16,6 @@ public class Constants {
     public static final long SPECIAL_VIBRATE_TIME = 70;
     public static final long SPECIAL_MIN_VIBRATE_TIME = 50;
     public static final long MIN_VIBRATE_TIME = 10;
-    public static final int FIX_SIZE = 4;
     public static final String NUMERAL = "#";
     public static final String SEPARATOR_SING = "%";
 
@@ -31,9 +30,6 @@ public class Constants {
     public static final String QUERY_KEY = "query_key";
     public static final String SPACE_REGEX = "\\s+";
     public static final String SPACE = " ";
-    public static final String DEFAULT = "DEFAULT";
-    public static final int ZERO = 0;
-    public static final String interstitial_ad_unit_id_testing = "ca-app-pub-3940256099942544/1033173712" ;
     public static final String interstitial_ad_unit_id= "ca-app-pub-4525078240939294/9187543270" ;
     public static final CharSequence HALLOWEEN_TAG = "halloween";
 
@@ -42,10 +38,6 @@ public class Constants {
         Collections.addAll(brands, context.getResources().getStringArray(R.array.brands));
         return brands;
     }
-
-    public static String preparation = "Corta el salmón en lomos rectangulares. " +
-            "En una olla, calienta el aceite de oliva y sella el pescado unos segundos por " +
-            "cada lado. Resérvalo para más adelante.";
 
 
     /*TAGS FOR WEB SCRAPPING*/
@@ -58,20 +50,16 @@ public class Constants {
     public static final String IMAGE_DATA_TAG = "data-imagen";
     public static final String PARAGRAPH_TAG = "p";
     public static final String PROPERTY_TAG_CLASS = "properties";
-    public static final String PROPERTY_TAG = "span";
     public static final String PROPERTY_DINERS_TAG = "property comensales";
     public static final String PROPERTY_TIME_TAG = "property duracion";
     public static final String PROPERTY_TYPE_TAG = "property para";
-    public static final String PROPERTY_EXTRA_TAG = "properties inline";
     public static final String PROPERTY_INGREDIENTS_TAG = "ingrediente";
     public static final String INGREDIENTS_LABEL_TAG = "label";
     public static final String STEPS_TAG = "apartado";
     public static final String STEPS_TAG_TITLE = "titulo titulo--h2 titulo--apartado";
     public static final String STEPS_ORDER_TAG = "orden";
-    public static final String STEPS_IMG_CLASS_TAG = "imagen_wrap";
     public static final String STEPS_IMG_TAG = "imagen lupa";
     public static final String STEPS_VIDEO_TAG = "video";
-    public static final String IFRAME_TAG = "iframe";
     public static final String VIDEO_ID_ATTR_TAG = "data-id-youtube";
     public static final String DIV_TAG = "div";
 
@@ -82,19 +70,13 @@ public class Constants {
     public static final String ATTRIBUTE_HREF = "href";
     public static final String A_TAG = "a";
     public static final String POSITION_IMAGE = "position-imagen";
-    public static final String IMAGE_TAG_CLASS = "image";
-    public static final String SPAN = "span";
 
     public static final String NEWLINE = "\n";
     public static final String DIVISION_SING = "%";
 
 
-    /*REALTIME FIRE DATABASE KEYS */
-    public static String FIRE_BASE_REFERENCE = "free-cuisine-default-rtdb";
     public static final String LINKS_FIRE_BASE_REFERENCE = "links";
     public static final String MAIN_URL_FIRE_BASE_REFERENCE = "main_urls";
-    public static final String LINK_COLUMN = "link";
-    public static final String TAG_COLUMN = "tag";
 
     /*REALM KEYS*/
     public static final String REALM_DATA_BASE_NAME = "json_recipes_db";
@@ -105,10 +87,8 @@ public class Constants {
     /*HOME TAGS*/
     public static final String HOME_RECOMMENDED_MAIN_TAG = "bloquegroup clear padding-left-1";
     public static final String BLOQUE_LINK = "bloque link";
-    public static final String RECETA_GRATIS_COLUMN = "recetasgratis";
     public static final String MAIN_RECETA_GRATIS_TAG = "mainurl";
     public static final String MAIN_RECIPE_SERVER = "https://www.recetasgratis.net";
-    public static final String CONSEJOS_COLUMN = "consejos";
     public static final String CONSEJOS_TAG= "consejos";
     public static final String BEBIDAS_TAG= "bebidas";
     public static final String TITLE_TITLE_BLOCK = "titulo titulo--bloque";
@@ -119,10 +99,8 @@ public class Constants {
     /*SHARED PREFERENCES KEYS*/
     public static final String SHARED_PREF_NAME = "free_cuisine_shared_pref";
     public static final String LAST_USAGE_KEY = "last_usage_key";
-    public static final String PREF_APP_FIRST_LAUNCH_KEY = "first_launch_key";
     public static final String OPEN_TIME_USAGE_KEY = "open_time_usage_key";
     public static final String LAST_RECIPE_READ_KEY = "last_recipe_key";
-    public static final String CURRENT_MEMO_RECIPE_READ_KEY = "memo_recipes_key";
     public static final String VIBRATION_STATUS_FLAG_KEY = "vibration_status_key";
     public static final String SCROLL_UP_STATUS_FLAG_KEY = "scroll_up_status_key";
     public static final String SHUFFLE_STATUS_FLAG_KEY = "shuffle_status_key";
@@ -141,8 +119,4 @@ public class Constants {
     public static final String GOOGLE_APP_DETAILS_URL = "http://play.google.com/store/apps/details?id=";
 
 
-    /*ADS KEYS*/
-    public static final int ITEM_TYPE_BANNER_AD = 1;
-    public static final int ITEM_TYPE_RECIPE = 0;
-    public static final int ITEMS_PER_AD = 9;
 }

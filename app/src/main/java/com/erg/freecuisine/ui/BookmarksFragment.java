@@ -54,10 +54,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     private RecipesAdapter recipesAdapter;
     private String currentSearchQuery = "";
 
-    private Context mContext;
     private Bundle savedState = null;
-
-    private RealmHelper realmHelper;
 
     public BookmarksFragment() {
         // Required empty public constructor
@@ -70,7 +67,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        realmHelper = new RealmHelper();
+        RealmHelper realmHelper = new RealmHelper();
         recipes = StringHelper.getRecipesFromStringJsonList(realmHelper.getRecipes());
     }
 
@@ -131,10 +128,10 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         SharedPreferencesHelper spHelper = new SharedPreferencesHelper(requireContext());
         if (spHelper.showAdFirst()) {
             loadFragment(currentRecipe,
-                    R.id.action_bookmarksFragment_to_adMobFragment, view);
+                    R.id.action_bookmarksFragment_to_adMobFragment);
         } else {
             loadFragment(currentRecipe,
-                    R.id.action_bookmarksFragment_to_singleRecipeFragment, view);
+                    R.id.action_bookmarksFragment_to_singleRecipeFragment);
         }
     }
 
@@ -171,7 +168,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    private void loadFragment(RecipeModel currentRecipe, int idAction, View view) {
+    private void loadFragment(RecipeModel currentRecipe, int idAction) {
         Bundle args = new Bundle();
         args.putBoolean(BOOKMARK_FLAG_KEY, true);
         String jsonRecipe = new Gson().toJson(currentRecipe);
@@ -222,14 +219,6 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         GridItemDecoration gridItemDecoration = new GridItemDecoration(3, 3);
         recyclerViewRecipes.addItemDecoration(gridItemDecoration);
 
-    }
-
-    private List<RecipeModel> getLoadingList() {
-        ArrayList<RecipeModel> aux = new ArrayList<>();
-        for (int i = 0; i < 14; i++) {
-            aux.add(new RecipeModel());
-        }
-        return aux;
     }
 
     private void resetRecipeList() {
@@ -321,12 +310,10 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onAttach(@NotNull Context context) {
         super.onAttach(requireContext());
-        mContext = context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mContext = null;
     }
 }

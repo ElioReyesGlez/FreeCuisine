@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Free Cuisine</string>
     <string name="title_home">Casa</string>
     <string name="title_recipes">Recetas</string>
@@ -9,10 +9,8 @@
     <string name="recipe_image">recipe image</string>
     <string name="recipe_image_transition_name">recipe_image_transition_name</string>
     <string name="recipe_title_transition_name">recipe_title_transition_name</string>
-    <string name="bullet">\u2022</string>
 
     <string name="str_all_selected">Todas las categorias</string>
-    <string name="recipes">Recetas</string>
 
     <string-array name="brands">
         <item>Huawei</item>
@@ -23,71 +21,6 @@
         <item>Oppo</item>
     </string-array>
 
-    <string-array name="tags">
-        <item>All categories</item>
-        <item>#fish</item>
-        <item>#vegetables</item>
-        <item>#appetizers</item>
-        <item>#desserts</item>
-        <item>#pasta</item>
-        <item>#meat</item>
-        <item>#shrimp</item>
-        <item>#salads</item>
-        <item>Other</item>
-    </string-array>
-
-    <string-array name="ingredients">
-        <item>1 cebolla tierna </item>
-        <item>1 diente de ajo </item>
-        <item>1 manojo de perejil fresco </item>
-        <item>1 vaso pequeño de vino blanco </item>
-        <item>1 cucharada sopera de harina de </item>
-        <item>trigo </item>
-        <item>1 vaso pequeño de agua </item>
-        <item>1 chorro de aceite de oliva </item>
-        <item>300 gramos de salmón fresco</item>
-        <item>1 huevo </item>
-    </string-array>
-
-    <string-array name="recipes_title">
-        <item>Palitos de merluza</item>
-        <item>Salmón en salsa verde</item>
-        <item>Buñuelos de bacalao con cerveza</item>
-        <item>Buñuelos de bacalao al horno</item>
-        <item>Merluza en salsa verde</item>
-        <item>Tarta de atún y choclo</item>
-        <item>Sardinas al horno</item>
-        <item>Bacalao espiritual</item>
-        <item>Bacalao en sanfaina</item>
-        <item>Sushi maki de atún</item>
-    </string-array>
-
-    <string-array name="recipes_cooking_time">
-        <item>30m</item>
-        <item>30m</item>
-        <item>45m</item>
-        <item>30m</item>
-        <item>30m</item>
-        <item>45m</item>
-        <item>15m</item>
-        <item>45m</item>
-        <item>90m</item>
-        <item>30m</item>
-    </string-array>
-
-    <string-array name="recipes_amount">
-        <item>3</item>
-        <item>2</item>
-        <item>4</item>
-        <item>2</item>
-        <item>4</item>
-        <item>3</item>
-        <item>3</item>
-        <item>4</item>
-        <item>4</item>
-        <item>4</item>
-    </string-array>
-
     <string name="ingredients">Ingredientes</string>
     <string name="empty">Vacío</string>
     <string name="search">buscar</string>
@@ -95,7 +28,6 @@
     <string name="steps">Pasos por Paso</string>
     <string name="dinner">cena</string>
     <string name="recommend">#recomendado</string>
-    <string name="user_activity_header_icon">Icono</string>
     <string name="activity">#actividad</string>
     <string name="ic_graphic">Icono grafico</string>
     <string name="statistics">Grafica de uso</string>
@@ -113,15 +45,11 @@
     <string name="last_reading">Última lectura</string>
     <string name="last_reading_info">Sección actividad: Muestra última receta abierta por el usuario</string>
     <string name="ic_last_recipe">Icono ultima receta</string>
-    <string name="test_email">elioworkemail@gmail.com</string>
-    <string name="login">registrar</string>
-    <string name="language">Idioma</string>
     <string name="vibration">Vibración</string>
     <string name="arrow">Flecha</string>
-    <string name="email_about_page">dememoteam@gmail.com</string>
+    <string name="email_about_page">infofreecuisine@gmail.com</string>
     <string name="app_version_about_page">Version: 1.0.0</string>
     <string name="play_store_about_page">Califíquenos en Play Store</string>
-    <string name="instagram_about_page">Síganos en Instagram</string>
     <string name="contact_us_about_page">Contáctenos vía E-mail</string>
     <string name="title1_about_page">#realimentación</string>
     <string name="title2_about_page">#desarrollador</string>
@@ -130,12 +58,6 @@
     <string name="icon">Icono</string>
     <string name="about">Acerca de</string>
 
-    <string name="lorem_description_about_page">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam dapibus, risus in pretium
-        tristique, ante metus consectetur felis, eu ultricies nisi lectus ac sem. Mauris lacinia
-        nulla sed libero dignissim, quis pellentesque diam semper. Donec id finibus eros, et luctus
-        nulla. Etiam non massa ornare, hendrerit lacus sit amet, fermentum odio.</string>
-    <string name="lorem_ipsum_small">Lorem ipsum dolor sit amet</string>
     <string name="shuffle">Mezcla automática</string>
     <string name="network_error">¡Error de red! Por favor revise su conexion a internet</string>
     <string name="zero">0</string>
@@ -148,18 +70,13 @@
         navegación a través de la pantalla táctil.</string>
     <string name="shuffle_description">Mezcla automática aleatoria de la lista de recetas para
         obtener un orden diferente cada vez que es mostrada al usuario.</string>
-    <string name="sync">Sincronizar</string>
-    <string name="refresh">refrescar</string>
     <string name="some_error">Algo malo paso, por favor cargue la vista de nuevo</string>
     <string name="saved">¡Salva en marcadores con éxito!</string>
     <string name="removed">¡Retiro de marcadores con éxito!</string>
-    <string name="empty_list">Nada que mostrar</string>
     <string name="tips">#consejos</string>
     <string name="ok">¡Vale!</string>
     <string name="links_ops">Vínculos</string>
     <string name="exit_links_container">Vículos</string>
-    <string name="cancel">Cancelar</string>
-    <string name="some_error_go_to_bowser">No sea ha podido cargar esta vista.</string>
     <string name="aks_go_to_bowser">¿Desea acceder vía navegador?</string>
     <string name="share_recipe">Compartir usando:</string>
     <string name="app_button">Botón arriba</string>
@@ -167,11 +84,11 @@
     <string name="up_scrollling_description">Botón que realiza el desplazamiento de la lista o vista
         al estado inicial.</string>-
 
-    <string name="description_about_page">
+    <string name="description_about_page" tools:ignore="Typos">
         <b>Free Cuisine</b> es el resultado de la idea de desarrollar una forma fácil e intuitiva de
         cocinar sin complicaciones y sobre todo de manera <b>\"Gratis\"</b>. Este proyecto está principalmente
         inspirado en el excelente sitio web <a href="https://www.recetasgratis.net">Recetas gratis</a>
-        y por el momento las recetas aquí encontradas provienen de este. Por tanto todo derecho de autor en lo que
+        y por el momento las recetas aquí encontradas provienen de este. Por tanto todo derecho de author en lo que
         respecta origen de las recetas pertenece a \n<a href="https://www.recetasgratis.net">Recetas gratis</a>.\n
           <b>Free Cuisine</b> es parte de un proyecto en desarrollo que
         tiene como objetivo mejorar la experiencia de usuarios a la hora de navegar por sitios webs
@@ -179,16 +96,8 @@
         por la cocina.
     </string>
 
-    <string name="description_about_page2"><b>Free Cuisine</b> es parte de un proyecto en desarrollo que
-        tiene como objetivo mejorar la experiencia de usuarios a la hora de navegar por sitios webs
-        o apps que en demasiadas ocasiones no es la mejor, así como continuar esparciendo el amor
-        por la cocina.</string>
 
-
-    <string name="premium_dialog_ok">¡Si, seguro!</string>
-    <string name="premium_dialog_no">No, gracias</string>
     <string name="get_premium">¡Hacerse Premium!</string>
-    <string name="premium_congrats">¡Felicidades, es usuario PREMIUM ahora!</string>
     <string name="already_premium">Ya es miembro premium</string>
     <string name="you_are_premium_now">¡Ya es Premium!</string>
     <!-- Urls -->
@@ -204,6 +113,11 @@
         por la cocina.</string>
     <string name="function_temporarily_disabled">Función temporalmente deshabilitada</string>
     <string name="ad_not_load">El anuncio no se cargó</string>
+    <string name="_45m">45m</string>
+    <string name="_4">4</string>
+    <string name="totamte">Totamte</string>
+    <string name="test_tag">#test1</string>
+    <string name="_1">1</string>
 
     <string-array name="day_codes">
         <item>mon_</item>

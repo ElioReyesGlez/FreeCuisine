@@ -12,8 +12,8 @@ public class RealmRecipeModel extends RealmObject {
     private String id = "";
     private String jsonRecipe = "";
 
-    public static String ID_COLUMN_NAME = "id";
-    public static String JSON_RECIPE_COLUMN_NAME = "jsonRecipe";
+    public static final String ID_COLUMN_NAME = "id";
+    public static final String JSON_RECIPE_COLUMN_NAME = "jsonRecipe";
 
     public RealmRecipeModel() {
     }

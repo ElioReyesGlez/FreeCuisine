@@ -137,7 +137,6 @@ public class JsoupController {
                 Element mainImg = classIntro.select(IMG_TAG).first();
                 Element recipeInfo = article.getElementsByClass(RECIPE_INFO_TAG).first();
 
-                String id = url;
                 String recipeTitle = article.getElementsByClass(TITLE_TAG).first().text();
 //            String recipeDescription = StringHelper.extractTextFromElement(classIntro);
                 String recipeDescription = classIntro.text();
@@ -152,17 +151,17 @@ public class JsoupController {
 //                String extra = StringHelper.extractTextByClassTag(
 //                        recipeInfo.getElementsByClass(PROPERTY_EXTRA_TAG).first(), "");
                     String ingredients = StringHelper.extractIngredients(recipeInfo);
-                    ImageModel mainImage = new ImageModel(id, mainImg.absUrl(SRC_TAG));
+                    ImageModel mainImage = new ImageModel(url, mainImg.absUrl(SRC_TAG));
                     List<StepModel> steps = StringHelper.extractPreparationSteps(article);
 
-                    recipe = new RecipeModel(id, recipeTitle,
+                    recipe = new RecipeModel(url, recipeTitle,
                             recipeDescription, ratings, time, diners, type, new ArrayList<>(),
                             ingredients, steps, "", mainImage, tags, url);
 
                 } else if (mainImg != null) {
-                    ImageModel mainImage = new ImageModel(id, mainImg.absUrl(SRC_TAG));
+                    ImageModel mainImage = new ImageModel(url, mainImg.absUrl(SRC_TAG));
                     List<StepModel> steps = StringHelper.extractStepsWhitSubTitles(article);
-                    recipe = new RecipeModel(id, recipeTitle,
+                    recipe = new RecipeModel(url, recipeTitle,
                             recipeDescription, -1, "", "", "", new ArrayList<>(),
                             "", steps, "", mainImage, tags, url);
                 } else {

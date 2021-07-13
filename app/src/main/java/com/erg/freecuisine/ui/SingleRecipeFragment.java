@@ -84,9 +84,11 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
     private LinearLayout linear_amounts_container;
     private LinearLayout table_recipe_ingredients_container;
     private LottieAnimationView lottie_anim_loading;
-    private ImageButton ibBookmark, shareButton;
+    private ImageButton ibBookmark;
     private ImageButton btn_up;
-    private Animation scaleUp, scaleDown, enter, exit;
+    private Animation scaleUp;
+    private Animation enter;
+    private Animation exit;
     private ArrayList<TagModel> tags;
     private AsyncDataLoad asyncDataLoad;
     private YouTubePlayerView videoView;
@@ -152,7 +154,6 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
         spHelper = new SharedPreferencesHelper(requireContext());
         asyncDataLoad = new AsyncDataLoad();
         scaleUp = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
-        scaleDown = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_down);
         enter = AnimationUtils.loadAnimation(requireContext(), R.anim.custom_enter_anim);
         exit = AnimationUtils.loadAnimation(requireContext(), R.anim.custom_exit_anim);
         handlerDelay = new Handler(Looper.getMainLooper());
@@ -217,6 +218,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
         setUpView(recipe);
     }
 
+    @SuppressLint("InflateParams")
     public void setUpView(RecipeModel recipe) {
 
         Util.hideView(null, lottie_anim_loading);
@@ -231,7 +233,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
             AppCompatTextView type = rootView.findViewById(R.id.tv_type);
             AppCompatTextView cockingTime = rootView.findViewById(R.id.tv_cocking_time);
             AppCompatTextView peopleAmount = rootView.findViewById(R.id.tv_people_amount);
-            shareButton = rootView.findViewById(R.id.ib_sharing);
+            ImageButton shareButton = rootView.findViewById(R.id.ib_sharing);
             btn_up = rootView.findViewById(R.id.btn_up);
 
             RelativeLayout typeContainer = rootView
@@ -320,6 +322,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
             LinearLayout linear_preparation_container = rootView.findViewById(R.id.linear_preparation_container);
             if (!recipe.getSteps().isEmpty()) {
                 for (StepModel step : recipe.getSteps()) {
+                    @SuppressLint("InflateParams")
                     View view = getLayoutInflater().inflate(R.layout.item_recipe_preparation_step, null);
 
                     if (step.getImage() != null && !step.getImage().getUrl().isEmpty()) {

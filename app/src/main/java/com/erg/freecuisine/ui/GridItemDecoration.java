@@ -5,9 +5,11 @@ import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.jetbrains.annotations.NotNull;
+
 public class GridItemDecoration extends RecyclerView.ItemDecoration {
-    private int largePadding;
-    private int smallPadding;
+    private final int largePadding;
+    private final int smallPadding;
 
     public GridItemDecoration(int largePadding, int smallPadding) {
         this.largePadding = largePadding;
@@ -15,8 +17,8 @@ public class GridItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     @Override
-    public void getItemOffsets(Rect outRect, View view,
-                               RecyclerView parent, RecyclerView.State state) {
+    public void getItemOffsets(Rect outRect, @NotNull View view,
+                               @NotNull RecyclerView parent, @NotNull RecyclerView.State state) {
         outRect.left = smallPadding;
         outRect.right = smallPadding;
         outRect.top = largePadding;

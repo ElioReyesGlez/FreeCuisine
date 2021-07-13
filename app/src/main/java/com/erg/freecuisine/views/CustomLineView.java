@@ -571,6 +571,7 @@ public class CustomLineView extends View {
         int linenumber;
         final int velocity = MyUtils.dip2px(getContext(), 18);
 
+        @SuppressWarnings("SameParameterValue")
         Dot(int x, float y, int targetX, float targetY, float data, int linenumber) {
             this.x = x;
             this.y = y;
