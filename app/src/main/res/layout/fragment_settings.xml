@@ -393,8 +393,8 @@
 
                 <ImageView
                     android:id="@+id/icon_about"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="29dp"
+                    android:layout_height="29dp"
                     android:layout_centerVertical="true"
                     android:layout_margin="@dimen/default_margin"
                     android:contentDescription="@string/icon"

@@ -64,6 +64,7 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
     private ArrayList<TagModel> tags;
     private Bundle savedState = null;
     private boolean finishedFlag = false;
+    private Dialog dialogMission = null;
 
     public AdMobFragment() {
         // Required empty public constructor
@@ -157,25 +158,26 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
     }
 
     public void showMissionDialog() {
-        final Dialog dialog = new Dialog(requireContext(), R.style.alert_dialog);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(false);
+        dialogMission = new Dialog(requireContext(), R.style.alert_dialog);
+        dialogMission.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogMission.setCancelable(false);
         LayoutInflater inflater = getLayoutInflater();
         @SuppressLint("InflateParams")
         View dialogView = inflater.inflate(R.layout.dialog_mission_view,
                 null, false);
-        dialog.setContentView(dialogView);
+        dialogMission.setContentView(dialogView);
 
         /*onClick on dialog ok button*/
         Button btnOK = dialogView.findViewById(R.id.ok);
         btnOK.setOnClickListener(v -> {
             Util.vibrate(requireContext());
-            startCountdown(requireActivity(), timerMilliseconds);
-            if (dialog.isShowing())
-                dialog.dismiss();
+            if (!finishedFlag)
+                startCountdown(requireActivity(), timerMilliseconds);
+            if (dialogMission.isShowing())
+                dialogMission.dismiss();
         });
 
-        dialog.show();
+        dialogMission.show();
         Animation animScaleUp = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up_long);
         dialogView.startAnimation(animScaleUp);
     }
@@ -280,6 +282,9 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onPause() {
         cancelTimer();
+        if (dialogMission != null && dialogMission.isShowing()) {
+            dialogMission.dismiss();
+        }
         super.onPause();
     }
 

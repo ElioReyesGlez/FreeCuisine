@@ -274,7 +274,6 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
 
         ImageButton info = staticsGraphView.findViewById(R.id.ib_info__statics);
         info.setOnClickListener(this);
-//        if (spHelper.isFirstLunch())
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             if (isVisible() && info.getVisibility() == View.VISIBLE) {
                 info.startAnimation(scaleUpLong);
