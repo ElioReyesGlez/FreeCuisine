@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,6 +32,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     private SharedPreferencesHelper spHelper;
     private SwitchMaterial vibrationSwitch, shuffleSwitch, scrollUpSwitch;
     private RealmHelper realmHelper;
+    private Animation scaleUp;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,6 +40,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         spHelper = new SharedPreferencesHelper(requireContext());
         realmHelper = new RealmHelper();
+        scaleUp = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -130,5 +134,11 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         NavController navController = Navigation
                 .findNavController(requireActivity(), R.id.nav_host_fragment);
         navController.navigate(actionId);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Util.showBottomBar(requireActivity(), scaleUp);
     }
 }

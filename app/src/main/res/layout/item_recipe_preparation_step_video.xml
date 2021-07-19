@@ -49,19 +49,6 @@
             android:textColor="@color/md_grey_500"
             android:textSize="@dimen/description_text_size_full_view" />
 
-    <!--    <TextView
-            android:id="@+id/tv_tips"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="3dp"
-            android:layout_below="@+id/tv_preparation_description"
-            android:padding="@dimen/default_padding"
-            android:textStyle="italic"
-            android:text="@string/lorem_ipsum"
-            android:layout_centerHorizontal="true"
-            android:textColor="@color/md_grey_500"
-            android:textSize="@dimen/description_text_size" />-->
-
         <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
             android:id="@+id/youtube_player_view"
             android:layout_width="match_parent"

@@ -85,7 +85,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     private Job recommendLoaderJob;
     private Job tipsLoaderJob;
     private FireBaseHelper fireBaseHelper;
-    private Animation scaleUP;
+    private Animation scaleUp;
     private Animation scaleUpLong;
     private Handler handlerMessage;
     private Runnable runnableDelayMassage;
@@ -133,7 +133,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         linearRecommendedEmptyContainer.setOnClickListener(this);
         linearTipsEmptyContainer.setOnClickListener(this);
 
-        scaleUP = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
+        scaleUp = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
         scaleUpLong = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up_long);
 
         LinearLayoutManager layoutManagerRecommended = new LinearLayoutManager(
@@ -505,7 +505,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
             Util.hideView(null, linearRecommendedEmptyContainer);
         } else {
             Util.hideView(null, recyclerviewRecommendRecipe);
-            Util.showView(scaleUP, linearRecommendedEmptyContainer);
+            Util.showView(scaleUp, linearRecommendedEmptyContainer);
         }
 
     }
@@ -516,7 +516,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
             Util.hideView(null, linearTipsEmptyContainer);
         } else {
             Util.hideView(null, recyclerviewTipsRecipe);
-            Util.showView(scaleUP, linearTipsEmptyContainer);
+            Util.showView(scaleUp, linearTipsEmptyContainer);
         }
     }
 
@@ -573,5 +573,11 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     public void onDetach() {
         super.onDetach();
         mContext = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Util.showBottomBar(requireActivity(), scaleUp);
     }
 }

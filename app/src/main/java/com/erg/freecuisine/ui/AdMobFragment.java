@@ -65,6 +65,7 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
     private Bundle savedState = null;
     private boolean finishedFlag = false;
     private Dialog dialogMission = null;
+    private Animation scaleDown;
 
     public AdMobFragment() {
         // Required empty public constructor
@@ -75,6 +76,7 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         spHelper = new SharedPreferencesHelper(requireContext());
         tags = new ArrayList<>();
+        scaleDown = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_down);
 
         if (savedInstanceState != null && savedState == null) {
             savedState = savedInstanceState.getBundle(SAVED_STATE_KEY);
@@ -299,6 +301,12 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
                     R.id.action_adMobFragment_to_singleRecipeFragment,
                     url, tags);
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Util.hideBottomBar(requireActivity(), scaleDown);
     }
 
     @Override

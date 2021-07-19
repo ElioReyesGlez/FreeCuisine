@@ -305,8 +305,26 @@ public class JsoupController {
                     tags.add(tagModel);
                     recipe.setTags(tags);
                 }
+
                 if (!recipe.getTitle().isEmpty() && !recipe.getDescription().isEmpty()) {
-                    recipes.add(recipe);
+
+                    /*leaving out Recipes */
+                    boolean isDrinkRecipe = false;
+                    if (recipe.getTags() != null && !recipe.getTags().isEmpty()) {
+                        for (TagModel auxTag : recipe.getTags()) {
+                            if (auxTag.getText().toLowerCase().contains(BEBIDAS_TAG)) {
+                                isDrinkRecipe = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    boolean isHalloweenRecipe = false;
+                    if (recipe.getTitle().toLowerCase().contains(HALLOWEEN_TAG))
+                        isHalloweenRecipe = true;
+
+                    if (!isDrinkRecipe && !isHalloweenRecipe)
+                        recipes.add(recipe);
                 }
             }
 

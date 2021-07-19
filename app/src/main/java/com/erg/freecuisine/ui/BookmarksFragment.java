@@ -1,20 +1,26 @@
 package com.erg.freecuisine.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -23,6 +29,7 @@ import com.erg.freecuisine.adapters.RecipesAdapter;
 import com.erg.freecuisine.helpers.RealmHelper;
 import com.erg.freecuisine.helpers.SharedPreferencesHelper;
 import com.erg.freecuisine.helpers.StringHelper;
+import com.erg.freecuisine.helpers.TimeHelper;
 import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
@@ -46,13 +53,20 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
 
     private View rootView;
     private RecyclerView recyclerViewRecipes;
+    private RecyclerView.SmoothScroller smoothScroller;
+    private GridItemDecoration gridItemDecoration;
+    private StaggeredGridLayoutManager gridLayoutManager;
     private SearchView searcher;
+    private ImageButton btn_up;
     private LinearLayout linearEmptyContainer;
-    private Animation scaleUP, scaleDown;
+    private Animation scaleUP, scaleDown,enterAnim, exitAnim;
 
     private List<RecipeModel> recipes;
     private RecipesAdapter recipesAdapter;
     private String currentSearchQuery = "";
+    private Runnable runnableHideUpBtn;
+    private Handler handlerDelay;
+    private SharedPreferencesHelper spHelper;
 
     private Bundle savedState = null;
 
@@ -60,15 +74,18 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         // Required empty public constructor
     }
 
-    public static BookmarksFragment newInstance() {
-        return new BookmarksFragment();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         RealmHelper realmHelper = new RealmHelper();
         recipes = StringHelper.getRecipesFromStringJsonList(realmHelper.getRecipes());
+        spHelper = new SharedPreferencesHelper(requireContext());
+        handlerDelay = new Handler(Looper.getMainLooper());
+        runnableHideUpBtn = () -> {
+            if (isAdded() && isVisible()) {
+                Util.hideView(exitAnim, btn_up);
+            }
+        };
     }
 
     @Override
@@ -87,10 +104,14 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         linearEmptyContainer = rootView.findViewById(R.id.linear_layout_empty_container);
         scaleUP = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
         scaleDown = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_down);
+        enterAnim = AnimationUtils.loadAnimation(requireContext(), R.anim.custom_enter_anim);
+        exitAnim = AnimationUtils.loadAnimation(requireContext(), R.anim.custom_exit_anim);
+        btn_up = rootView.findViewById(R.id.btn_up);
 
         searcher.setSubmitButtonEnabled(true);
         searcher.setOnQueryTextListener(this);
         searcher.setOnCloseListener(this);
+        btn_up.setOnClickListener(this);
         linearEmptyContainer.setOnClickListener(this);
 
         if (savedState != null) {
@@ -160,11 +181,20 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         /*Empty*/
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         Util.vibrate(requireContext());
-        if (v.getId() == R.id.linear_layout_empty_container) {
-            Util.refreshCurrentFragment(requireActivity());
+        switch (v.getId()) {
+            case R.id.linear_layout_empty_container:
+                Util.refreshCurrentFragment(requireActivity());
+                break;
+            case R.id.btn_up:
+                if (recyclerViewRecipes != null && smoothScroller != null
+                        && gridLayoutManager != null) {
+                    smoothScroller.setTargetPosition(0);
+                    gridLayoutManager.startSmoothScroll(smoothScroller);
+                }
         }
     }
 
@@ -212,12 +242,56 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     private void setUpRecyclerView() {
 
         int numberOfColumns = 2;
-        StaggeredGridLayoutManager gridLayoutManager =
-                new StaggeredGridLayoutManager(numberOfColumns, StaggeredGridLayoutManager.VERTICAL);
+        gridLayoutManager = new StaggeredGridLayoutManager(numberOfColumns, StaggeredGridLayoutManager.VERTICAL);
         recyclerViewRecipes.setLayoutManager(gridLayoutManager);
         recyclerViewRecipes.setHasFixedSize(true);
-        GridItemDecoration gridItemDecoration = new GridItemDecoration(3, 3);
+        if (recyclerViewRecipes.getItemDecorationCount() > 0 &&
+                gridItemDecoration != null) {
+            recyclerViewRecipes.removeItemDecoration(gridItemDecoration);
+        }
+        gridItemDecoration = new GridItemDecoration(6, 6);
         recyclerViewRecipes.addItemDecoration(gridItemDecoration);
+
+        if (spHelper.getScrollUpStatus()) {
+            setUpScrollFlow();
+        } else {
+            Util.hideView(null, btn_up);
+        }
+
+    }
+
+    private void setUpScrollFlow() {
+
+        smoothScroller = new LinearSmoothScroller(requireContext()) {
+            @Override
+            protected int getVerticalSnapPreference() {
+                return LinearSmoothScroller.SNAP_TO_START;
+            }
+        };
+
+        recyclerViewRecipes.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                Log.d(TAG, "onScrollStateChanged: STATE = " + newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE
+                        && recyclerView.canScrollVertically(Integer.MAX_VALUE)) {
+                    Util.showView(enterAnim, btn_up);
+                    handlerDelay.removeCallbacks(runnableHideUpBtn);
+                    handlerDelay.postDelayed(runnableHideUpBtn, TimeHelper.DELAY / 2);
+                } else {
+                    Util.hideView(exitAnim, btn_up);
+                }
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (!recyclerView.canScrollVertically(Integer.MAX_VALUE)) {
+                    Util.hideView(exitAnim, btn_up);
+                }
+            }
+        });
 
     }
 
@@ -312,4 +386,9 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
         super.onAttach(requireContext());
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        Util.hideBottomBar(requireActivity(), scaleDown);
+    }
 }

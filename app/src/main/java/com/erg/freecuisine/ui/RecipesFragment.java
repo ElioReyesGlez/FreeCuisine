@@ -76,7 +76,7 @@ public class RecipesFragment extends Fragment implements
     private CoordinatorLayout filter_container;
     private Filter<TagModel> filter;
     private ImageButton btn_up;
-    private Animation scaleUP, scaleDown, enter, exit;
+    private Animation scaleUp, scaleDown, enterAnim, exitAnim;
 
     private List<RecipeModel> recipes;
     private List<TagModel> tags;
@@ -98,6 +98,7 @@ public class RecipesFragment extends Fragment implements
     private Runnable runnableDelayMassage, runnableHideUpBtn;
     private RecyclerView.SmoothScroller smoothScroller;
     private StaggeredGridLayoutManager gridLayoutManager;
+    private GridItemDecoration gridItemDecoration;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -128,7 +129,7 @@ public class RecipesFragment extends Fragment implements
 
         runnableHideUpBtn = () -> {
             if (isAdded() && isVisible()) {
-                Util.hideView(exit, btn_up);
+                Util.hideView(exitAnim, btn_up);
             }
         };
 
@@ -171,10 +172,10 @@ public class RecipesFragment extends Fragment implements
         searcher = rootView.findViewById(R.id.searcher);
         recyclerViewRecipes = rootView.findViewById(R.id.recycler_view_recipes);
         linearEmptyContainer = rootView.findViewById(R.id.linear_layout_empty_container);
-        scaleUP = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
+        scaleUp = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
         scaleDown = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_down);
-        enter = AnimationUtils.loadAnimation(requireContext(), R.anim.custom_enter_anim);
-        exit = AnimationUtils.loadAnimation(requireContext(), R.anim.custom_exit_anim);
+        enterAnim = AnimationUtils.loadAnimation(requireContext(), R.anim.custom_enter_anim);
+        exitAnim = AnimationUtils.loadAnimation(requireContext(), R.anim.custom_exit_anim);
 
         searcher.setSubmitButtonEnabled(true);
         searcher.setOnQueryTextListener(this);
@@ -183,7 +184,7 @@ public class RecipesFragment extends Fragment implements
         btn_up.setOnClickListener(this);
 //        searcher.setOnSearchClickListener(this);
 
-        setUpRecyclerView();
+//        setUpRecyclerView();
 
         if (savedState != null) {
             String recipesJson = savedState.getString(RECIPE_KEY);
@@ -340,10 +341,15 @@ public class RecipesFragment extends Fragment implements
     private void setUpRecyclerView() {
 
         int numberOfColumns = 2;
-        gridLayoutManager = new StaggeredGridLayoutManager(numberOfColumns, StaggeredGridLayoutManager.VERTICAL);
+        gridLayoutManager = new StaggeredGridLayoutManager(numberOfColumns,
+                StaggeredGridLayoutManager.VERTICAL);
         recyclerViewRecipes.setLayoutManager(gridLayoutManager);
         recyclerViewRecipes.setHasFixedSize(true);
-        GridItemDecoration gridItemDecoration = new GridItemDecoration(3, 3);
+        if (recyclerViewRecipes.getItemDecorationCount() > 0 &&
+                gridItemDecoration != null) {
+            recyclerViewRecipes.removeItemDecoration(gridItemDecoration);
+        }
+        gridItemDecoration = new GridItemDecoration(6, 6);
         recyclerViewRecipes.addItemDecoration(gridItemDecoration);
 
         if (spHelper.getScrollUpStatus()) {
@@ -351,7 +357,6 @@ public class RecipesFragment extends Fragment implements
         } else {
             Util.hideView(null, btn_up);
         }
-//        loadBannerAds();
     }
 
     private void setUpScrollFlow() {
@@ -370,11 +375,11 @@ public class RecipesFragment extends Fragment implements
                 Log.d(TAG, "onScrollStateChanged: STATE = " + newState);
                 if (newState == RecyclerView.SCROLL_STATE_IDLE
                         && recyclerView.canScrollVertically(Integer.MAX_VALUE)) {
-                    Util.showView(enter, btn_up);
+                    Util.showView(enterAnim, btn_up);
                     handlerDelay.removeCallbacks(runnableHideUpBtn);
                     handlerDelay.postDelayed(runnableHideUpBtn, TimeHelper.DELAY / 2);
                 } else {
-                    Util.hideView(exit, btn_up);
+                    Util.hideView(exitAnim, btn_up);
                 }
             }
 
@@ -382,7 +387,7 @@ public class RecipesFragment extends Fragment implements
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 if (!recyclerView.canScrollVertically(Integer.MAX_VALUE)) {
-                    Util.hideView(exit, btn_up);
+                    Util.hideView(exitAnim, btn_up);
                 }
             }
         });
@@ -408,7 +413,7 @@ public class RecipesFragment extends Fragment implements
             filter.build();
             filter_container.removeAllViews();
             filter_container.addView(filter);
-            Util.showView(scaleUP, filter_container);
+            Util.showView(scaleUp, filter_container);
         }
     }
 
@@ -419,7 +424,7 @@ public class RecipesFragment extends Fragment implements
             Util.showView(null, filter);
             Util.showView(null, searcher);
         } else {
-            Util.showView(scaleUP, linearEmptyContainer);
+            Util.showView(scaleUp, linearEmptyContainer);
             Util.hideView(null, recyclerViewRecipes);
             Util.hideView(null, filter);
             Util.hideView(null, searcher);
@@ -688,5 +693,11 @@ public class RecipesFragment extends Fragment implements
     public void onDetach() {
         super.onDetach();
         mContext = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Util.showBottomBar(requireActivity(), scaleUp);
     }
 }

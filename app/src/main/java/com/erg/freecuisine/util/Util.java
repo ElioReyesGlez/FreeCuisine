@@ -87,6 +87,27 @@ public class Util {
             }
     }
 
+    public static void hideBottomBar(Activity activity, Animation anim) {
+        View view = activity.findViewById(R.id.nav_view);
+        if (view != null)
+            if (view.getVisibility() == View.VISIBLE) {
+                if (anim != null)
+                    view.startAnimation(anim);
+                view.setVisibility(View.GONE);
+            }
+    }
+
+    public static void showBottomBar(Activity activity, Animation anim) {
+        View view = activity.findViewById(R.id.nav_view);
+        if (view != null)
+            if (view.getVisibility() == View.GONE
+                    || view.getVisibility() == View.INVISIBLE) {
+                if (anim != null)
+                    view.startAnimation(anim);
+                view.setVisibility(View.VISIBLE);
+            }
+    }
+
     public static void hideViewWithDelay(Animation anim, View view) {
         new Handler(Looper.getMainLooper()).postDelayed(() -> hideView(anim, view), TimeHelper.DELAY);
     }

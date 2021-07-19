@@ -86,7 +86,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
     private LottieAnimationView lottie_anim_loading;
     private ImageButton ibBookmark;
     private ImageButton btn_up;
-    private Animation scaleUp;
+    private Animation scaleUp, scaleDown;
     private Animation enter;
     private Animation exit;
     private ArrayList<TagModel> tags;
@@ -106,10 +106,6 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
 
     public SingleRecipeFragment() {
         // Required empty public constructor
-    }
-
-    public static SingleRecipeFragment newInstance() {
-        return new SingleRecipeFragment();
     }
 
     @Override
@@ -154,6 +150,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
         spHelper = new SharedPreferencesHelper(requireContext());
         asyncDataLoad = new AsyncDataLoad();
         scaleUp = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
+        scaleDown = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_down);
         enter = AnimationUtils.loadAnimation(requireContext(), R.anim.custom_enter_anim);
         exit = AnimationUtils.loadAnimation(requireContext(), R.anim.custom_exit_anim);
         handlerDelay = new Handler(Looper.getMainLooper());
@@ -517,6 +514,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
         Log.d(TAG, "onStart: Usage = " + spHelper.getUsageOpenTime());
         spHelper.saveUsageOpenTime(System.currentTimeMillis());
         spHelper.increasesAdCounter();
+        Util.hideBottomBar(requireActivity(), scaleDown);
     }
 
     @Override
@@ -552,15 +550,15 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
                     checkBookmark(true);
                     realmHelper.insertOrUpdate(realmRecipeModel);
                     if (isVisible())
-                        MessageHelper.showSuccessMessage(requireActivity(),
-                                getString(R.string.saved), rootView);
+                        MessageHelper.showSuccessMessageOnMain(requireActivity(),
+                                getString(R.string.saved));
                 } else {
                     isBookmarkChecked = false;
                     checkBookmark(false);
                     realmHelper.deleteRecipe(realmRecipeModel);
                     if (isVisible())
-                        MessageHelper.showSuccessMessage(requireActivity(),
-                                getString(R.string.removed), rootView);
+                        MessageHelper.showSuccessMessageOnMain(requireActivity(),
+                                getString(R.string.removed));
                 }
                 break;
             case R.id.recipe_description:
