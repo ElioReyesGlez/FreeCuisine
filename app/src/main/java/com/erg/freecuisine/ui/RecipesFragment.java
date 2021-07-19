@@ -698,6 +698,6 @@ public class RecipesFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-        Util.showBottomBar(requireActivity(), scaleUp);
+        Util.showBottomBar(requireActivity());
     }
 }

@@ -17,6 +17,7 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -87,7 +88,8 @@ public class Util {
             }
     }
 
-    public static void hideBottomBar(Activity activity, Animation anim) {
+    public static void hideBottomBar(Activity activity) {
+        Animation anim = AnimationUtils.loadAnimation(activity, R.anim.custom_exit_anim_faster);
         View view = activity.findViewById(R.id.nav_view);
         if (view != null)
             if (view.getVisibility() == View.VISIBLE) {
@@ -97,7 +99,8 @@ public class Util {
             }
     }
 
-    public static void showBottomBar(Activity activity, Animation anim) {
+    public static void showBottomBar(Activity activity) {
+        Animation anim = AnimationUtils.loadAnimation(activity, R.anim.custom_enter_anim_faster);
         View view = activity.findViewById(R.id.nav_view);
         if (view != null)
             if (view.getVisibility() == View.GONE

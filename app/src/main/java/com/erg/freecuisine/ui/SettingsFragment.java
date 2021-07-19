@@ -32,7 +32,6 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     private SharedPreferencesHelper spHelper;
     private SwitchMaterial vibrationSwitch, shuffleSwitch, scrollUpSwitch;
     private RealmHelper realmHelper;
-    private Animation scaleUp;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,7 +39,6 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         spHelper = new SharedPreferencesHelper(requireContext());
         realmHelper = new RealmHelper();
-        scaleUp = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -139,6 +137,6 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        Util.showBottomBar(requireActivity(), scaleUp);
+        Util.showBottomBar(requireActivity());
     }
 }

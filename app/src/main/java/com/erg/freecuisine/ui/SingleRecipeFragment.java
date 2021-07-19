@@ -86,7 +86,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
     private LottieAnimationView lottie_anim_loading;
     private ImageButton ibBookmark;
     private ImageButton btn_up;
-    private Animation scaleUp, scaleDown;
+    private Animation scaleUp;
     private Animation enter;
     private Animation exit;
     private ArrayList<TagModel> tags;
@@ -150,7 +150,6 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
         spHelper = new SharedPreferencesHelper(requireContext());
         asyncDataLoad = new AsyncDataLoad();
         scaleUp = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_up);
-        scaleDown = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_down);
         enter = AnimationUtils.loadAnimation(requireContext(), R.anim.custom_enter_anim);
         exit = AnimationUtils.loadAnimation(requireContext(), R.anim.custom_exit_anim);
         handlerDelay = new Handler(Looper.getMainLooper());
@@ -514,7 +513,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
         Log.d(TAG, "onStart: Usage = " + spHelper.getUsageOpenTime());
         spHelper.saveUsageOpenTime(System.currentTimeMillis());
         spHelper.increasesAdCounter();
-        Util.hideBottomBar(requireActivity(), scaleDown);
+        Util.hideBottomBar(requireActivity());
     }
 
     @Override

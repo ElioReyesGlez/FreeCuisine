@@ -389,6 +389,6 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onStart() {
         super.onStart();
-        Util.hideBottomBar(requireActivity(), scaleDown);
+        Util.hideBottomBar(requireActivity());
     }
 }
