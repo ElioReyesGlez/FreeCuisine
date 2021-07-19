@@ -694,10 +694,4 @@ public class RecipesFragment extends Fragment implements
         super.onDetach();
         mContext = null;
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Util.showBottomBar(requireActivity());
-    }
 }

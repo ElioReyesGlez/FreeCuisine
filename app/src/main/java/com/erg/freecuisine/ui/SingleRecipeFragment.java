@@ -513,7 +513,6 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
         Log.d(TAG, "onStart: Usage = " + spHelper.getUsageOpenTime());
         spHelper.saveUsageOpenTime(System.currentTimeMillis());
         spHelper.increasesAdCounter();
-        Util.hideBottomBar(requireActivity());
     }
 
     @Override

@@ -385,10 +385,4 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     public void onAttach(@NotNull Context context) {
         super.onAttach(requireContext());
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Util.hideBottomBar(requireActivity());
-    }
 }

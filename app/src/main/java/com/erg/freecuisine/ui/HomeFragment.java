@@ -574,10 +574,4 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
         super.onDetach();
         mContext = null;
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Util.showBottomBar(requireActivity());
-    }
 }

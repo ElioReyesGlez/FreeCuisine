@@ -229,7 +229,7 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                         super.onAdFailedToLoad(loadAdError);
                         mInterstitialAd = null;
-                        Log.i(TAG, "onAdFailedToLoad: ErrorCode : " + loadAdError.getMessage());
+                        Log.d(TAG, "onAdFailedToLoad: ErrorCode : " + loadAdError.getMessage());
                     }
                 });
     }
@@ -299,12 +299,6 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
                     R.id.action_adMobFragment_to_singleRecipeFragment,
                     url, tags);
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Util.hideBottomBar(requireActivity());
     }
 
     @Override

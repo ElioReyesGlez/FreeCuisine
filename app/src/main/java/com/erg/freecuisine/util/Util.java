@@ -27,6 +27,7 @@ import com.erg.freecuisine.helpers.SharedPreferencesHelper;
 import com.erg.freecuisine.helpers.TimeHelper;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -88,26 +89,24 @@ public class Util {
             }
     }
 
-    public static void hideBottomBar(Activity activity) {
+    public static void hideBottomBar(Activity activity, BottomNavigationView navView) {
         Animation anim = AnimationUtils.loadAnimation(activity, R.anim.custom_exit_anim_faster);
-        View view = activity.findViewById(R.id.nav_view);
-        if (view != null)
-            if (view.getVisibility() == View.VISIBLE) {
+        if (navView != null)
+            if (navView.getVisibility() == View.VISIBLE) {
                 if (anim != null)
-                    view.startAnimation(anim);
-                view.setVisibility(View.GONE);
+                    navView.startAnimation(anim);
+                navView.setVisibility(View.GONE);
             }
     }
 
-    public static void showBottomBar(Activity activity) {
+    public static void showBottomBar(Activity activity, BottomNavigationView navView) {
         Animation anim = AnimationUtils.loadAnimation(activity, R.anim.custom_enter_anim_faster);
-        View view = activity.findViewById(R.id.nav_view);
-        if (view != null)
-            if (view.getVisibility() == View.GONE
-                    || view.getVisibility() == View.INVISIBLE) {
+        if (navView != null)
+            if (navView.getVisibility() == View.GONE
+                    || navView.getVisibility() == View.INVISIBLE) {
                 if (anim != null)
-                    view.startAnimation(anim);
-                view.setVisibility(View.VISIBLE);
+                    navView.startAnimation(anim);
+                navView.setVisibility(View.VISIBLE);
             }
     }
 
