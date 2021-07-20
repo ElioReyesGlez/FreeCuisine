@@ -477,30 +477,6 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
         ibBookmark.startAnimation(scaleUp);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart: Usage = " + spHelper.getUsageOpenTime());
-        spHelper.saveUsageOpenTime(System.currentTimeMillis());
-        spHelper.increasesAdCounter();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (recipe != null) {
-            Util.saveUsageByWeekDay(requireContext());
-            spHelper.saveLastRecipeRead(recipe);
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (videoView != null)
-            videoView.release();
-    }
-
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
@@ -672,6 +648,36 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
             state.putBundle("args", args);
         }
         return state;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: Usage = " + spHelper.getUsageOpenTime());
+        spHelper.saveUsageOpenTime(System.currentTimeMillis());
+        spHelper.increasesAdCounter();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Util.hideBottomBar(requireActivity());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (recipe != null) {
+            Util.saveUsageByWeekDay(requireContext());
+            spHelper.saveLastRecipeRead(recipe);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (videoView != null)
+            videoView.release();
     }
 
 }

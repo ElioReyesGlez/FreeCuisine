@@ -43,6 +43,7 @@ import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
 import com.erg.freecuisine.util.Constants;
 import com.erg.freecuisine.util.Util;
+import com.erg.freecuisine.views.GridItemDecoration;
 import com.google.gson.Gson;
 import com.yalantis.filter.listener.FilterListener;
 import com.yalantis.filter.widget.Filter;
@@ -587,7 +588,7 @@ public class RecipesFragment extends Fragment implements
         ArrayList<RecipeModel> filteredVerseList = new ArrayList<>();
         for (RecipeModel recipe : oldRecipes) {
             final String title = StringHelper.clarifyText(recipe.getTitle().toLowerCase());
-            final String description = StringHelper.clarifyText( recipe.getDescription()
+            final String description = StringHelper.clarifyText(recipe.getDescription()
                     .toLowerCase());
             final List<TagModel> tags = recipe.getTags();
             if (title.contains(queryClarified) || description.contains(queryClarified)
@@ -651,15 +652,14 @@ public class RecipesFragment extends Fragment implements
             recyclerViewRecipes.setAdapter(recipesAdapter);
             Log.d(TAG, "restoreState: RECIPES = " + recipes.toString());
 
+            if (links != null && !links.isEmpty()) {
+                setUpFilterView(links);
+            }
+
             if (!currentSearchQuery.isEmpty()) {
                 searcher.setQuery(currentSearchQuery, false);
-                if (links != null && !links.isEmpty()) {
-                    setUpFilterView(links);
-                }
-            } else if (links != null && !links.isEmpty()) {
-                setUpFilterView(links);
+            } else {
                 Log.d(TAG, "restoreState: LINKS: " + links.toString());
-
                 if (tagsSelected != null && !tagsSelected.isEmpty()) {
                     onFiltersSelected(tagsSelected);
                     Log.d(TAG, "restoreState: TAGS SELECTED: " + tagsSelected.toString());
@@ -676,6 +676,12 @@ public class RecipesFragment extends Fragment implements
             searcher.setIconified(true);
         }
     }*/
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Util.showBottomBar(requireActivity());
+    }
 
     @Override
     public void onAttach(@NotNull Context context) {

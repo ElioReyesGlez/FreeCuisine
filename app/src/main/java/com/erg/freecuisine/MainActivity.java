@@ -42,19 +42,6 @@ public class MainActivity extends AppCompatActivity {
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(navView, navController);
-        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            switch (destination.getId()){
-                case R.id.navigation_home:
-                case R.id.navigation_recipes:
-                case R.id.navigation_settings:
-                    Util.showBottomBar(MainActivity.this, navView);
-                    break;
-                default:
-                    Util.hideBottomBar(MainActivity.this, navView);
-                    break;
-            }
-
-        });
 
         initMobileAds();
     }

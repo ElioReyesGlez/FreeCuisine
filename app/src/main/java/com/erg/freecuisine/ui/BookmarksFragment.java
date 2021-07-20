@@ -1,7 +1,6 @@
 package com.erg.freecuisine.ui;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -34,6 +33,7 @@ import com.erg.freecuisine.interfaces.OnRecipeListener;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
 import com.erg.freecuisine.util.Util;
+import com.erg.freecuisine.views.GridItemDecoration;
 import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
@@ -337,6 +337,12 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                 return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
             }
         }).dispatchUpdatesTo(recipesAdapter);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Util.hideBottomBar(requireActivity());
     }
 
     @Override

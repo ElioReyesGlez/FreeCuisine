@@ -133,4 +133,10 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 .findNavController(requireActivity(), R.id.nav_host_fragment);
         navController.navigate(actionId);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Util.showBottomBar(requireActivity());
+    }
 }

@@ -1,4 +1,4 @@
-package com.erg.freecuisine.ui;
+package com.erg.freecuisine.views;
 
 import android.graphics.Rect;
 import android.view.View;

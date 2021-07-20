@@ -36,10 +36,6 @@ public class AboutFragment extends Fragment implements View.OnClickListener {
         // Required empty public constructor
     }
 
-    public static AboutFragment newInstance() {
-        return new AboutFragment();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,5 +133,11 @@ public class AboutFragment extends Fragment implements View.OnClickListener {
         intent.setData(Uri.parse("mailto:"));
         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
         startActivity(intent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Util.hideBottomBar(requireActivity());
     }
 }

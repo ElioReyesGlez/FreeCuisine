@@ -89,7 +89,8 @@ public class Util {
             }
     }
 
-    public static void hideBottomBar(Activity activity, BottomNavigationView navView) {
+    public static void hideBottomBar(Activity activity) {
+        BottomNavigationView navView = activity.findViewById(R.id.nav_view);
         Animation anim = AnimationUtils.loadAnimation(activity, R.anim.custom_exit_anim_faster);
         if (navView != null)
             if (navView.getVisibility() == View.VISIBLE) {
@@ -99,7 +100,8 @@ public class Util {
             }
     }
 
-    public static void showBottomBar(Activity activity, BottomNavigationView navView) {
+    public static void showBottomBar(Activity activity) {
+        BottomNavigationView navView = activity.findViewById(R.id.nav_view);
         Animation anim = AnimationUtils.loadAnimation(activity, R.anim.custom_enter_anim_faster);
         if (navView != null)
             if (navView.getVisibility() == View.GONE

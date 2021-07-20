@@ -1,5 +1,6 @@
 package com.erg.freecuisine.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 
 import androidx.core.content.ContextCompat;
@@ -15,10 +16,10 @@ import java.util.List;
 public class RecipesFilterAdapter extends FilterAdapter<TagModel> {
 
     private int[] colors;
-    private Context context;
+    private Activity context;
 
     public RecipesFilterAdapter(@NotNull List<? extends TagModel> items,
-                                int[] colors, Context context) {
+                                int[] colors, Activity context) {
         super(items);
         this.colors = colors;
         this.context = context;
