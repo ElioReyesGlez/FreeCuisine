@@ -29,6 +29,7 @@ public class Constants {
     public static final String TAG_KEY = "tag_key";
     public static final String QUERY_KEY = "query_key";
     public static final String SPACE_REGEX = "\\s+";
+//    public static final String ACCENT_REGEX = "[^\\p{ASCII}]";
     public static final String SPACE = " ";
     public static final String interstitial_ad_unit_id= "ca-app-pub-4525078240939294/9187543270" ;
     public static final CharSequence HALLOWEEN_TAG = "halloween";
@@ -71,7 +72,7 @@ public class Constants {
     public static final String A_TAG = "a";
     public static final String POSITION_IMAGE = "position-imagen";
 
-    public static final String NEWLINE = "\n";
+//    public static final String NEWLINE = "\n";
     public static final String DIVISION_SING = "%";
 
 
@@ -81,7 +82,7 @@ public class Constants {
     /*REALM KEYS*/
     public static final String REALM_DATA_BASE_NAME = "json_recipes_db";
 
-    public static final String PATTER_FOR_YOUTUBE_ID = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
+//    public static final String PATTER_FOR_YOUTUBE_ID = "(?<=watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*";
 
 
     /*HOME TAGS*/

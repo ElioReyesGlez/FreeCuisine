@@ -16,9 +16,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.lang.reflect.Type;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.erg.freecuisine.util.Constants.ATTRIBUTE_HREF;
@@ -26,12 +26,9 @@ import static com.erg.freecuisine.util.Constants.A_TAG;
 import static com.erg.freecuisine.util.Constants.DIV_TAG;
 import static com.erg.freecuisine.util.Constants.IMG_TAG;
 import static com.erg.freecuisine.util.Constants.INGREDIENTS_LABEL_TAG;
-import static com.erg.freecuisine.util.Constants.NEWLINE;
 import static com.erg.freecuisine.util.Constants.NUMERAL;
 import static com.erg.freecuisine.util.Constants.PARAGRAPH_TAG;
-import static com.erg.freecuisine.util.Constants.PATTER_FOR_YOUTUBE_ID;
 import static com.erg.freecuisine.util.Constants.PROPERTY_INGREDIENTS_TAG;
-import static com.erg.freecuisine.util.Constants.PROPERTY_TAG_CLASS;
 import static com.erg.freecuisine.util.Constants.SEPARATOR_SING;
 import static com.erg.freecuisine.util.Constants.SPACE_REGEX;
 import static com.erg.freecuisine.util.Constants.SRC_TAG;
@@ -46,15 +43,6 @@ public class StringHelper {
 
     private static final String TAG = "StringHelper";
 
-    public static String getRecipeDescription(Element classIntro) {
-        StringBuilder stringBuilder = new StringBuilder();
-        Elements elements = classIntro.select(PARAGRAPH_TAG);
-        for (Element element : elements) {
-            stringBuilder.append(element.text()).append(NEWLINE);
-        }
-        return stringBuilder.toString();
-    }
-
     public static String extractPropertyByClassTag(Element recipeInfo, String tag) {
         if (recipeInfo != null) {
             Element property = recipeInfo.getElementsByClass(tag).first();
@@ -64,15 +52,6 @@ public class StringHelper {
                 return "";
         }
         return "";
-    }
-
-    public static String extractTextByClassTag(Element rootElement, String tag) {
-        Element property = rootElement.getElementsByClass(PROPERTY_TAG_CLASS).first();
-        if (!tag.isEmpty()) {
-            return property.getElementsByClass(tag).text();
-        } else {
-            return property.text();
-        }
     }
 
     public static String extractIngredients(Element recipeInfo) {
@@ -184,15 +163,6 @@ public class StringHelper {
         return strDiners.split(SPACE_REGEX)[0];
     }
 
-    public static String extractIdFromUrl(String url) {
-        Pattern compiledPatter = Pattern.compile(PATTER_FOR_YOUTUBE_ID);
-        Matcher matcher = compiledPatter.matcher(url);
-        if (matcher.find()) {
-            return matcher.group();
-        } else
-            return "";
-    }
-
     public static String extractTag(String tag) {
         String aux = tag.replaceAll(SPACE_REGEX, "").toLowerCase();
         return NUMERAL + aux;
@@ -238,5 +208,11 @@ public class StringHelper {
         Type type = new TypeToken<ArrayList<TagModel>>() {
         }.getType();
         return gson.fromJson(tagsStringJson, type);
+    }
+
+    public static String clarifyText(String text) {
+        String stringNormalize = Normalizer.normalize(text, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(stringNormalize).replaceAll("");
     }
 }

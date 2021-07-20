@@ -22,6 +22,13 @@
         <!-- Inactive thumb color -->
         <item name="colorSwitchThumbNormal">@color/gray_btn_bg_color_light</item>
 
+        <item name="autoCompleteTextViewStyle">@style/cursorColor</item>
+    </style>
+
+    <style name="cursorColor" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textCursorDrawable">@drawable/cursor</item>
+        <item name="editTextColor">@color/md_grey_700</item>
+        <item name="android:textColor">@color/md_grey_700</item>
     </style>
 
     <style name="Widget.App.CardView" parent="Widget.MaterialComponents.CardView">

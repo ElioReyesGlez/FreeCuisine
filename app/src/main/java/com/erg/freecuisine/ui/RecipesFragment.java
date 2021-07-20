@@ -582,15 +582,16 @@ public class RecipesFragment extends Fragment implements
     }
 
     private void filter(@NotNull String query) {
-        final String lowerCaseQuery = query.toLowerCase();
+        final String queryClarified = StringHelper.clarifyText(query.toLowerCase());
         List<RecipeModel> oldRecipes = recipes;
         ArrayList<RecipeModel> filteredVerseList = new ArrayList<>();
         for (RecipeModel recipe : oldRecipes) {
-            final String title = recipe.getTitle().toLowerCase();
-            final String description = recipe.getDescription().toLowerCase();
+            final String title = StringHelper.clarifyText(recipe.getTitle().toLowerCase());
+            final String description = StringHelper.clarifyText( recipe.getDescription()
+                    .toLowerCase());
             final List<TagModel> tags = recipe.getTags();
-            if (title.contains(lowerCaseQuery) || description.contains(lowerCaseQuery)
-                    || tags.contains(new TagModel(query))) {
+            if (title.contains(queryClarified) || description.contains(queryClarified)
+                    || tags.contains(new TagModel(queryClarified))) {
                 filteredVerseList.add(recipe);
             }
         }

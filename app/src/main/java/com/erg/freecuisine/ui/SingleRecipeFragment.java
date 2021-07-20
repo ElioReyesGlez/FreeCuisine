@@ -429,37 +429,6 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
 
         Runnable runnableDelayMassage = () -> {
 
-           /* if (isAdded() && isVisible()) {
-                Dialog dialog = new Dialog(requireContext(), R.style.alert_dialog);
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                LayoutInflater inflater = getLayoutInflater();
-                @SuppressLint("InflateParams")
-                View dialogView = inflater.inflate(R.layout.dialog_view_error_loading, null,
-                        false);
-
-                TextView tv_url = dialogView.findViewById(R.id.url_link);
-                Button ok = dialogView.findViewById(R.id.ok);
-                Button cancel = dialogView.findViewById(R.id.cancel);
-
-                tv_url.setText(url);
-
-                ok.setOnClickListener(v -> {
-                    Util.vibrate(requireContext());
-                    goToBrowser(url);
-                    if (dialog.isShowing())
-                        dialog.dismiss();
-                });
-
-                cancel.setOnClickListener(v -> {
-                    Util.vibrate(requireContext());
-                    if (dialog.isShowing())
-                        dialog.dismiss();
-                });
-
-                dialog.show();
-                dialogView.startAnimation(scaleUp);
-            }*/
-
             if (isAdded() && isVisible()) {
                 String msg = getString(R.string.aks_go_to_bowser);
                 Snackbar snackBar = Snackbar.make(
