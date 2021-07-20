@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorOnPrimary"
-    android:padding="@dimen/default_padding"
     tools:context=".ui.HomeFragment">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fillViewport="true"
+        android:layout_margin="@dimen/default_margin"
         android:scrollbars="none">
 
         <LinearLayout

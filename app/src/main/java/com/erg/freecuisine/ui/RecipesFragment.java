@@ -374,19 +374,12 @@ public class RecipesFragment extends Fragment implements
                 super.onScrollStateChanged(recyclerView, newState);
                 Log.d(TAG, "onScrollStateChanged: STATE = " + newState);
                 if (newState == RecyclerView.SCROLL_STATE_IDLE
-                        && recyclerView.canScrollVertically(Integer.MAX_VALUE)) {
+                        && recyclerView.canScrollVertically(1)
+                        && recyclerView.canScrollVertically(-1)) {
                     Util.showView(enterAnim, btn_up);
                     handlerDelay.removeCallbacks(runnableHideUpBtn);
                     handlerDelay.postDelayed(runnableHideUpBtn, TimeHelper.DELAY / 2);
                 } else {
-                    Util.hideView(exitAnim, btn_up);
-                }
-            }
-
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (!recyclerView.canScrollVertically(Integer.MAX_VALUE)) {
                     Util.hideView(exitAnim, btn_up);
                 }
             }

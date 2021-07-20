@@ -1,9 +1,16 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     style="@style/Theme.MaterialComponents.Dialog"
     android:background="@drawable/background_gray"
+    android:scrollbars="vertical"
     android:padding="10dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_gray"
+        android:padding="10dp">
 
     <ImageView
         android:id="@+id/iv_ic_dialog"
@@ -19,7 +26,7 @@
 
     <TextView
         android:id="@+id/text_dialog"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="@dimen/default_elevation"
         android:layout_centerInParent="true"
@@ -45,4 +52,6 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@id/text_dialog"/>
 
-</RelativeLayout>
+    </RelativeLayout>
+
+</ScrollView>

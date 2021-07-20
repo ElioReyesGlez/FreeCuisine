@@ -462,10 +462,11 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
 
             if (isAdded() && isVisible()) {
                 String msg = getString(R.string.aks_go_to_bowser);
-                Snackbar snackBar = Snackbar.make(rootView, msg, Snackbar.LENGTH_SHORT);
+                Snackbar snackBar = Snackbar.make(
+                        requireActivity().findViewById(R.id.nav_host_fragment),
+                        msg, Snackbar.LENGTH_LONG);
                 snackBar.setBackgroundTint(getResources().getColor(R.color.md_green_50));
                 snackBar.setTextColor(getResources().getColor(R.color.dark_gray_btn_bg_color));
-                snackBar.setDuration(Snackbar.LENGTH_INDEFINITE);
 
                 snackBar.setAction(getString(R.string.ok), v -> Util.goToBrowser(requireActivity(), url));
 
@@ -635,9 +636,8 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
     private void showNetworkErrorMessage() {
         if (isVisible()) {
             requireActivity().runOnUiThread(() -> {
-                MessageHelper.showInfoMessageWarning(
-                        requireActivity(), getString(R.string.network_error),
-                        rootView);
+                MessageHelper.showInfoMessageWarningOnMain(
+                        requireActivity(), getString(R.string.network_error));
                 refreshView();
             });
         } else {
@@ -654,9 +654,8 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
     private void showErrorMessage(String url) {
         if (isVisible()) {
             requireActivity().runOnUiThread(() -> {
-                MessageHelper.showInfoMessageWarning(
-                        requireActivity(), getString(R.string.some_error),
-                        rootView);
+                MessageHelper.showInfoMessageWarningOnMain(
+                        requireActivity(), getString(R.string.some_error));
                 showGoToBrowserDialog(url);
                 if (isVisible())
                     refreshView();

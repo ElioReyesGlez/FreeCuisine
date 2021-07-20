@@ -59,7 +59,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     private SearchView searcher;
     private ImageButton btn_up;
     private LinearLayout linearEmptyContainer;
-    private Animation scaleUP, scaleDown,enterAnim, exitAnim;
+    private Animation scaleUP, scaleDown, enterAnim, exitAnim;
 
     private List<RecipeModel> recipes;
     private RecipesAdapter recipesAdapter;
@@ -275,19 +275,12 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                 super.onScrollStateChanged(recyclerView, newState);
                 Log.d(TAG, "onScrollStateChanged: STATE = " + newState);
                 if (newState == RecyclerView.SCROLL_STATE_IDLE
-                        && recyclerView.canScrollVertically(Integer.MAX_VALUE)) {
+                        && recyclerView.canScrollVertically(1)
+                        && recyclerView.canScrollVertically(-1)) {
                     Util.showView(enterAnim, btn_up);
                     handlerDelay.removeCallbacks(runnableHideUpBtn);
                     handlerDelay.postDelayed(runnableHideUpBtn, TimeHelper.DELAY / 2);
                 } else {
-                    Util.hideView(exitAnim, btn_up);
-                }
-            }
-
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (!recyclerView.canScrollVertically(Integer.MAX_VALUE)) {
                     Util.hideView(exitAnim, btn_up);
                 }
             }
@@ -379,10 +372,5 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
                 searcher.setQuery(currentSearchQuery, false);
             }
         }
-    }
-
-    @Override
-    public void onAttach(@NotNull Context context) {
-        super.onAttach(requireContext());
     }
 }

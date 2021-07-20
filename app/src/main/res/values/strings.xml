@@ -29,9 +29,9 @@
     <string name="dinner">cena</string>
     <string name="recommend">#recomendado</string>
     <string name="activity">#actividad</string>
-    <string name="ic_graphic">Icono grafico</string>
-    <string name="statistics">Grafica de uso</string>
-    <string name="statistics_info">Sección actividad: Muestra el uso en porcentaje graficamente</string>
+    <string name="ic_graphic">Icono gráfica</string>
+    <string name="statistics">Gráfica de uso</string>
+    <string name="statistics_info">Sección actividad: Muestra el uso en porcentaje gráficamente</string>
 
 
     <string name="minutes_ago">\ minutos atrás</string>
@@ -118,6 +118,7 @@
     <string name="totamte">Totamte</string>
     <string name="test_tag">#test1</string>
     <string name="_1">1</string>
+    <string name="dismiss">Descartar</string>
 
     <string-array name="day_codes">
         <item>mon_</item>
