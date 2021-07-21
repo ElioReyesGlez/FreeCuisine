@@ -299,8 +299,6 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
                     R.id.action_adMobFragment_to_singleRecipeFragment,
                     url, tags);
         }
-
-        Util.hideBottomBar(requireActivity());
     }
 
     @Override

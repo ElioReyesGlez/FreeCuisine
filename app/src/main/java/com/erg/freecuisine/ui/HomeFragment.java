@@ -564,12 +564,6 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        Util.showBottomBar(requireActivity());
-    }
-
-    @Override
     public void onAttach(@NotNull Context context) {
         super.onAttach(requireContext());
         mContext = context;

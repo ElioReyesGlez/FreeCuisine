@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|top"
         android:visibility="invisible"
-        android:layout_margin="@dimen/default_margin"
+        android:layout_margin="5dp"
         android:elevation="@dimen/default_elevation">
 
         <ImageButton
@@ -109,6 +109,7 @@
         android:id="@+id/main_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="@dimen/default_padding"
         android:fillViewport="true">
 
         <RelativeLayout
@@ -123,7 +124,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/default_margin"
-                android:background="@drawable/background_white">
+                android:elevation="@dimen/default_elevation">
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/recipe_main_image"
@@ -134,7 +135,6 @@
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/recipe_image"
                     android:cropToPadding="false"
-                    android:elevation="@dimen/default_elevation"
                     android:scaleType="centerCrop"
                     app:shapeAppearanceOverlay="@style/roundCornerView" />
 

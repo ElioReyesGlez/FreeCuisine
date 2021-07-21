@@ -286,7 +286,8 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
                 String[] ingredients = Util.extractIngredients(ingredientsStr);
                 for (int i = 0; i < ingredients.length; i++) {
                     String ingredient = ingredients[i];
-                    View view = getLayoutInflater().inflate(R.layout.item_ingredint, null);
+                    View view = LayoutInflater.from(requireActivity())
+                            .inflate(R.layout.item_ingredint, null);
                     CheckBox checkBox = view.findViewById(R.id.checkBox);
                     TextView textView = view.findViewById(R.id.textViewIngredient);
                     textView.setText(ingredient);
@@ -319,16 +320,19 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
             if (!recipe.getSteps().isEmpty()) {
                 for (StepModel step : recipe.getSteps()) {
                     @SuppressLint("InflateParams")
-                    View view = getLayoutInflater().inflate(R.layout.item_recipe_preparation_step, null);
+                    View view = LayoutInflater.from(requireActivity())
+                            .inflate(R.layout.item_recipe_preparation_step, null);
 
                     if (step.getImage() != null && !step.getImage().getUrl().isEmpty()) {
-                        view = getLayoutInflater().inflate(R.layout.item_recipe_preparation_step_img, null);
+                        view = LayoutInflater.from(requireActivity())
+                                .inflate(R.layout.item_recipe_preparation_step_img, null);
                         ShapeableImageView iv_step_preparation_image = view.findViewById(R.id.iv_step_preparation_image);
                         Picasso.get().load(step.getImage().getUrl()).into(iv_step_preparation_image);
                     }
 
                     if (step.getVideo() != null && !step.getVideo().getId().isEmpty()) {
-                        view = getLayoutInflater().inflate(R.layout.item_recipe_preparation_step_video, null);
+                        view = LayoutInflater.from(requireActivity())
+                                .inflate(R.layout.item_recipe_preparation_step_video, null);
                         videoView = view.findViewById(R.id.youtube_player_view);
                         getViewLifecycleOwner().getLifecycle().addObserver(videoView);
                         setUpYouPlayerView(videoView, step.getVideo());
@@ -404,9 +408,9 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
     private void showLinksDialog(ArrayList<LinkModel> links) {
         Dialog dialog = new Dialog(requireContext(), R.style.alert_dialog);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        LayoutInflater inflater = getLayoutInflater();
         @SuppressLint("InflateParams")
-        View dialogView = inflater.inflate(R.layout.dialog_view_links_choice, null, false);
+        View dialogView = LayoutInflater.from(requireContext())
+                .inflate(R.layout.dialog_view_links_choice, null, false);
         ListView listView = dialogView.findViewById(R.id.list_view_links);
 
         LinksAdapter linksAdapter = new LinksAdapter(requireContext(), R.layout.item_step_link, links);
@@ -423,7 +427,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
         dialogView.startAnimation(scaleUp);
     }
 
-    private void showGoToBrowserDialog(String url) {
+    private void showGoToBrowserMessage(String url) {
 
         Handler handlerMessage = new Handler(Looper.getMainLooper());
 
@@ -431,11 +435,9 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
 
             if (isAdded() && isVisible()) {
                 String msg = getString(R.string.aks_go_to_bowser);
-                Snackbar snackBar = Snackbar.make(
-                        requireActivity().findViewById(R.id.nav_host_fragment),
-                        msg, Snackbar.LENGTH_LONG);
+                Snackbar snackBar = Snackbar.make(rootView, msg, Snackbar.LENGTH_LONG);
                 snackBar.setBackgroundTint(getResources().getColor(R.color.md_green_50));
-                snackBar.setTextColor(getResources().getColor(R.color.dark_gray_btn_bg_color));
+                snackBar.setTextColor(getResources().getColor(R.color.md_grey_700));
 
                 snackBar.setAction(getString(R.string.ok), v -> Util.goToBrowser(requireActivity(), url));
 
@@ -494,15 +496,15 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
                     checkBookmark(true);
                     realmHelper.insertOrUpdate(realmRecipeModel);
                     if (isVisible())
-                        MessageHelper.showSuccessMessageOnMain(requireActivity(),
-                                getString(R.string.saved));
+                        MessageHelper.showSuccessMessage(requireActivity(),
+                                getString(R.string.saved), rootView);
                 } else {
                     isBookmarkChecked = false;
                     checkBookmark(false);
                     realmHelper.deleteRecipe(realmRecipeModel);
                     if (isVisible())
-                        MessageHelper.showSuccessMessageOnMain(requireActivity(),
-                                getString(R.string.removed));
+                        MessageHelper.showSuccessMessage(requireActivity(),
+                                getString(R.string.removed), rootView);
                 }
                 break;
             case R.id.recipe_description:
@@ -525,9 +527,9 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
         final Dialog dialog = new Dialog(requireContext(), R.style.alert_dialog);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(true);
-        LayoutInflater inflater = getLayoutInflater();
         @SuppressLint("InflateParams")
-        View dialogView = inflater.inflate(R.layout.dialog_description_text, null, false);
+        View dialogView = LayoutInflater.from(requireContext())
+                .inflate(R.layout.dialog_description_text, null, false);
         TextView msg = dialogView.findViewById(R.id.tv_description);
 
         msg.setText(text);
@@ -581,8 +583,9 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
     private void showNetworkErrorMessage() {
         if (isVisible()) {
             requireActivity().runOnUiThread(() -> {
-                MessageHelper.showInfoMessageWarningOnMain(
-                        requireActivity(), getString(R.string.network_error));
+                MessageHelper.showInfoMessageWarning(
+                        requireActivity(), getString(R.string.network_error)
+                        , rootView);
                 refreshView();
             });
         } else {
@@ -599,9 +602,10 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
     private void showErrorMessage(String url) {
         if (isVisible()) {
             requireActivity().runOnUiThread(() -> {
-                MessageHelper.showInfoMessageWarningOnMain(
-                        requireActivity(), getString(R.string.some_error));
-                showGoToBrowserDialog(url);
+                MessageHelper.showInfoMessageWarning(
+                        requireActivity(), getString(R.string.some_error),
+                        rootView);
+                showGoToBrowserMessage(url);
                 if (isVisible())
                     refreshView();
             });
@@ -610,7 +614,7 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
                 Toast.makeText(requireContext(),
                         getString(R.string.some_error), Toast.LENGTH_LONG)
                         .show();
-                showGoToBrowserDialog(url);
+                showGoToBrowserMessage(url);
                 if (isVisible())
                     refreshView();
             });
@@ -656,12 +660,6 @@ public class SingleRecipeFragment extends Fragment implements OnRecipeListener,
         Log.d(TAG, "onStart: Usage = " + spHelper.getUsageOpenTime());
         spHelper.saveUsageOpenTime(System.currentTimeMillis());
         spHelper.increasesAdCounter();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Util.hideBottomBar(requireActivity());
     }
 
     @Override

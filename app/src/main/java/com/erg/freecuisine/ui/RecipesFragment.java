@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -659,7 +660,7 @@ public class RecipesFragment extends Fragment implements
             if (!currentSearchQuery.isEmpty()) {
                 searcher.setQuery(currentSearchQuery, false);
             } else {
-                Log.d(TAG, "restoreState: LINKS: " + links.toString());
+                Log.d(TAG, "restoreState: LINKS: " + links);
                 if (tagsSelected != null && !tagsSelected.isEmpty()) {
                     onFiltersSelected(tagsSelected);
                     Log.d(TAG, "restoreState: TAGS SELECTED: " + tagsSelected.toString());
@@ -676,12 +677,6 @@ public class RecipesFragment extends Fragment implements
             searcher.setIconified(true);
         }
     }*/
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Util.showBottomBar(requireActivity());
-    }
 
     @Override
     public void onAttach(@NotNull Context context) {

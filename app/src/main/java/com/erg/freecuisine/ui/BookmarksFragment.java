@@ -340,12 +340,6 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        Util.hideBottomBar(requireActivity());
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
         savedState = saveState();

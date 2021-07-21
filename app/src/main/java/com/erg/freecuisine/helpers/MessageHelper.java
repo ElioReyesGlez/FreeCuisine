@@ -12,6 +12,7 @@ public class MessageHelper {
         if (!context.isFinishing()) {
             Snackbar snackBar = Snackbar.make(placeSnackBar, msg, Snackbar.LENGTH_LONG);
             snackBar.setBackgroundTint(context.getResources().getColor(R.color.md_green_200));
+            snackBar.setTextColor(context.getResources().getColor(R.color.text_second_color));
             if (!snackBar.isShown())
                 snackBar.show();
         }
@@ -42,6 +43,7 @@ public class MessageHelper {
 
             Snackbar snackBar = Snackbar.make(placeSnackBar, msg, Snackbar.LENGTH_LONG);
             snackBar.setBackgroundTint(context.getResources().getColor(R.color.red_btn_bg_color));
+            snackBar.setTextColor(context.getResources().getColor(R.color.text_second_color));
             if (!snackBar.isShown())
                 snackBar.show();
         }

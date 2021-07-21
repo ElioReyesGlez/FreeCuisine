@@ -89,29 +89,6 @@ public class Util {
             }
     }
 
-    public static void hideBottomBar(Activity activity) {
-        BottomNavigationView navView = activity.findViewById(R.id.nav_view);
-        Animation anim = AnimationUtils.loadAnimation(activity, R.anim.custom_exit_anim_faster);
-        if (navView != null)
-            if (navView.getVisibility() == View.VISIBLE) {
-                if (anim != null)
-                    navView.startAnimation(anim);
-                navView.setVisibility(View.GONE);
-            }
-    }
-
-    public static void showBottomBar(Activity activity) {
-        BottomNavigationView navView = activity.findViewById(R.id.nav_view);
-        Animation anim = AnimationUtils.loadAnimation(activity, R.anim.custom_enter_anim_faster);
-        if (navView != null)
-            if (navView.getVisibility() == View.GONE
-                    || navView.getVisibility() == View.INVISIBLE) {
-                if (anim != null)
-                    navView.startAnimation(anim);
-                navView.setVisibility(View.VISIBLE);
-            }
-    }
-
     public static void hideViewWithDelay(Animation anim, View view) {
         new Handler(Looper.getMainLooper()).postDelayed(() -> hideView(anim, view), TimeHelper.DELAY);
     }

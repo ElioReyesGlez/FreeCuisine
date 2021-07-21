@@ -135,9 +135,4 @@ public class AboutFragment extends Fragment implements View.OnClickListener {
         startActivity(intent);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Util.hideBottomBar(requireActivity());
-    }
 }

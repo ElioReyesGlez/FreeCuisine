@@ -3,6 +3,8 @@ package com.erg.freecuisine;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.erg.freecuisine.helpers.MessageHelper;
 import com.erg.freecuisine.helpers.SharedPreferencesHelper;
@@ -22,12 +24,14 @@ import java.util.Objects;
 
 import io.realm.Realm;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavController.OnDestinationChangedListener {
 
     private static final String TAG = "MainActivity";
 
     private SharedPreferencesHelper spHelper;
     private NavController navController;
+    private BottomNavigationView navView;
+    private Animation exit_anim, enter_anim;
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -36,11 +40,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Realm.init(this);
         spHelper = new SharedPreferencesHelper(this);
+        exit_anim = AnimationUtils.loadAnimation(this, R.anim.custom_exit_anim_faster);
+        enter_anim = AnimationUtils.loadAnimation(this, R.anim.custom_enter_anim_faster);
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+
+        navView = findViewById(R.id.nav_view);
         navView.setOnItemReselectedListener(item -> Log.d(TAG, "onNavigationItemReselected: " + item));
-
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController.addOnDestinationChangedListener(this);
         NavigationUI.setupWithNavController(navView, navController);
 
         initMobileAds();
@@ -66,7 +73,8 @@ public class MainActivity extends AppCompatActivity {
         boolean isAdFragmentVisible = false;
         if (navController != null) {
             isAdFragmentVisible = Objects.requireNonNull(
-                    navController.getCurrentDestination()).getId() == R.id.adMobFragment;
+                    navController.getCurrentDestination())
+                    .getId() == R.id.navigation_ad_mob_fragment;
         }
         if (isAdFragmentVisible) {
             MessageHelper.showSuccessMessageOnMain(
@@ -82,5 +90,17 @@ public class MainActivity extends AppCompatActivity {
         spHelper.saveLastUsage(System.currentTimeMillis());
         if (spHelper.isFirstLunch())
             spHelper.setFistLunchStatus(false);
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public void onDestinationChanged(@NonNull NavController controller,
+                                     @NonNull NavDestination destination,
+                                     @Nullable Bundle arguments) {
+        if (destination.getId() == R.id.navigation_ad_mob_fragment) {
+            Util.hideView(exit_anim, navView);
+        } else {
+            Util.showView(enter_anim, navView);
+        }
     }
 }
