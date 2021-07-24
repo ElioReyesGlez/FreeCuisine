@@ -507,7 +507,7 @@ public class RecipesFragment extends Fragment implements
     public void onRecipeClick(int position, View view) {
         Util.vibrate(requireContext());
         RecipeModel currentRecipe = recipesAdapter.getRecipes().get(position);
-        if (spHelper.showAdFirst()) {
+        if (spHelper.showAdFirst() && !spHelper.getPremiumStatus()) {
             Util.loadFragment(requireActivity(),
                     R.id.action_navigation_recipes_to_adMobFragment,
                     currentRecipe);

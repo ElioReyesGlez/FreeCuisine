@@ -146,8 +146,7 @@ public class BookmarksFragment extends Fragment implements View.OnClickListener,
     public void onRecipeClick(int position, View view) {
         Util.vibrate(requireContext());
         RecipeModel currentRecipe = recipesAdapter.getRecipes().get(position);
-        SharedPreferencesHelper spHelper = new SharedPreferencesHelper(requireContext());
-        if (spHelper.showAdFirst()) {
+        if (spHelper.showAdFirst() && !spHelper.getPremiumStatus()) {
             loadFragment(currentRecipe,
                     R.id.action_bookmarksFragment_to_adMobFragment);
         } else {

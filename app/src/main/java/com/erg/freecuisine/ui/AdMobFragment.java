@@ -214,8 +214,9 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
 
     private void initInterstitialAd(final Context context) {
         AdRequest adRequest = new AdRequest.Builder().build();
+        String interstitial_ad_unit_id = "ca-app-pub-5375894039512920/3650487008";
         InterstitialAd.load(
-                context, Constants.interstitial_ad_unit_id, adRequest,
+                context, interstitial_ad_unit_id, adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {

@@ -360,7 +360,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
             case R.id.recommended_main_card_container:
                 if (recommendedRecipes != null && !recommendedRecipes.isEmpty()) {
                     RecipeModel recipe = recommendedRecipesAdapter.getRecipes().get(position);
-                    if (spHelper.showAdFirst()) {
+                    if (spHelper.showAdFirst() && !spHelper.getPremiumStatus()) {
                         Util.loadFragment(requireActivity(),
                                 R.id.action_navigation_home_to_adMobFragment,
                                 recipe);
@@ -372,7 +372,7 @@ public class HomeFragment extends Fragment implements OnRecipeListener,
             case R.id.tips_main_card_container:
                 if (tipsRecipes != null && !tipsRecipes.isEmpty()) {
                     RecipeModel recipe = tipsRecipesAdapter.getRecipes().get(position);
-                    if (spHelper.showAdFirst()) {
+                    if (spHelper.showAdFirst() && !spHelper.getPremiumStatus()) {
                         Util.loadFragment(requireActivity(),
                                 R.id.action_navigation_home_to_adMobFragment,
                                 recipe);

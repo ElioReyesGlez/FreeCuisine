@@ -31,7 +31,6 @@ public class Constants {
     public static final String SPACE_REGEX = "\\s+";
 //    public static final String ACCENT_REGEX = "[^\\p{ASCII}]";
     public static final String SPACE = " ";
-    public static final String interstitial_ad_unit_id= "ca-app-pub-4525078240939294/9187543270" ;
     public static final CharSequence HALLOWEEN_TAG = "halloween";
 
     public static ArrayList<String> getBrands(Context context) {

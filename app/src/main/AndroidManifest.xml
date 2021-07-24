@@ -27,10 +27,10 @@
             </intent-filter>
         </activity>
 
-        <!--AdMob Ads SDK-->
+        <!--AdMob app ID-->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-4525078240939294~5348725835" />
+            android:value="ca-app-pub-5375894039512920~7752194177" />
 
     </application>
 
