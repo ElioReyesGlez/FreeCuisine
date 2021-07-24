@@ -108,6 +108,7 @@
     <string name="test_tag">#test1</string>
     <string name="_1">1</string>
     <string name="dismiss">Descartar</string>
+    <string name="purchase_canceled">¡Compra cancelada!</string>
 
     <string-array name="day_codes">
         <item>mon_</item>

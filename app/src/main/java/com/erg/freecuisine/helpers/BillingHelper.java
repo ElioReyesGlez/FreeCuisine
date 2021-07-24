@@ -19,6 +19,8 @@ import com.erg.freecuisine.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.realm.Realm.getApplicationContext;
+
 public class BillingHelper {
 
     private static final String TAG = "BillingHelper";
@@ -93,7 +95,6 @@ public class BillingHelper {
                             if (!context.isFinishing()) {
                                 MessageHelper.showErrorMessageOnMain(context,
                                         context.getString(R.string.faild_billing_connection));
-
                             }
                         }
                     });
@@ -123,16 +124,46 @@ public class BillingHelper {
 
     private final PurchasesUpdatedListener purchaseUpdateListener = (billingResult, purchases) -> {
         Log.d(TAG, "onPurchasesUpdated: billingResult: " + billingResult.getDebugMessage());
-        if (purchases != null) {
-            for (Purchase purchase : purchases) {
-                ArrayList<String> purchaseSku = purchase.getSkus();
-                if (purchaseSku.contains(SKU_PREMIUM)) {
-                    spHelper.setPremiumStatus(true);
-                    Toast.makeText(context, context.getString(R.string.you_are_premium_now),
-                            Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "onPurchasesUpdated: Purchase: " + purchases.toString());
-                }
+        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null) {
+            handlePurchases(purchases);
+        } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
+            spHelper.setPremiumStatus(true);
+            if (!context.isFinishing()) {
+                MessageHelper.showSuccessMessageOnMain(context,
+                        context.getString(R.string.already_premium));
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        getApplicationContext().getString(R.string.already_premium),
+                        Toast.LENGTH_SHORT).show();
+            }
+        } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
+            if (!context.isFinishing()) {
+                MessageHelper.showSuccessMessageOnMain(context,
+                        context.getString(R.string.purchase_canceled));
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        getApplicationContext().getString(R.string.purchase_canceled),
+                        Toast.LENGTH_SHORT).show();
             }
         }
     };
+
+    private void handlePurchases(List<Purchase> purchases) {
+        for (Purchase purchase : purchases) {
+            ArrayList<String> purchaseSku = purchase.getSkus();
+            if (purchaseSku.contains(SKU_PREMIUM)) {
+                spHelper.setPremiumStatus(true);
+                if (!context.isFinishing()) {
+                    MessageHelper.showSuccessMessageOnMain(context,
+                            context.getString(R.string.you_are_premium_now));
+                } else {
+                    Toast.makeText(context.getApplicationContext(),
+                            context.getApplicationContext()
+                                    .getString(R.string.you_are_premium_now),
+                            Toast.LENGTH_SHORT).show();
+                }
+                Log.d(TAG, "onPurchasesUpdated: Purchase: " + purchases.toString());
+            }
+        }
+    }
 }
