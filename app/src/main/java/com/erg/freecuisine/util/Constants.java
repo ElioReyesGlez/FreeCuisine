@@ -12,10 +12,9 @@ public class Constants {
     public static final int DECIMAL_PLACE = 1;
 
     /*VIBRATION*/
-    public static final long VIBRATE_TIME = 12;
-    public static final long SPECIAL_VIBRATE_TIME = 70;
-    public static final long SPECIAL_MIN_VIBRATE_TIME = 50;
-    public static final long MIN_VIBRATE_TIME = 10;
+    public static final long SPECIAL_VIBRATE_TIME = 57;
+    public static final long DEFAULT_VIBRATE_TIME = 50;
+    public static final long VIBRATE_TIME_SAMSUNG = 12;
     public static final String NUMERAL = "#";
     public static final String SEPARATOR_SING = "%";
 
@@ -33,6 +32,8 @@ public class Constants {
     public static final String SPACE = " ";
     public static final CharSequence HALLOWEEN_TAG = "halloween";
 
+    //SAMSUNG BRAND
+    public static final String SAMSUNG = "samsung";
     public static ArrayList<String> getBrands(Context context) {
         ArrayList<String> brands = new ArrayList<>();
         Collections.addAll(brands, context.getResources().getStringArray(R.array.brands));

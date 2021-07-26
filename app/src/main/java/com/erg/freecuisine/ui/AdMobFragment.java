@@ -28,7 +28,6 @@ import com.erg.freecuisine.helpers.SharedPreferencesHelper;
 import com.erg.freecuisine.helpers.StringHelper;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
-import com.erg.freecuisine.util.Constants;
 import com.erg.freecuisine.util.Util;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -292,13 +291,13 @@ public class AdMobFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        if (!spHelper.getPremiumStatus()) {
-            if (!finishedFlag)
-                startCountdown(requireActivity(), timerMilliseconds);
-        } else {
+        if (spHelper.getPremiumStatus()) {
             Util.loadFragmentByUrl(requireActivity(),
                     R.id.action_adMobFragment_to_singleRecipeFragment,
                     url, tags);
+        } else {
+            if (!finishedFlag)
+                startCountdown(requireActivity(), timerMilliseconds);
         }
     }
 

@@ -210,9 +210,9 @@ public class StringHelper {
         return gson.fromJson(tagsStringJson, type);
     }
 
-    public static String clarifyText(String text) {
-        String stringNormalize = Normalizer.normalize(text, Normalizer.Form.NFD);
+    public static String clarifyText(String textToClarify) {
+        String stringNormalized = Normalizer.normalize(textToClarify, Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-        return pattern.matcher(stringNormalize).replaceAll("");
+        return pattern.matcher(stringNormalized).replaceAll("");
     }
 }

@@ -48,7 +48,6 @@
     <color name="colorBlueLight">#BBCEE4</color>
 
     <color name="custom_white_text_color">#f2f1f1</color>
-    <color name="full_white">#ffffff</color>
     <color name="gray_btn_bg_color">#D0D0D0</color>
     <color name="gray_btn_bg_color_light">#e0e0e0</color>
     <color name="gray_btn_bg_pressed_color">#B6B6B6</color>

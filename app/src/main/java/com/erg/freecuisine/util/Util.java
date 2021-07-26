@@ -17,17 +17,16 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.erg.freecuisine.R;
 import com.erg.freecuisine.helpers.SharedPreferencesHelper;
+import com.erg.freecuisine.helpers.StringHelper;
 import com.erg.freecuisine.helpers.TimeHelper;
 import com.erg.freecuisine.models.RecipeModel;
 import com.erg.freecuisine.models.TagModel;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -35,13 +34,12 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
+import static com.erg.freecuisine.util.Constants.DEFAULT_VIBRATE_TIME;
 import static com.erg.freecuisine.util.Constants.DIVISION_SING;
-import static com.erg.freecuisine.util.Constants.MIN_VIBRATE_TIME;
-import static com.erg.freecuisine.util.Constants.SPECIAL_MIN_VIBRATE_TIME;
 import static com.erg.freecuisine.util.Constants.SPECIAL_VIBRATE_TIME;
 import static com.erg.freecuisine.util.Constants.TAG_KEY;
 import static com.erg.freecuisine.util.Constants.URL_KEY;
-import static com.erg.freecuisine.util.Constants.VIBRATE_TIME;
+import static com.erg.freecuisine.util.Constants.VIBRATE_TIME_SAMSUNG;
 
 public class Util {
 
@@ -94,60 +92,38 @@ public class Util {
     }
 
     public static void vibrate(Context context) {
-//        ToDo
         SharedPreferencesHelper spHelper = new SharedPreferencesHelper(context);
         if (spHelper.getVibrationStatus()) {
-            long VIBRATION_TIME = getRightVibrationTime(context, true);
-            Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-
-            assert v != null;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                v.vibrate(VibrationEffect.createOneShot(VIBRATION_TIME,
-                        VibrationEffect.DEFAULT_AMPLITUDE));
-                Log.d(TAG, "regular vibrate: VIBRATE_TIME VibrationEffect :" + VIBRATION_TIME);
+            long VIBRATION_TIME = getRightVibrationTime(context);
+            Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+            assert vibrator != null;
+            if (vibrator.hasVibrator()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(VIBRATION_TIME,
+                            VibrationEffect.DEFAULT_AMPLITUDE));
+                    Log.d(TAG, "vibrate: VIBRATE_TIME VibrationEffect :" + VIBRATION_TIME);
+                } else {
+                    vibrator.vibrate(VIBRATION_TIME);
+                    Log.d(TAG, "vibrate: VIBRATE_TIME :" + VIBRATION_TIME);
+                }
             } else {
-                v.vibrate(VIBRATION_TIME);
-                Log.d(TAG, "regular vibrate: VIBRATE_TIME :" + VIBRATION_TIME);
+                Log.d(TAG, "vibrate: NO VIBRATOR");
             }
         }
     }
 
-    public static void vibrateMin(Context context) {
-        SharedPreferencesHelper spHelper = new SharedPreferencesHelper(context);
-        if (spHelper.getVibrationStatus()) {
-            long VIBRATION_TIME = getRightVibrationTime(context, false);
-            Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-
-            assert v != null;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                v.vibrate(VibrationEffect.createOneShot(VIBRATION_TIME,
-                        VibrationEffect.DEFAULT_AMPLITUDE));
-                Log.d(TAG, "vibrateMin: MIN_VIBRATE_TIME VibrationEffect " + VIBRATION_TIME);
-            } else {
-                v.vibrate(VIBRATION_TIME);
-                Log.d(TAG, "vibrateMin: MIN_VIBRATE_TIME " + VIBRATION_TIME);
+    private static long getRightVibrationTime(Context context) {
+        String deviceBrand = StringHelper.clarifyText(Build.MANUFACTURER.toLowerCase());
+        Log.d(TAG, "vibrate: MANUFACTURER: " + deviceBrand);
+        for (String brand : Constants.getBrands(context)) {
+            if (deviceBrand.contains(StringHelper.clarifyText(brand.toLowerCase()))) {
+                return SPECIAL_VIBRATE_TIME;
             }
         }
-    }
-
-    private static long getRightVibrationTime(Context context, boolean isRegular) {
-        if (isRegular) {
-            for (String brand : Constants.getBrands(context)) {
-                if (Build.MANUFACTURER.toLowerCase().contains(brand.toLowerCase())) {
-                    return SPECIAL_VIBRATE_TIME;
-                }
-                Log.d(TAG, "regular vibrate: flagSwitchVibrationTime: false");
-            }
-            return VIBRATE_TIME;
-        } else {
-            for (String brand : Constants.getBrands(context)) {
-                if (Build.MANUFACTURER.toLowerCase().contains(brand.toLowerCase())) {
-                    return SPECIAL_MIN_VIBRATE_TIME;
-                }
-                Log.d(TAG, "regular vibrate: flagSwitchVibrationTime: false");
-            }
-            return MIN_VIBRATE_TIME;
-        }
+        if (deviceBrand.contains(Constants.SAMSUNG))
+            return VIBRATE_TIME_SAMSUNG;
+        else
+            return DEFAULT_VIBRATE_TIME;
     }
 
     public static String[] extractIngredients(String strIngredients) {

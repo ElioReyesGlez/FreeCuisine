@@ -124,7 +124,8 @@ public class BillingHelper {
 
     private final PurchasesUpdatedListener purchaseUpdateListener = (billingResult, purchases) -> {
         Log.d(TAG, "onPurchasesUpdated: billingResult: " + billingResult.getDebugMessage());
-        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null) {
+        Log.d(TAG, "onPurchasesUpdated: ResponseCode: " + billingResult.getResponseCode());
+        if (purchases != null && billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
             handlePurchases(purchases);
         } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
             spHelper.setPremiumStatus(true);
@@ -133,7 +134,7 @@ public class BillingHelper {
                         context.getString(R.string.already_premium));
             } else {
                 Toast.makeText(getApplicationContext(),
-                        getApplicationContext().getString(R.string.already_premium),
+                        context.getString(R.string.already_premium),
                         Toast.LENGTH_SHORT).show();
             }
         } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
@@ -142,7 +143,7 @@ public class BillingHelper {
                         context.getString(R.string.purchase_canceled));
             } else {
                 Toast.makeText(getApplicationContext(),
-                        getApplicationContext().getString(R.string.purchase_canceled),
+                        context.getApplicationContext().getString(R.string.purchase_canceled),
                         Toast.LENGTH_SHORT).show();
             }
         }

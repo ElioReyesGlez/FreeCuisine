@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
 
 
         navView = findViewById(R.id.nav_view);
-        navView.setOnItemReselectedListener(item -> Log.d(TAG, "onNavigationItemReselected: " + item));
+//        navView.setOnItemReselectedListener(item -> Log.d(TAG, "onNavigationItemReselected: " + item));
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         navController.addOnDestinationChangedListener(this);
         NavigationUI.setupWithNavController(navView, navController);

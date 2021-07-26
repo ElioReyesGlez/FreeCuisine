@@ -1,7 +1,6 @@
 package com.erg.freecuisine.adapters;
 
 import android.app.Activity;
-import android.content.Context;
 
 import androidx.core.content.ContextCompat;
 
